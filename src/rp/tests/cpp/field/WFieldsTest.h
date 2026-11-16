@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace Util;
 using namespace Pscf;
@@ -400,6 +401,66 @@ public:
       comparison.compare(bf, fields.basis());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
+
+   /*
+   * Read files that end before their data are complete. The fields
+   * must then be marked as invalid.
+   */
+   void testReadTruncated_lam()
+   {
+      printMethod(TEST_FUNC);
+
+      Rp::Domain<1,CPT> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_lam.rf", domain);
+
+      Rp::WFields<1,CPT> fields;
+      fields.setFieldIo(domain.fieldIo());
+      fields.setNMonomer(nMonomer_);
+      fields.setReadUnitCell(domain.unitCell());
+      std::ifstream in;
+      openInputFile("in/w_lam.bf", in);
+      fields.readBasis(in);
+      in.close();
+      TEST_ASSERT(fields.hasData());
+
+      // The first 20 lines of each file: header and 5 lines of data
+      std::stringstream basisFile, rgridFile;
+      std::string line;
+      openInputFile("in/w_lam.bf", in);
+      for (int i = 0; i < 20 && std::getline(in, line); ++i) {
+         basisFile << line << "\n";
+      }
+      in.close();
+      openInputFile("in/w_lam.rf", in);
+      for (int i = 0; i < 20 && std::getline(in, line); ++i) {
+         rgridFile << line << "\n";
+      }
+      in.close();
+
+      bool thrown = false;
+      try {
+         fields.readBasis(basisFile);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+      TEST_ASSERT(!fields.hasData());
+      TEST_ASSERT(!fields.isSymmetric());
+
+      openInputFile("in/w_lam.bf", in);
+      fields.readBasis(in);
+      in.close();
+      TEST_ASSERT(fields.hasData());
+      thrown = false;
+      try {
+         fields.readRGrid(rgridFile);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+      TEST_ASSERT(!fields.hasData());
+   }
 };
 
 TEST_BEGIN(WFieldsTest)
@@ -410,6 +471,7 @@ TEST_ADD(WFieldsTest, testSetRGrid_2_bcc)
 TEST_ADD(WFieldsTest, testReadBasis_bcc)
 TEST_ADD(WFieldsTest, testReadRGrid_1_bcc)
 TEST_ADD(WFieldsTest, testReadRGrid_2_bcc)
+TEST_ADD(WFieldsTest, testReadTruncated_lam)
 TEST_END(WFieldsTest)
 
 #endif
