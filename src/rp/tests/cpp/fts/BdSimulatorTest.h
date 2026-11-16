@@ -10,6 +10,7 @@
 #include <rp/fts/brownian/PredCorrBdStep.h>
 #include <rp/fts/brownian/LMBdStep.h>
 #include <rp/system/System.h>
+#include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 
 #include <rp/fts/compressor/Compressor.h>
@@ -18,9 +19,14 @@
 #include <pscf/field/cpp/RFieldComparison.h>
 
 #include <util/misc/FileMaster.h>
+#include <util/containers/FSArray.h>
 #include <util/tests/LogFileUnitTest.h>
 
+#include <vector>
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -99,6 +105,40 @@ public:
       allocateRGridFields(system, fields);
       Rp::FieldIo<D,CPT> const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
+   }
+
+   /*
+   * Read a 1D diblock melt (16 grid points) with the given BdSimulator
+   * block, and set w fields with a cosine exchange component of the
+   * given amplitude.
+   */
+   void initSystem1D(Rp::System<1,CPT>& system,
+                     std::string const & simulatorBlock,
+                     double amplitude = 1.0)
+   {
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } "
+         + simulatorBlock + " }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.5);
+      system.setUnitCell(parameters);
+      DArray< RField<1,CPT> > w;
+      w.allocate(2);
+      for (int i = 0; i < 2; ++i) {
+         w[i].allocate(system.domain().mesh().dimensions());
+         for (int k = 0; k < 16; ++k) {
+            w[i][k] = (i == 0) ? amplitude*std::cos(2.0*M_PI*k/16.0) : 0.0;
+         }
+      }
+      system.w().setRGrid(w);
    }
 
    /*
@@ -208,6 +248,49 @@ public:
                      "out/testPredCorrBdStepTriblocks.log");  
    }
 
+   /*
+   * Run LMBdStep simulations of nSteps[0], nSteps[1], ... steps in
+   * turn (one SIMULATE each), and copy the final w fields to w.
+   */
+   void runLMBdStep(std::vector<int> const & nSteps,
+                    DArray< RField<1,CPT> >& w)
+   {
+      Rp::System<1,CPT> system;
+      initSystem1D(system,
+          "BdSimulator{ seed 1234 LMBdStep{ mobility 0.001 }"
+          " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 } }");
+      for (unsigned int i = 0; i < nSteps.size(); ++i) {
+         system.simulate(nSteps[i]);
+      }
+      allocateRGridFields(system, w);
+      for (int i = 0; i < 2; ++i) {
+         w[i] = system.w().rgrid(i);
+      }
+   }
+
+   /*
+   * A run split into SIMULATE 2, SIMULATE 1 and SIMULATE 3 must give
+   * the same trajectory as SIMULATE 6, bitwise: each SIMULATE must
+   * continue the LM noise chain of the previous one.
+   */
+   void testLMBdStepSplitRun()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLMBdStepSplitRun.log");
+
+      DArray< RField<1,CPT> > w1, w2;
+      std::vector<int> nSteps(1, 6);
+      runLMBdStep(nSteps, w1);
+      nSteps.clear();
+      nSteps.push_back(2);
+      nSteps.push_back(1);
+      nSteps.push_back(3);
+      runLMBdStep(nSteps, w2);
+      RFieldComparison<1,CPT> comparison;
+      comparison.compare(w1, w2);
+      TEST_ASSERT(comparison.maxDiff() == 0.0);
+   }
+
 };
 
 TEST_BEGIN(BdSimulatorTest)
@@ -217,6 +300,7 @@ TEST_ADD(BdSimulatorTest, testExplicitBdStepDiblocks)
 TEST_ADD(BdSimulatorTest, testExplicitBdStepTriblocks)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepDiblocks)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepTriblocks)
+TEST_ADD(BdSimulatorTest, testLMBdStepSplitRun)
 TEST_END(BdSimulatorTest)
 
 #endif
