@@ -37,9 +37,11 @@ namespace Rp {
       ptr = trySubfactories(className);
       if (ptr) return ptr;
 
-      // Try to match classname
+      // Try to match classname. The generic label "Perturbation"
+      // selects the default algorithm, EinsteinCrystalPerturbation.
       if (className == "EinsteinCrystal" ||
-          className == "EinsteinCrystalPerturbation") {
+          className == "EinsteinCrystalPerturbation" ||
+          className == "Perturbation") {
          ptr = new EinsteinCrystalPerturbation<D,T>(*simulatorPtr_);
       }
 
