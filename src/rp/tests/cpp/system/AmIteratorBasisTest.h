@@ -1368,6 +1368,45 @@ public:
       }
    }
 
+   /*
+   * A parameter file with isFlexible 1 and a flexibleParams array with
+   * only false values gives a rigid unit cell. The WRITE_PARAM output,
+   * with isFlexible 0 followed by flexibleParams, must be readable, for
+   * both SCFT AM iterators.
+   */
+   void testReadParam_flexibleParams()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testReadParam_flexibleParams.log");
+
+      std::string iterators[2] = {"AmIteratorBasis", "AmIteratorGrid"};
+      for (int k = 0; k < 2; ++k) {
+         Rp::System<1,CPT> system1;
+         std::istringstream in(
+            "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 1"
+            " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+            " phi 1.0 } ds 0.01 } Interaction{ chi( 1 0 15.0 ) }"
+            " Domain{ mesh 32 lattice lamellar groupName P_-1 } "
+            + iterators[k] + "{ epsilon 1.0e-8 isFlexible 1"
+            " flexibleParams[ 0 ] } }\n");
+         system1.readParam(in);
+         TEST_ASSERT(!system1.iterator().isFlexible());
+         std::stringstream out;
+         system1.writeParam(out);
+
+         Rp::System<1,CPT> system2;
+         bool thrown = false;
+         try {
+            system2.readParam(out);
+         } catch (Exception& e) {
+            thrown = true;
+            Label::clear();
+         }
+         TEST_ASSERT(!thrown);
+         TEST_ASSERT(!system2.iterator().isFlexible());
+      }
+   }
+
 };
 
 TEST_BEGIN(AmIteratorBasisTest)
@@ -1395,6 +1434,7 @@ TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_nan)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_relNorm_wall)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_setFlexibleParams)
 TEST_ADD(AmIteratorBasisTest, testReadParam_scaleStress)
+TEST_ADD(AmIteratorBasisTest, testReadParam_flexibleParams)
 TEST_END(AmIteratorBasisTest)
 
 #endif
