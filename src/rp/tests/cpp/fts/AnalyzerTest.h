@@ -7,6 +7,7 @@
 #include <rp/system/System.h>
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/analyzer/BinaryChiDerivative.h>
+#include <rp/fts/analyzer/CubicLengthDerivative.h>
 #include <rp/fts/perturbation/Perturbation.h>
 #include <rp/field/FieldIo.h>
 #include <rp/fts/brownian/BdSimulator.h>
@@ -42,6 +43,22 @@ public:
    {}
 
    using Rp::BinaryChiDerivative<1,CPT>::compute;
+
+};
+
+/*
+* CubicLengthDerivative with a public compute function.
+*/
+class TestLengthDerivative : public Rp::CubicLengthDerivative<3,CPT>
+{
+public:
+
+   TestLengthDerivative(Rp::Simulator<3,CPT>& simulator,
+                        Rp::System<3,CPT>& system)
+    : Rp::CubicLengthDerivative<3,CPT>(simulator, system)
+   {}
+
+   using Rp::CubicLengthDerivative<3,CPT>::compute;
 
 };
 
@@ -259,6 +276,90 @@ public:
       TEST_ASSERT(std::abs(value - expected) < 1.0E-6*std::abs(expected));
    }
 
+   /*
+   * Set the cubic cell length of a 3D diblock melt, keeping the values
+   * of the w fields on the mesh, and return the Hamiltonian.
+   */
+   double hamiltonianAtLength(Rp::System<3,CPT>& system, double length)
+   {
+      FSArray<double, 6> parameters;
+      parameters.append(length);
+      system.setUnitCell(parameters);
+      system.compute();
+      Rp::Simulator<3,CPT>& simulator = system.simulator();
+      simulator.clearData();
+      simulator.computeWc();
+      simulator.computeHamiltonian();
+      return simulator.hamiltonian();
+   }
+
+   /*
+   * CubicLengthDerivative of a diblock melt on a 6^3 mesh with an
+   * EinsteinCrystalPerturbation (lambda 0.25, reference field half of
+   * the w fields): the value must be the central difference of H with
+   * respect to the cell length L at fixed w fields on the mesh, plus
+   * the term -3 G/(2 L) of the normalization.
+   */
+   void testLengthDerivativePerturbation()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLengthDerivativePerturbation.log");
+
+      Rp::System<3,CPT> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::string mixture =
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.05 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 6 6 6 lattice cubic } ";
+      std::istringstream param(mixture
+         + "BdSimulator{ seed 1234"
+         " EinsteinCrystalPerturbation{ lambda 0.25"
+         " fieldFileName out/lengthDerivRef.rf } } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      system.setUnitCell(parameters);
+
+      // w fields, and the reference field of the perturbation (half)
+      DArray< RField<3,CPT> > w, ref;
+      w.allocate(2);
+      ref.allocate(2);
+      for (int i = 0; i < 2; ++i) {
+         w[i].allocate(system.domain().mesh().dimensions());
+         ref[i].allocate(system.domain().mesh().dimensions());
+         for (int k = 0; k < 216; ++k) {
+            double x = 2.0*M_PI*(k/36)/6.0;
+            double y = 2.0*M_PI*((k/6)%6)/6.0;
+            w[i][k] = (i == 0) ? std::cos(x) + 0.5*std::sin(y) : 0.0;
+            ref[i][k] = 0.5*w[i][k];
+         }
+      }
+      system.domain().fieldIo().writeFieldsRGrid("out/lengthDerivRef.rf",
+                               ref, system.domain().unitCell(), false);
+      system.w().setRGrid(w);
+      system.simulator().analyzeChi();
+      system.simulator().perturbation().setup();
+
+      double length = 2.0;
+      double delta = 1.0E-4;
+      double hPlus = hamiltonianAtLength(system, length + delta);
+      double hMinus = hamiltonianAtLength(system, length - delta);
+      hamiltonianAtLength(system, length);
+      TestLengthDerivative analyzer(system.simulator(), system);
+      double value = analyzer.compute();
+      double expected = (hPlus - hMinus)/(2.0*delta)
+                      - 3.0*216.0/(2.0*length);
+      if (verbose() > 0) {
+         std::cout << "\nanalyzer = " << value
+                   << ", finite differences = " << expected;
+      }
+      TEST_ASSERT(std::abs(value - expected) < 1.0E-5*std::abs(expected));
+   }
+
    void checkHamiltonianAnalyzer()
    {
       // Open data file
@@ -363,6 +464,7 @@ public:
 TEST_BEGIN(AnalyzerTest)
 TEST_ADD(AnalyzerTest, testAnalyzeTrajectory)
 TEST_ADD(AnalyzerTest, testChiDerivativePerturbation)
+TEST_ADD(AnalyzerTest, testLengthDerivativePerturbation)
 TEST_END(AnalyzerTest)
 
 #endif
