@@ -404,6 +404,36 @@ namespace Pscf
       if (!isAllocatedAM()) {
          allocateAM();
       } else {
+
+         // If the number of elements of a vector has changed since the
+         // allocation (e.g., after a change in the set of flexible unit
+         // cell parameters), reallocate all vectors, and discard all
+         // histories and basis vectors, also for a continuation.
+         const int nElem = nElements();
+         if (nElem != nElem_) {
+            nElem_ = nElem;
+            RingBuffer<T>* buffers[4] = {&stateHistory_, &residualHistory_,
+                                         &stateBasis_, &residualBasis_};
+            for (int k = 0; k < 4; ++k) {
+               RingBuffer<T>& buffer = *buffers[k];
+               // Visit every slot, including slots outside the history
+               buffer.clear();
+               for (int i = 0; i < buffer.capacity(); ++i) {
+                  buffer.advance();
+                  if (buffer[0].isAllocated()) {
+                     buffer[0].deallocate();
+                  }
+               }
+               buffer.clear();
+            }
+            stateTrial_.deallocate();
+            residualTrial_.deallocate();
+            temp_.deallocate();
+            stateTrial_.allocate(nElem_);
+            residualTrial_.allocate(nElem_);
+            temp_.allocate(nElem_);
+         }
+
          // Clear residual and state history buffers
          residualHistory_.clear();
          stateHistory_.clear();
