@@ -275,6 +275,14 @@ namespace Rp {
                         << " failed to converge" << "\n";
          }
       }
+
+      // A rejected move or a failed step restores w, but not the c
+      // fields, propagators and block concentrations, which still hold
+      // the rejected trial solution. Recompute them for the final w.
+      if (!Simulator<D,T>::system().c().hasData()) {
+         Simulator<D,T>::system().compute();
+      }
+
       timer.stop();
       double time = timer.time();
       double analyzerTime = analyzerTimer.time();
