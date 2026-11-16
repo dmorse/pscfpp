@@ -181,6 +181,57 @@ public:
    }
 
    /*
+   * BinaryRelaxIterator with a nonzero diagonal element of chi.
+   */
+   void testIteratorPlanarBrDiagonalChi()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorPlanarBrDiagonalChi.log");
+
+      // Diblock with chi(0,0) = 6, chi(0,1) = 20, chi(1,1) = 0
+      System sys;
+      std::istringstream in(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 1"
+         " nSolvent 0 Polymer{ type linear nBlock 2"
+         " blocks 0 0.5 1 0.5 phi 1.0 } ds 0.01 }"
+         " Interaction{ chi( 0 0 6.0 0 1 20.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 1.7 nx 101 }"
+         " BinaryRelaxIterator{ epsilon 1.0e-8 maxIter 40000"
+         " lambdaPlus 2.0 lambdaMinus 2.0 } }\n");
+      sys.readParam(in);
+
+      FieldIo fieldIo;
+      fieldIo.associate(sys.domain(), sys.fileMaster());
+      std::ifstream wIn;
+      openInputFile("in/planar.w", wIn);
+      fieldIo.readFields(sys.wFields(), wIn);
+      wIn.close();
+
+      TEST_ASSERT(sys.iterator().solve() == 0);
+
+      // SCF equations: w1 - w0 = (chi01 - chi00) c0 + (chi11 - chi01) c1
+      // and c0 + c1 = 1
+      double c0, c1, r;
+      double maxExchange = 0.0;
+      double maxIncompress = 0.0;
+      int nx = sys.domain().nx();
+      for (int i = 0; i < nx; ++i) {
+         c0 = sys.cField(0)[i];
+         c1 = sys.cField(1)[i];
+         r = sys.wField(1)[i] - sys.wField(0)[i] - 14.0*c0 + 20.0*c1;
+         if (fabs(r) > maxExchange) maxExchange = fabs(r);
+         r = c0 + c1 - 1.0;
+         if (fabs(r) > maxIncompress) maxIncompress = fabs(r);
+      }
+      Log::file() << "max exchange residual          = "
+                  << maxExchange << "\n"
+                  << "max incompressibility residual = "
+                  << maxIncompress << std::endl;
+      TEST_ASSERT(maxExchange < 1.0E-6);
+      TEST_ASSERT(maxIncompress < 1.0E-6);
+   }
+
+   /*
    * Test NR iterator on input field generated within function.
    */
    void testIteratorPlanarNr1()
@@ -738,6 +789,7 @@ TEST_ADD(SystemTest, testConstructor)
 TEST_ADD(SystemTest, testReadParameters)
 TEST_ADD(SystemTest, testSolveMdePlanar)
 TEST_ADD(SystemTest, testSolveMdeSpherical)
+TEST_ADD(SystemTest, testIteratorPlanarBrDiagonalChi)
 TEST_ADD(SystemTest, testIteratorPlanarNr1)
 TEST_ADD(SystemTest, testIteratorPlanarNr2)
 TEST_ADD(SystemTest, testIteratorPlanarNr3)
