@@ -164,11 +164,17 @@ class Field:
          line = openFile.readline()
          l = line.split()
       else:
+         # Each header line contains a label and a value. The number of
+         # header lines is not fixed: w and c field files have nx and
+         # nm, files written by WRITE_BLOCK_C have nx, n_block and
+         # n_solvent, and propagator slice files have only nx. The data
+         # section starts with the first line that begins with a number.
+         while True:
             line = openFile.readline()
             l = line.split()
+            if line == '' or not isinstance(getValue(l[0]), str):
+               break
             self.header[l[0]] = getValue(l[1])
-            line = openFile.readline()
-            l = line.split()
 
       while line != '':
          d = []
@@ -193,9 +199,14 @@ class Field:
    #
    def __str__(self):
       out = ''
+      if self.type == 'fd1d':
+         # Width of the label column: 7, or more for longer labels
+         width = 7
+         for x in self.header:
+            width = max(width, len(x) + 3)
       for x, y in self.header.items():
          if self.type == 'fd1d':
-            o = f'{x:<7}' + str(y) + '\n'
+            o = f'{x:<{width}}' + str(y) + '\n'
          else:
             if x == 'format':
                o = x + '   ' + str(y[0]) + '   ' + str(y[1]) + '\n'
