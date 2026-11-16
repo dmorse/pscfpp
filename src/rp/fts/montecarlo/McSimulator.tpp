@@ -451,7 +451,10 @@ namespace Rp {
    template <int D, class T>
    void McSimulator<D,T>::outputTimers(std::ostream& out) const
    {
-      Simulator<D,T>::compressor().outputTimers(out);
+      // A simulator used only for ANALYZE may have no compressor
+      if (Simulator<D,T>::hasCompressor()) {
+         Simulator<D,T>::compressor().outputTimers(out);
+      }
       out << "\n";
       out << "MC move time contributions:\n";
       mcMoveManager().outputTimers(out);
