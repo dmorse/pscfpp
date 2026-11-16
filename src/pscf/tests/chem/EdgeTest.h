@@ -6,7 +6,9 @@
 
 #include <pscf/chem/Edge.h>
 
+#include <cmath>
 #include <fstream>
+#include <sstream>
 
 using namespace Pscf;
 using namespace Util;
@@ -97,11 +99,48 @@ public:
       
    }
 
+   /*
+   * A length written by operator << and read by operator >> must be
+   * the same double. Lengths were written with 13 significant digits.
+   */
+   void testWriteReadLength()
+   {
+      printMethod(TEST_FUNC);
+      PolymerModel::setModel(PolymerModel::Thread);
+
+      double lengths[3];
+      lengths[0] = 1.0/3.0;
+      lengths[1] = 0.2 + 0.085;   // 0.28500000000000003
+      lengths[2] = 2.0*std::acos(-1.0);
+
+      Edge v, u;
+      v.setMonomerId(1);
+      v.setVertexIds(2, 5);
+      for (int i = 0; i < 3; ++i) {
+         v.setLength(lengths[i]);
+         std::stringstream stream;
+         stream << v;
+         stream >> u;
+         TEST_ASSERT(u.monomerId() == 1);
+         TEST_ASSERT(u.vertexId(0) == 2);
+         TEST_ASSERT(u.vertexId(1) == 5);
+         TEST_ASSERT(u.length() == lengths[i]);
+      }
+
+      // 15 significant digits if these give the same double
+      v.setLength(0.8);
+      std::stringstream stream;
+      stream << v;
+      TEST_ASSERT(stream.str().find("8.00000000000000e-01")
+                  != std::string::npos);
+   }
+
 };
 
 TEST_BEGIN(EdgeTest)
 TEST_ADD(EdgeTest, testConstructor)
 TEST_ADD(EdgeTest, testReadWrite)
+TEST_ADD(EdgeTest, testWriteReadLength)
 TEST_END(EdgeTest)
 
 #endif
