@@ -671,6 +671,45 @@ public:
       TEST_ASSERT(!bdMoveReadThrows("3"));
    }
 
+   /*
+   * Does reading an McSimulator with two RealMoves of the given
+   * probabilities throw an Exception?
+   */
+   bool probabilityReadThrows(std::string const & p0,
+                              std::string const & p1)
+   {
+      Rp::System<1,CPT> system;
+      initSystem1D(system, "");
+      Rp::McSimulator<1,CPT> simulator(system);
+      std::istringstream in(
+         "McSimulator{ seed 1234 McMoveManager{"
+         " RealMove{ probability " + p0 + " sigma 0.1 }"
+         " RealMove{ probability " + p1 + " sigma 0.2 } }"
+         " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 } }\n");
+      bool thrown = false;
+      try {
+         simulator.readParam(in);
+      } catch (Exception& e) {
+         Label::clear();
+         thrown = true;
+      }
+      return thrown;
+   }
+
+   /*
+   * A negative move probability must be rejected, also if the sum of
+   * the probabilities is 1.
+   */
+   void testNegativeProbability()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testNegativeProbability.log");
+
+      TEST_ASSERT(probabilityReadThrows("1.5", "-0.5"));
+      TEST_ASSERT(probabilityReadThrows("-0.5", "1.5"));
+      TEST_ASSERT(!probabilityReadThrows("0.25", "0.75"));
+   }
+
 };
 
 TEST_BEGIN(McSimulatorTest)
@@ -686,6 +725,7 @@ TEST_ADD(McSimulatorTest, testRejectedLastMove)
 TEST_ADD(McSimulatorTest, testBdMoveFirstStepNoise)
 TEST_ADD(McSimulatorTest, testBdMoveFailedStepNoise)
 TEST_ADD(McSimulatorTest, testBdMoveNStep)
+TEST_ADD(McSimulatorTest, testNegativeProbability)
 TEST_END(McSimulatorTest)
 
 #endif
