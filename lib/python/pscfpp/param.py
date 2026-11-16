@@ -1,5 +1,7 @@
 """! Module for parsing param files. """
 
+import warnings
+
 ##
 #  Container for data of a Composite in a param file.
 #
@@ -820,7 +822,9 @@ class Matrix:
    #
    # This function returns an indented string representation of this
    # Matrix object in PSCF parameter file format, with a controllable
-   # indentation of the first line.
+   # indentation of the first line. Only the lower triangle is written,
+   # so a warning is issued for each pair of elements (i, j) and (j, i)
+   # that differ.
    #
    # \param depth the spaces string as the prefix depth.
    #
@@ -829,6 +833,11 @@ class Matrix:
       s += depth + self.label + '(\n'
       for i in range(len(self.val)):
          for j in range(i+1):
+            if self.val[i][j] != self.val[j][i]:
+               warnings.warn(f'Matrix {self.label} is not symmetric:'
+                  + f' elements ({i},{j}) and ({j},{i}) differ, and only'
+                  + f' ({i},{j}) of the lower triangle is written.'
+                  + ' Set elements by assigning [i, j, value].')
             s += depth + f'{i:>24}{j:>5}   ' + f'{self.val[i][j]:.12e}\n'
       s += depth + ')\n'
       return s
