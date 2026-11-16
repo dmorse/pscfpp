@@ -51,9 +51,11 @@ namespace Pscf {
             in >> value;
             assign(fields[k][rank], value);
          }
-         UTIL_ASSERT(in.good());
+         UTIL_ASSERT(!in.fail());
       }
-      UTIL_CHECK(in.good());
+      // Check fail(), not good(): eofbit is also set if the last number
+      // is followed by the end of the file, rather than by a newline.
+      UTIL_CHECK(!in.fail());
    }
 
    template <int D, class AT>
@@ -67,10 +69,10 @@ namespace Pscf {
       for (iter.begin(); !iter.atEnd(); ++iter) {
          rank = iter.rank();
          in >> value;
-         UTIL_ASSERT(in.good());
+         UTIL_ASSERT(!in.fail());
          assign(field[rank], value);
       }
-      UTIL_CHECK(in.good());
+      UTIL_CHECK(!in.fail());
    }
 
    template <int D, class AT>
@@ -133,10 +135,10 @@ namespace Pscf {
             in >> y;
             assign(fields[j][rank], x, y);
          }
-         UTIL_ASSERT(in.good());
+         UTIL_ASSERT(!in.fail());
          ++i;
       }
-      UTIL_CHECK(in.good());
+      UTIL_CHECK(!in.fail());
    }
 
    template <int D, class ACT>
@@ -158,11 +160,11 @@ namespace Pscf {
          UTIL_CHECK(i == rank);
          in >> x;
          in >> y;
-         UTIL_ASSERT(in.good());
+         UTIL_ASSERT(!in.fail());
          assign(field[rank], x, y);
          ++i;
       }
-      UTIL_CHECK(in.good());
+      UTIL_CHECK(!in.fail());
    }
 
    template <int D, class ACT>
@@ -306,7 +308,7 @@ namespace Pscf {
             }
             in >> waveIn;            // wave of star
             in >> sizeIn;            // # of waves in star
-            UTIL_CHECK(in.good());
+            UTIL_CHECK(!in.fail());
             ++i;
          }
 
@@ -398,7 +400,7 @@ namespace Pscf {
                }
                in >> waveIn2;              // wave of star
                in >> sizeIn2;              // # of wavevectors in star
-               UTIL_CHECK(in.good());
+               UTIL_CHECK(!in.fail());
                ++i;
 
                bool isPartner = false;
