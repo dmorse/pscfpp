@@ -49,6 +49,7 @@ namespace Rp {
       kMeshDimensions_(),
       nWave_(0),
       nBunch_(0),
+      hasSamples_(false),
       writeWaveData_(false),
       isInitialized_(false)
    {
@@ -80,6 +81,7 @@ namespace Rp {
    {
       allocate();
       setupWaveBunches();
+      hasSamples_ = false;
    }
 
    /*
@@ -89,8 +91,27 @@ namespace Rp {
    void BinaryStructureFactor<D,T>::sample(long iStep)
    {
       if (Analyzer<D,T>::isAtInterval(iStep)) {
+
+         // The unit cell of the first sample defines the wavevectors
+         // (ANALYZE sets up the analyzers at a frame that may not be
+         // sampled). The cell must not change after that.
+         FSArray<double, 6> parameters
+                            = system().domain().unitCell().parameters();
+         bool sameCell = (parameters.size() == cellParameters_.size());
+         for (int i = 0; sameCell && i < parameters.size(); ++i) {
+            sameCell = (parameters[i] == cellParameters_[i]);
+         }
+         if (!sameCell) {
+            if (hasSamples_) {
+               UTIL_THROW("BinaryStructureFactor requires the same unit "
+                          "cell for all samples");
+            }
+            setupWaveBunches();
+         }
+
          computeW();
          computeS();
+         hasSamples_ = true;
       }
    }
 
@@ -255,6 +276,7 @@ namespace Rp {
       }
       UTIL_CHECK(nw == nWave_);
 
+      cellParameters_ = system().domain().unitCell().parameters();
    }
 
    /*

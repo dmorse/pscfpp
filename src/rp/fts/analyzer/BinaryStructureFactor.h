@@ -15,6 +15,7 @@
 #include <pscf/backend/HostRecvArray.h>      // member
 #include <util/accumulators/Average.h>        // member
 #include <util/containers/DArray.h>           // member
+#include <util/containers/FSArray.h>          // member
 
 #include <pscf/backend/TmplDeclare.h>
 #include <iostream>
@@ -146,6 +147,12 @@ namespace Rp {
 
       /// Number of wavevector bunches (sets of wavevectors of equal norm).
       int nBunch_;
+
+      /// Unit cell parameters used to define the wave bunches.
+      FSArray<double, 6> cellParameters_;
+
+      /// Has a sample been accumulated since setup()?
+      bool hasSamples_;
 
       /// Should S(q) data be outuput for all individual waves?
       bool writeWaveData_;
