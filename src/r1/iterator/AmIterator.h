@@ -121,6 +121,18 @@ namespace R1 {
       */
       void outputToLog() override;
 
+      /**
+      * Return the norm of the reference vector of the relNorm error.
+      *
+      * The reference vector is the interaction field chi phi, with
+      * which the residual compares the w fields. Unlike the w fields,
+      * it does not contain a field common to all monomer types (a
+      * pressure field), which affects the residual only through phi.
+      *
+      * \param state  current state vector (w fields, not used)
+      */
+      double relNormReference(DArray<double> const & state) override;
+
    };
 
 } // namespace R1

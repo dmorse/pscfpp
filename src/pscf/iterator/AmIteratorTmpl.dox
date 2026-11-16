@@ -258,8 +258,9 @@ string parameter named "errorType":
     Some classes divide by the norm of another reference vector, as
     described on their pages: the compressors used in field theoretic
     simulations, whose state vector can vanish, and the SCFT iterators
-    \ref rp_AmIteratorBasis_page "AmIteratorBasis" and
-    \ref rp_AmIteratorGrid_page "AmIteratorGrid", whose reference
+    \ref rp_AmIteratorBasis_page "AmIteratorBasis",
+    \ref rp_AmIteratorGrid_page "AmIteratorGrid" and
+    \ref r1_AmIterator_page "R1::AmIterator", whose reference
     vector is the interaction field.
 
 An iteration algorithm successfully converges if it terminates with
