@@ -94,9 +94,9 @@ public:
                   sum += cell.drBasis(k, i, m)*cell.kBasis(j)[m];
                   sum += cell.dkBasis(k, j, m)*cell.rBasis(i)[m];
                }
-            }
-            if (std::abs(sum) > 1.0E-8) {
-               return false;
+               if (std::abs(sum) > 1.0E-8) {
+                  return false;
+               }
             }
          }
       }
