@@ -51,4 +51,19 @@ editor.setIsTest(False)
 editor.editFile(name)
 assert read() == 'mesh 32\n\nchi 12.0\n'
 
+# FileEditor.editFileBlocks (used by editFiles): delete two adjacent
+# lines 'x', and replace a line 'x' by two
+editor = FileEditor()
+editor.setFilter('x')
+editor.setOld('x\n')
+editor.setNew('')
+editor.setIsTest(False)
+write('a\nx\nx\nb\n')
+editor.editFileBlocks(name)
+assert read() == 'a\nb\n'
+editor.setNew('x\nx\n')
+write('x\nb\n')
+editor.editFileBlocks(name)
+assert read() == 'x\nx\nb\n'
+
 d.cleanup()
