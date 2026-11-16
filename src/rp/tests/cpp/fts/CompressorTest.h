@@ -25,6 +25,8 @@
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -191,6 +193,56 @@ public:
                      "out/testAmCompressor.log");
    }
    
+   /*
+   * AM compressor with errorType relNorm. The state vector of the AM
+   * algorithm is the change in the pressure field since the start of
+   * compress(), which vanishes at the first iteration. A homogeneous
+   * state of the melt, and a state that was just compressed, must be
+   * accepted at the first iteration, with one MDE solution.
+   */
+   template <typename Compressor>
+   void checkRelNorm(std::string const & className)
+   {
+      Rp::System<3,CPT> system;
+      Compressor compressor(system);
+      initSystem(system, "in/param_system_disordered");
+      std::istringstream in(className + "{ epsilon 1.0e-8 maxItr 200 "
+                            "maxHist 30 errorType relNorm }\n");
+      compressor.readParam(in);
+      system.w().readRGrid("in/w_dis.rf");
+
+      // Homogeneous fields w = 0
+      int nMonomer = system.mixture().nMonomer();
+      IntVec<3> const & dimensions = system.domain().mesh().dimensions();
+      DArray< RField<3,CPT> > w;
+      w.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         w[i].allocate(dimensions);
+         for (int k = 0; k < w[i].capacity(); ++k) {
+            w[i][k] = 0.0;
+         }
+      }
+      system.w().setRGrid(w);
+      TEST_ASSERT(compressor.compress() == 0);
+      TEST_ASSERT(compressor.mdeCounter() == 1);
+
+      // Compressed state
+      system.w().readRGrid("in/w_dis.rf");
+      randomStep(system);
+      TEST_ASSERT(compressor.compress() == 0);
+      int mdeCounter = compressor.mdeCounter();
+      TEST_ASSERT(compressor.compress() == 0);
+      TEST_ASSERT(compressor.mdeCounter() == mdeCounter + 1);
+   }
+
+   void testRelNorm()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testRelNorm.log");
+      checkRelNorm< Rp::AmCompressor<3,CPT> >("AmCompressor");
+      checkRelNorm< Rp::LrAmCompressor<3,CPT> >("LrAmCompressor");
+   }
+
    void testLrCompressor()
    {
       printMethod(TEST_FUNC);
@@ -227,6 +279,7 @@ public:
 
 TEST_BEGIN(CompressorTest)
 TEST_ADD(CompressorTest, testAmCompressor)
+TEST_ADD(CompressorTest, testRelNorm)
 TEST_ADD(CompressorTest, testLrCompressor)
 //TEST_ADD(CompressorTest, testLrAmPreCompressor)
 TEST_ADD(CompressorTest, testLrAmCompressor)
