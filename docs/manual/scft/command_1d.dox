@@ -350,13 +350,17 @@ solvent types of the same monomer type, while WRITE_C only ouputs
 the total concentration for all monomers of that type.
 
 The format of the file created WRITE_BLOCK_C is similar to that of
-a field file created by WRITE_C.  The file contains with a header
-section identical to that contained in any pscf_1d field file,
-followed by a data section.  The format of the data section file is
-analogous to that of pscf_1d field file that contains one field per
-monomer type, except that each polymer block and solvent species is
-treated as a separate monomer type, and thus output in a separate
-column of the data section.
+a field file created by WRITE_C.  The file contains a header section
+followed by a data section.  The header has three lines, which give
+the number of grid points (label nx), the total number of blocks in
+all polymer species (label n_block) and the number of solvent species
+(label n_solvent), in that order, instead of the nx and nm lines of
+a pscf_1d field file.  The format of the data section is analogous
+to that of a pscf_1d field file that contains one field per monomer
+type, except that each polymer block and solvent species is treated
+as a separate monomer type, and thus output in a separate column of
+the data section.  Each row thus contains a grid point index followed
+by n_block + n_solvent values.
 
 Columns associated with blocks and species are output by the WRITE_BLOCK_C
 command are listed from left to right in the same order that they appear
