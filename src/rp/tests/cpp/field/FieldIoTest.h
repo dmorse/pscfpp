@@ -755,6 +755,66 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
    }
 
+   /*
+   * Conversions between r-grid and k-grid files, and rescaling of an
+   * r-grid file, without a space group in the domain or in the file.
+   */
+   void testConvertRGridKGrid_noGroup()
+   {
+      printMethod(TEST_FUNC);
+
+      // Domain of in/w_hex.rf, but without a space group
+      Rp::Domain<2,CPT> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeaderString("format 1 0 dim 2 crystal_system hexagonal "
+                       "N_cell_param 1 cell_param 1.6651597308 "
+                       "N_monomer 2 mesh 32 32", domain);
+      TEST_ASSERT(!domain.hasGroup());
+      domain.fieldIo().setNMonomer(nMonomer_);
+
+      // Convert in/w_hex.rf (whose header gives group p_6_m_m)
+      bool thrown = false;
+      try {
+         domain.fieldIo().convertRGridToKGrid("in/w_hex.rf",
+                                              "out/w_hex_ng.kf");
+         domain.fieldIo().convertKGridToRGrid("out/w_hex_ng.kf",
+                                              "out/w_hex_ng.rf");
+         domain.fieldIo().scaleFieldsRGrid("in/w_hex.rf",
+                                           "out/w_hex_ng_x2.rf", 2.0);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+
+      DArray< RField<2,CPT> > rf_0, rf_1;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf_0);
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf_1);
+      readFields("in/w_hex.rf", domain, rf_0);
+      readFields("out/w_hex_ng.rf", domain, rf_1);
+      RFieldComparison<2,CPT> comparison;
+      comparison.compare(rf_0, rf_1);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+
+      // Domain with group p_6_m_m, and an r-grid file without a group
+      Rp::Domain<2,CPT> domainG;
+      domainG.setFileMaster(fileMaster_);
+      readHeader("in/w_hex.rf", domainG);
+      domainG.fieldIo().setNMonomer(nMonomer_);
+      rf_0[0][0] += 0.1;
+      domainG.fieldIo().writeFieldsRGrid("out/w_hex_asym.rf", rf_0,
+                                         domainG.unitCell(), false);
+
+      // The output files must not declare the group
+      domainG.fieldIo().convertRGridToKGrid("out/w_hex_asym.rf",
+                                            "out/w_hex_asym.kf");
+      domainG.fieldIo().convertKGridToRGrid("out/w_hex_asym.kf",
+                                            "out/w_hex_asym_2.rf");
+      bool isSymmetric;
+      isSymmetric = domainG.fieldIo().readFieldsRGrid("out/w_hex_asym_2.rf",
+                                               rf_1, domainG.unitCell());
+      TEST_ASSERT(!isSymmetric);
+   }
+
    void testRGridIo_bcc() 
    {
       printMethod(TEST_FUNC);
@@ -1381,6 +1441,7 @@ TEST_ADD(FieldIoTest, testBasisIo_mesh)
 TEST_ADD(FieldIoTest, testRGridIo_lam)
 TEST_ADD(FieldIoTest, testRGridIo_hex)
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
+TEST_ADD(FieldIoTest, testConvertRGridKGrid_noGroup)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_altG)
