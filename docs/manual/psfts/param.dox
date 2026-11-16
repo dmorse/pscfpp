@@ -265,7 +265,7 @@ not needed for simple simulations of a standard model with fixed
 parameters. These blocks are omitted from examples discussed on this
 page.
 
-For reference, here is the BdSsimulator block of the example BD
+For reference, here is the BdSimulator block of the example BD
 parameter file given above :
 \code
   BdSimulator{
@@ -290,10 +290,10 @@ parameter file given above :
   }
 \endcode
 This example uses the default BdStep algorithm, as indicated by the
-generic label BdStsep in the first line of the selectable BdStep block.
+generic label BdStep in the first line of the selectable BdStep block.
 The default algorithm is a Leimkuhler-Mathews (LM) Brownian dynamics
 step algorithm, which could also be selected using the specific class
-name LMBDStep as a label for this block.  This example also uses the
+name LMBdStep as a label for this block.  This example also uses the
 default compressor algorithm, as indicated by the use of the generic
 block label "Compressor".  The default compressor algorithm is a
 linear-response Anderson mixing (LRAM) algorithm that was devised as
