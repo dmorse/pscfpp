@@ -492,6 +492,45 @@ public:
    }
 
    /*
+   * AM iterator error for w fields with a large pressure field.
+   */
+   void testIteratorPlanarAmPressureField()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorPlanarAmPressureField.log");
+
+      // System of in/planar_am2.prm, with a single iteration
+      System sys;
+      std::istringstream in(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 1"
+         " nSolvent 0 Polymer{ type linear nBlock 2"
+         " blocks 0 0.5 1 0.5 phi 1.0 } ds 0.01 }"
+         " Interaction{ chi( 0 1 30.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 0.8 nx 101 }"
+         " AmIterator{ epsilon 1.0e-7 maxItr 1 } }\n");
+      sys.readParam(in);
+      FieldIo fieldIo;
+      fieldIo.associate(sys.domain(), sys.fileMaster());
+      std::ifstream wIn;
+      openInputFile("in/planar.w", wIn);
+      fieldIo.readFields(sys.wFields(), wIn);
+      wIn.close();
+
+      // Add xi = A cos(pi x/L), with A = 1.0E10, to both w fields. The
+      // volume fractions stay bounded, so this state is far from a
+      // solution. With maxItr 1, solve() returns 0 only if the error of
+      // the given state is below epsilon.
+      int nx = sys.domain().nx();
+      double xi;
+      for (int i = 0; i < nx; ++i) {
+         xi = 1.0E10*cos(Constants::Pi*double(i)/double(nx-1));
+         sys.wField(0)[i] += xi;
+         sys.wField(1)[i] += xi;
+      }
+      TEST_ASSERT(sys.iterator().solve() != 0);
+   }
+
+   /*
    * Test AM iterator controlled by a command file.
    */
    void testIteratorPlanarAm3()
@@ -790,6 +829,7 @@ TEST_ADD(SystemTest, testIteratorSphericalNr1)
 TEST_ADD(SystemTest, testIteratorSphericalNr3)
 TEST_ADD(SystemTest, testIteratorPlanarAm1)
 TEST_ADD(SystemTest, testIteratorPlanarAmRounded)
+TEST_ADD(SystemTest, testIteratorPlanarAmPressureField)
 TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
 TEST_ADD(SystemTest, testThermoSmallPhi)
