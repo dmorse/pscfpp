@@ -112,6 +112,12 @@ namespace R1
       
       /// Mixing parameter for Wminus
       double lambdaMinus_;
+
+      /// Value of lambdaPlus_ used in a solve (reduced if necessary)
+      double lambdaPlusWork_;
+
+      /// Value of lambdaMinus_ used in a solve (reduced if necessary)
+      double lambdaMinusWork_;
       
       /// Max number of iterations
       int maxItr_;
