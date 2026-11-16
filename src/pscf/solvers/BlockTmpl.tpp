@@ -19,7 +19,8 @@ namespace Pscf {
    BlockTmpl<QT,FT>::BlockTmpl()
     : propagators_(),
       cField_(),
-      kuhn_(0.0)
+      kuhn_(0.0),
+      wShift_(0.0)
    {
       propagators_.allocate(2);
       propagator(0).setDirectionId(0);
