@@ -366,6 +366,30 @@ public:
    }
 
    /*
+   * Copy a trajectory file, replacing the line after each line whose
+   * first word is label (e.g. "mesh") by text.
+   */
+   void writeModifiedTrajectory(std::string const & inFileName,
+                                std::string const & outFileName,
+                                std::string const & label,
+                                std::string const & text)
+   {
+      std::ifstream in;
+      openInputFile(inFileName, in);
+      std::ofstream out;
+      openOutputFile(outFileName, out);
+      std::string line, first;
+      bool replace = false;
+      while (std::getline(in, line)) {
+         out << (replace ? text : line) << "\n";
+         std::istringstream words(line);
+         first = "";
+         words >> first;
+         replace = (first == label);
+      }
+   }
+
+   /*
    * Read frame iFrame of a trajectory file into the w fields of system.
    */
    void readFrame(Rp::System<1,CPT>& system, std::string const & filename,
@@ -632,6 +656,34 @@ public:
       }
    }
 
+   /*
+   * ANALYZE of a trajectory whose header gives another number of
+   * monomer types, or whose frames give other mesh dimensions, than
+   * the system must fail.
+   */
+   void testTrajectoryMismatch()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testTrajectoryMismatch.log");
+
+      writeTrajectory("out/trajectory1D.rf", 1);
+      writeModifiedTrajectory("out/trajectory1D.rf",
+                              "out/trajectory1D_nMonomer.rf",
+                              "N_monomer", "          3");
+      writeModifiedTrajectory("out/trajectory1D.rf",
+                              "out/trajectory1D_mesh.rf",
+                              "mesh", "          32");
+      std::string files[2] = {"out/trajectory1D_nMonomer.rf",
+                              "out/trajectory1D_mesh.rf"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::System<1,CPT> system;
+         initSystem1D(system, "BdSimulator{ AnalyzerManager{"
+            " HamiltonianAnalyzer{ interval 1"
+            " outputFileName out/analyzeMismatch } } }");
+         TEST_ASSERT(!analyze(system, 0, 1, files[i]));
+      }
+   }
+
 };
 
 TEST_BEGIN(AnalyzerTest)
@@ -644,6 +696,7 @@ TEST_ADD(AnalyzerTest, testAnalyzeNoSample)
 TEST_ADD(AnalyzerTest, testTimersWithoutCompressor)
 TEST_ADD(AnalyzerTest, testAnalyzeInputPrefix)
 TEST_ADD(AnalyzerTest, testTrajectoryCellRamp)
+TEST_ADD(AnalyzerTest, testTrajectoryMismatch)
 TEST_END(AnalyzerTest)
 
 #endif
