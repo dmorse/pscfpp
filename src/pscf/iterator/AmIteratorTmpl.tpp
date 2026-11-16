@@ -701,8 +701,7 @@ namespace Pscf
          } else if (errorType == "rmsResid") {
             error = normRes/sqrt(nElements());
          } else if (errorType == "relNormResid") {
-            double normField = norm(stateTrial);
-            error = normRes/normField;
+            error = normRes/relNormReference(stateTrial);
          } else {
             UTIL_THROW("Invalid iterator error type in parameter file.");
          }
@@ -715,9 +714,8 @@ namespace Pscf
          // Find root-mean-squared residual element value
          double rmsRes = normRes/sqrt(nElements());
    
-         // Find norm of residual vector relative to state
-         double normField = norm(stateTrial);
-         double relNormRes = normRes/normField;
+         // Find norm of residual vector relative to reference
+         double relNormRes = normRes/relNormReference(stateTrial);
    
          // Set error value
          if (errorType == "maxResid") {
@@ -742,6 +740,13 @@ namespace Pscf
 
       return error;
    }
+
+   /*
+   * Norm of the reference vector of the relNorm error (default).
+   */
+   template <class Iterator, class T>
+   double AmIteratorTmpl<Iterator,T>::relNormReference(T const & state)
+   {  return norm(state); }
 
    /*
    * Compute error (use current residual, errorType).
