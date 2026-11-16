@@ -279,8 +279,13 @@ namespace Pscf {
             jacobian_(m1, mLast) = molecule(m1).size();
          }
 
-         // Newton Raphson update of phi and xi fields
+         // Newton Raphson update of phi and xi fields. The Jacobian is
+         // singular if the composition is at a spinodal of the mixture,
+         // e.g., at the critical point of a symmetric blend.
          solverPtr_->computeLU(jacobian_);
+         if (solverPtr_->isSingular()) {
+            UTIL_THROW("Singular Jacobian (composition at a spinodal?)");
+         }
          solverPtr_->solve(residual_, dX_);
 
          // Store old value of phi
