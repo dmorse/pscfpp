@@ -301,6 +301,65 @@ public:
       Rp::Analyzer<1,CPT>::initStatic();
    }
 
+   /*
+   * SIMULATE 4 BD steps of the 1D diblock melt with a ramp of the cell
+   * parameter from 1.5 to 1.9, with the given analyzer blocks.
+   */
+   void simulateCellRamp(Rp::System<1,CPT>& system,
+                         std::string const & analyzers)
+   {
+      initSystem1D(system,
+         "BdSimulator{ seed 1234 LMBdStep{ mobility 0.01 }"
+         " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 }"
+         " LinearRamp{ nParameter 1 parameters[ cell_param 0 0.4 ] }"
+         " AnalyzerManager{\n" + analyzers + "\n"
+         " }\n"
+         " }");
+      system.simulate(4);
+   }
+
+   /*
+   * SIMULATE with a ramp of the cell parameter (1.5 to 1.9 in 4 BD
+   * steps), with a TrajectoryWriter and a ConcentrationWriter. Frame k
+   * of both files, read by ANALYZE or by an RGridTrajectoryReader, must
+   * set the unit cell of step k.
+   */
+   void testTrajectoryCellRamp()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testTrajectoryCellRamp.log");
+
+      {
+         Rp::System<1,CPT> system;
+         simulateCellRamp(system,
+            "TrajectoryWriter{\n"
+            " interval 1 outputFileName out/cellRamp_w.rf }\n"
+            " ConcentrationWriter{\n"
+            " interval 1"
+            " outputFileName out/cellRamp_c.rf }");
+      }
+      for (int k = 0; k <= 4; ++k) {
+         double cell = 1.5 + 0.1*k;
+
+         Rp::System<1,CPT> system;
+         initSystem1D(system, "BdSimulator{ AnalyzerManager{\n"
+            " HamiltonianAnalyzer{\n"
+            " interval 1"
+            " outputFileName out/analyzeCellRamp }\n"
+            " }\n"
+            " }");
+         TEST_ASSERT(analyze(system, 0, k, "out/cellRamp_w.rf"));
+         TEST_ASSERT(std::abs(system.domain().unitCell().parameter(0)
+                              - cell) < 1.0E-10);
+
+         Rp::System<1,CPT> system2;
+         initSystem1D(system2, "");
+         readFrame(system2, "out/cellRamp_c.rf", k);
+         TEST_ASSERT(std::abs(system2.domain().unitCell().parameter(0)
+                              - cell) < 1.0E-10);
+      }
+   }
+
    bool checkValue(std::string label, 
                    double value, double ref, 
                    double epsilon = 1.0E-4)
@@ -478,6 +537,7 @@ TEST_BEGIN(AnalyzerTest)
 TEST_ADD(AnalyzerTest, testAnalyzeLastFrame)
 TEST_ADD(AnalyzerTest, testAnalyzeFirstFrame)
 TEST_ADD(AnalyzerTest, testAnalyzeBaseInterval)
+TEST_ADD(AnalyzerTest, testTrajectoryCellRamp)
 TEST_ADD(AnalyzerTest, testAnalyzeTrajectory)
 TEST_END(AnalyzerTest)
 
