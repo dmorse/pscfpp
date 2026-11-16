@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+
+from pscfpp.param import *
+import os, tempfile
+
+# Read a parameter file with the given text
+def readText(text):
+   with tempfile.TemporaryDirectory() as d:
+      name = os.path.join(d, 'param')
+      with open(name, 'w') as file:
+         file.write(text)
+      return Composite(name)
+
+# A chi matrix with indices larger than 9
+p = readText('System{\n  Interaction{\n    chi(\n      1  0  2.0\n'
+             + '     10  9  3.0\n    )\n  }\n}\n')
+assert len(p.Interaction.chi) == 11
+assert p.Interaction.chi[9][10] == 3.0
