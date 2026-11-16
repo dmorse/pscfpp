@@ -186,7 +186,11 @@ class Field:
          
 
       if self.type != 'basis' and self.type != 'fd1d':
-         if type(self.data[0][0]) is int:
+         # A row of a k-grid file has an integer index and the real and
+         # imaginary parts of each field, a row of an r-grid file one
+         # value of each field. (The type of the first value does not
+         # tell them apart: r-grid values may be written as integers.)
+         if len(self.data[0]) == 1 + 2*self.header['N_monomer']:
             self.type = 'kgrid'
          else:
             self.type = 'rgrid'
