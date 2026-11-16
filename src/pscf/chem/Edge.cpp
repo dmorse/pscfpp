@@ -6,6 +6,8 @@
 */
 
 #include "Edge.h"
+#include <iomanip>
+#include <sstream>
 
 namespace Pscf
 {
@@ -108,9 +110,22 @@ namespace Pscf
 
       // Write length or nBead
       if (PolymerModel::isThread()) {
+         // Write enough digits that a length read back is the same
+         // double (a length next to a rounding tie of the number of
+         // contour steps could otherwise get another number): 15
+         // significant digits if these suffice, 17 otherwise
+         std::ostringstream buffer;
+         buffer << std::scientific << std::setprecision(14)
+                << block.length_;
+         std::istringstream input(buffer.str());
+         double length;
+         int precision = 16;
+         if ((input >> length) && length == block.length_) {
+            precision = 14;
+         }
          out.setf(std::ios::scientific);
-         out.width(20);
-         out.precision(12);
+         out.width(24);
+         out.precision(precision);
          out << block.length_;
       } else
       if (PolymerModel::isBead()) {
