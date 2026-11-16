@@ -84,6 +84,9 @@ namespace Pscf {
       /**
       * Set system composition.
       *
+      * The volume fraction of the species with the largest value of
+      * phi is set to 1 minus the sum of the others.
+      *
       * \param phi array of molecular volume fractions.
       */
       void setComposition(DArray<double> const & phi);
