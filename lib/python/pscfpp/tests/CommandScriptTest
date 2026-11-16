@@ -17,6 +17,11 @@ assert p[0].label == 'READ_W' and p[0].param() == 'in/w'
 assert p[1].param() == 'out/timers'
 assert str(p[1]) == 'WRITE_TIMERS \t out/timers'
 
+# A blank line, which is skipped
+p = readText('READ_W in/w\n\nITERATE\nFINISH\n')
+assert len(p) == 3
+assert p['ITERATE'].label == 'ITERATE'
+
 p = Script('in/command')
 
 print(p)
