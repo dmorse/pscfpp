@@ -239,7 +239,7 @@ class Composite:
    # this Composite object. The parameter "file" must be a python
    # file object that is open for reading. Processing of the file stops
    # when the closing bracket "}" that matches the opening bracket is
-   # encountered.
+   # encountered. Blank lines are skipped.
    #
    # \param file  a python file object that is open for reading
    #
@@ -247,6 +247,11 @@ class Composite:
       line = file.readline()
       l = line.split()
       while line != '':
+         if len(l) == 0:
+            # Skip a blank line
+            line = file.readline()
+            l = line.split()
+            continue
          if l[0][-1] == '{':
             # Composite (nested)
             if len(l) == 1:
@@ -575,12 +580,14 @@ class Array:
    def read(self, file):
       line = file.readline()
       l = line.split()
-      while l[0] != ']':
-         # Process a line
+      while len(l) == 0 or l[0] != ']':
+         if line == '':
+            raise Exception('End of file in Array ' + self.label)
+         # Process a line (skip a blank line)
          if len(l) == 1:
             # Single value
             self.val.append(getValue(l[0]))
-         else:
+         elif len(l) > 1:
             # Multiple space-separated values on one line
             ls = []
             for i in range(len(l)):
@@ -717,8 +724,11 @@ class Matrix:
       att = []
       line = file.readline()
       l = line.split()
-      while l[0] != ')':
-         att.append(l)
+      while len(l) == 0 or l[0] != ')':
+         if line == '':
+            raise Exception('End of file in Matrix ' + self.label)
+         if len(l) > 0:
+            att.append(l)
          line = file.readline()
          l = line.split()
       rowMax = att[0][0]
