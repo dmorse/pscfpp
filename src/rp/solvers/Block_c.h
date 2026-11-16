@@ -285,6 +285,11 @@ namespace Rp {
       * directions but the same bead, and \f$ p \f$ is the prefactor
       * parameter. The sum is taken over all beads in this block.
       *
+      * If \f$ \exp(W(r)) \f$ overflows at some grid point, so that the
+      * sum is not finite, the sum is evaluated again with the product
+      * \f$ q_{0}(r,s) \exp(W(r)) \f$ replaced by the forward propagator
+      * before the field factor of the bead, computed by the bond operator.
+      *
       * \param prefactor  constant multiplying sum over beads
       */
       void computeConcentrationBead(double prefactor);

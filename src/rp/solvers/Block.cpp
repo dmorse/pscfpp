@@ -20,6 +20,8 @@
 #include <util/containers/DMatrix.h>
 #include <util/containers/DArray.h>
 
+#include <cmath>
+
 #include <pscf/solvers/BlockTmpl.tpp>
 
 namespace Pscf {
@@ -523,6 +525,39 @@ namespace Rp {
          RField<D,CPT> const & qr = p1.q(ns_ - 1 - j);
          for (i = 0; i < nx; ++i) {
             cField()[i] += qf[i] * qr[i] * expWInv_[i];
+         }
+      }
+
+      // The reciprocal weight expWInv_[i] = exp(w[i] - wShift) is inf
+      // where the field exceeds the shift by more than about 709 (as in
+      // a strong field that excludes the chain), and the sum above is
+      // then inf or NaN (0*inf) there. In that case, sum instead the
+      // products of the reverse propagator with qf/exp(-(w - wShift)),
+      // the forward propagator before the field factor of the bead: the
+      // bond operator applied to the previous slice, or for the first
+      // bead the head slice (chain end) or the half-bond operator
+      // applied to it.
+      bool isFinite = true;
+      for (i = 0; i < nx; ++i) {
+         if (!std::isfinite(cField()[i])) isFinite = false;
+      }
+      if (!isFinite) {
+         for (i = 0; i < nx; ++i) {
+            cField()[i] = 0.0;
+         }
+         for (j = 1; j < (ns_ -1); ++j) {
+            if (j > 1) {
+               stepBondBead(p0.q(j-1), qr_);
+            } else
+            if (p0.isHeadEnd()) {
+               qr_ = p0.q(0);
+            } else {
+               stepHalfBondBead(p0.q(0), qr_);
+            }
+            RField<D,CPT> const & qr = p1.q(ns_ - 1 - j);
+            for (i = 0; i < nx; ++i) {
+               cField()[i] += qr_[i] * qr[i];
+            }
          }
       }
 

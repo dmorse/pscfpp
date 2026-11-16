@@ -270,6 +270,11 @@ namespace Rp {
       * this block times the "prefactor" parameter, where q(r,s) and
       * q^{*}(r,s) are propagators associated with different directions.
       *
+      * If exp(W(r)) overflows at some grid point, so that the sum is not
+      * finite, the sum is evaluated again with the product q(r,s)
+      * exp(W(r)) replaced by the forward propagator before the field
+      * factor of the bead, computed by the bond operator.
+      *
       * \param prefactor  constant multiplying sum over beads
       */
       void computeConcentrationBead(double prefactor);
@@ -371,7 +376,7 @@ namespace Rp {
       */
       mutable BackendArray<cudaComplex,CUT> qkPair_;
 
-      // R-grid work space (used in productAverage)
+      /// R-grid work space (bead model, computeConcentrationBead)
       mutable RField<D,CUT> qr_;
 
       // K-grid work space (used for FFT of q in stepBondBead)
