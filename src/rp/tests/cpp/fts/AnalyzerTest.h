@@ -216,6 +216,49 @@ public:
       }
    }
 
+   /*
+   * ANALYZE 0 0 of a trajectory whose frames are compressed only to an
+   * error of 1e-2, by BD and MC simulators with a compressor of
+   * epsilon 1e-10 (and a BD step or an MC move): the analyzed frame
+   * must be left unchanged.
+   */
+   void testAnalyzeFirstFrame()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testAnalyzeFirstFrame.log");
+
+      writeTrajectory("out/trajectory1D.rf", 2);
+      std::string compressor
+            = " LrAmCompressor{ epsilon 1.0e-10 maxItr 200 maxHist 20 }";
+      std::string analyzers
+            = " AnalyzerManager{\n"
+              " HamiltonianAnalyzer{\n"
+              " interval 1"
+              " outputFileName out/analyzeFirstFrame }\n"
+              " }\n"
+              " }";
+      std::string simulators[2];
+      simulators[0] = "BdSimulator{ LMBdStep{ mobility 0.01 }"
+                      + compressor + analyzers;
+      simulators[1] = "McSimulator{ McMoveManager{\n"
+                      " RealMove{ probability 1.0 sigma 0.1 }\n"
+                      " }\n"
+                      + compressor + analyzers;
+      for (int i = 0; i < 2; ++i) {
+         Rp::System<1,CPT> system;
+         initSystem1D(system, simulators[i]);
+         TEST_ASSERT(analyze(system, 0, 0, "out/trajectory1D.rf"));
+
+         // Compare with frame 0
+         Rp::System<1,CPT> reference;
+         initSystem1D(reference, "");
+         readFrame(reference, "out/trajectory1D.rf", 0);
+         RFieldComparison<1,CPT> comparison;
+         comparison.compare(reference.w().rgrid(), system.w().rgrid());
+         TEST_ASSERT(comparison.maxDiff() == 0.0);
+      }
+   }
+
    bool checkValue(std::string label, 
                    double value, double ref, 
                    double epsilon = 1.0E-4)
@@ -391,6 +434,7 @@ public:
 
 TEST_BEGIN(AnalyzerTest)
 TEST_ADD(AnalyzerTest, testAnalyzeLastFrame)
+TEST_ADD(AnalyzerTest, testAnalyzeFirstFrame)
 TEST_ADD(AnalyzerTest, testAnalyzeTrajectory)
 TEST_END(AnalyzerTest)
 
