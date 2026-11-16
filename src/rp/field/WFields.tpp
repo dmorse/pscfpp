@@ -283,6 +283,12 @@ namespace Rp {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(readUnitCellPtr_);
 
+      // Reading can change the unit cell and the field values before
+      // it fails: the fields are invalid until the read is complete
+      hasData_ = false;
+      isSymmetric_ = false;
+      signal().notify();
+
       // Read field file header
       int nMonomerIn;
       bool isSymmetricIn;
@@ -357,6 +363,12 @@ namespace Rp {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(readUnitCellPtr_);
+
+      // Reading can change the unit cell and the field values before
+      // it fails: the fields are invalid until the read is complete
+      hasData_ = false;
+      isSymmetric_ = false;
+      signal().notify();
 
       // If necessary, allocate r-grid fields
       if (!isAllocatedRGrid_) {
