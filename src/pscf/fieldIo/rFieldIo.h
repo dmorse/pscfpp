@@ -232,10 +232,15 @@ namespace Pscf {
    * On input, the capacity of the fields array must equal the number
    * of monomer types represented by data columns in the input file.
    * The DArray<double> arrays associated with different monomer types
-   * must all of the same nonzero capacity, denoted by fieldCapacity.
-   * The number of basis functions that are processes is the smallar
-   * of nStarIn (the number available in the file) and fieldCapacity
-   * (the number for which there is room in the arrays).
+   * must all of the same nonzero capacity, which must be at least the
+   * number of basis functions in the basis. All nStarIn lines of the
+   * data section are read. The file may have been written for another
+   * mesh: lines that do not match a star of this basis are skipped and
+   * counted in a warning, and components of basis functions that do not
+   * appear in the file are set to zero. A file with as many basis
+   * functions as the basis is taken to be written for the same mesh, and
+   * a line of a cancelled star or of an open star without its partner
+   * then throws an Exception.
    *
    * \ingroup Pscf_FieldIo_Module
    *
