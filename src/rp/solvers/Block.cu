@@ -384,6 +384,32 @@ namespace Rp {
    }
 
    /*
+   * Set or reset the number of beads in this block.
+   */
+   template <int D>
+   void Block<D,CUT>::setNBead(int nBead)
+   {
+      Edge::setNBead(nBead);
+
+      if (isAllocated_ && ns_ != nBead + 2) {
+         // Reallocate memory for solutions to MDE
+         ns_ = nBead + 2;
+         propagator(0).reallocate(ns_);
+         propagator(1).reallocate(ns_);
+
+         // If using batched FFTs, resize arrays and change batch size
+         if (useBatchedFFT_) {
+            UTIL_CHECK(fftBatchedAll_.isSetup());
+            q0kBatched_.deallocate();
+            q1kBatched_.deallocate();
+            q0kBatched_.allocate(ns_ * kSize_);
+            q1kBatched_.allocate(ns_ * kSize_);
+            fftBatchedAll_.resetBatchSize(ns_);
+         }
+      }
+   }
+
+   /*
    * Set or reset monomer statistical segment length.
    */
    template <int D>

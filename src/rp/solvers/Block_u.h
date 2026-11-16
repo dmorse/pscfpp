@@ -143,6 +143,16 @@ namespace Rp {
       void setLength(double newLength);
 
       /**
+      * Set or reset the number of beads (only used in bead model).
+      *
+      * Precondition: PolymerModel::isBead(). If memory is allocated,
+      * the propagators are reallocated for the new number of beads.
+      *
+      * \param nBead  new number of beads in this block
+      */
+      void setNBead(int nBead);
+
+      /**
       * Set or reset monomer statistical segment length.
       *
       * \param kuhn  new monomer statistical segment length.
