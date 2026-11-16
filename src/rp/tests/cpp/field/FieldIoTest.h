@@ -701,6 +701,66 @@ public:
       TEST_ASSERT(readReplacedBasisThrows(domain, lines));
    }
 
+   /*
+   * Read field files in which the last number is not followed by a
+   * newline.
+   */
+   void testReadWithoutFinalNewline_lam()
+   {
+      printMethod(TEST_FUNC);
+
+      Rp::Domain<1,CPT> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_lam.rf", domain);
+      Rp::FieldIo<1,CPT> const & fieldIo = domain.fieldIo();
+
+      DArray< DArray<double> > bf_0, bf_1;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_1);
+      DArray< RField<1,CPT> > rf_0, rf_1;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf_0);
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf_1);
+      DArray< RFieldDft<1,CPT> > kf_0, kf_1;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_0);
+      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_1);
+      readFields("in/w_lam.bf", domain, bf_0);
+      fieldIo.convertBasisToRGrid(bf_0, rf_0);
+      fieldIo.convertBasisToKGrid(bf_0, kf_0);
+
+      // Write the fields in each format, remove the final newline
+      std::ostringstream outB, outR, outK;
+      fieldIo.writeFieldsBasis(outB, bf_0, domain.unitCell());
+      fieldIo.writeFieldsRGrid(outR, rf_0, domain.unitCell());
+      fieldIo.writeFieldsKGrid(outK, kf_0, domain.unitCell());
+      std::string textB = outB.str();
+      std::string textR = outR.str();
+      std::string textK = outK.str();
+      textB.erase(textB.find_last_not_of(" \n") + 1);
+      textR.erase(textR.find_last_not_of(" \n") + 1);
+      textK.erase(textK.find_last_not_of(" \n") + 1);
+      std::istringstream inB(textB), inR(textR), inK(textK);
+
+      bool thrown = false;
+      try {
+         fieldIo.readFieldsBasis(inB, bf_1, domain.unitCell());
+         fieldIo.readFieldsRGrid(inR, rf_1, domain.unitCell());
+         fieldIo.readFieldsKGrid(inK, kf_1, domain.unitCell());
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+
+      BFieldComparison comparisonB;
+      comparisonB.compare(bf_0, bf_1);
+      TEST_ASSERT(comparisonB.maxDiff() < 1.0E-10);
+      RFieldComparison<1,CPT> comparisonR;
+      comparisonR.compare(rf_0, rf_1);
+      TEST_ASSERT(comparisonR.maxDiff() < 1.0E-10);
+      RFieldDftComparison<1,CPT> comparisonK;
+      comparisonK.compare(kf_0, kf_1);
+      TEST_ASSERT(comparisonK.maxDiff() < 1.0E-10);
+   }
+
    void testRGridIo_lam() 
    {
       printMethod(TEST_FUNC);
@@ -1378,6 +1438,7 @@ TEST_ADD(FieldIoTest, testBasisIo_altG)
 TEST_ADD(FieldIoTest, testBasisIo_altG_fort)
 TEST_ADD(FieldIoTest, testBasisIo_cellChange)
 TEST_ADD(FieldIoTest, testBasisIo_mesh)
+TEST_ADD(FieldIoTest, testReadWithoutFinalNewline_lam)
 TEST_ADD(FieldIoTest, testRGridIo_lam)
 TEST_ADD(FieldIoTest, testRGridIo_hex)
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
