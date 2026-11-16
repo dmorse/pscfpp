@@ -178,8 +178,10 @@ namespace Pscf {
       // Correct for possible partial occupation of the unit cell.
       divEq(Q, phiTot);
 
-      // Set q and compute phi or mu, depending on the ensemble
-      SpeciesT::setQ(Q);
+      // Set ln q and compute phi or mu, depending on the ensemble
+      WT lnQ;
+      assignLog(lnQ, Q);
+      SpeciesT::setLnQ(lnQ);
 
    }
 

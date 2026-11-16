@@ -8,6 +8,8 @@
 #include "Solvent.h"
 #include <r1/field/Domain.h>
 
+#include <cmath>
+
 namespace Pscf {
 namespace R1 { 
 
@@ -43,20 +45,27 @@ namespace R1 {
    {
       UTIL_CHECK(cField_.isAllocated());
 
-      // Evaluate unnormalized concentration, Boltzmann weight
+      // Evaluate unnormalized concentration, the Boltzmann weight of
+      // the field minus its minimum wMin, which lies between 0 and 1
+      // and is 1 at the minimum, so that it can neither overflow nor
+      // vanish everywhere for a large solvent size
       int nx = domain().nx();
       double s = size();
+      double wMin = wField[0];
+      for (int i = 1; i < nx; ++i) {
+         if (wField[i] < wMin) wMin = wField[i];
+      }
       for (int i = 0; i < nx; ++i) {
-          cField_[i] = exp(-s*wField[i]);
+          cField_[i] = exp(-s*(wField[i] - wMin));
       }
 
-      // Compute spatial average q
+      // Compute spatial average Q of the shifted weight
       double Q = domain().spatialAverage(cField_);
 
-      // Set q and compute mu or phi (depending on ensemble)
-      Species::setQ(Q);
+      // Set ln q = ln Q - s*wMin, compute mu or phi (by ensemble)
+      Species::setLnQ(std::log(Q) - s*wMin);
 
-      // Normalize concentration 
+      // Normalize concentration (the shift cancels in phi/Q)
       double prefactor = phi()/Q;
       for (int i = 0; i < nx; ++i) {
           cField_[i] *= prefactor;
