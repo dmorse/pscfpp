@@ -19,6 +19,8 @@
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 
+#include <cmath>
+
 #include <pscf/solvers/BlockTmpl.tpp>
 
 namespace Pscf {
@@ -289,6 +291,7 @@ namespace Rp {
       } else 
       if (PolymerModel::isBead()) {
          expWInv_.allocate(mesh().dimensions());
+         qr_.allocate(mesh().dimensions());
          qk_.allocate(mesh().dimensions());
       }
 
@@ -648,6 +651,30 @@ namespace Rp {
       // Internal beads (j = 1, ..., nbead, with nbead = ns_ -2)
       for (int j = 1; j < ns_ - 1; ++j) {
          addEqMulVVV(cField(), p0.q(j), p1.q(ns_ - 1 - j), expWInv_);
+      }
+
+      // The reciprocal weight expWInv_ = exp(w - wShift) is inf where
+      // the field exceeds the shift by more than about 709 (as in a
+      // strong field that excludes the chain), and the sum above is then
+      // inf or NaN (0*inf) there. In that case, sum instead the products
+      // of the reverse propagator with qf/exp(-(w - wShift)), the forward
+      // propagator before the field factor of the bead: the bond
+      // operator applied to the previous slice, or for the first bead
+      // the head slice (chain end) or the half-bond operator applied to
+      // it.
+      if (!std::isfinite(Reduce::sum(cField()))) {
+         VecOp::eqS(cField(), 0.0);
+         for (int j = 1; j < ns_ - 1; ++j) {
+            if (j > 1) {
+               stepBondBead(p0.q(j-1), qr_);
+            } else
+            if (p0.isHeadEnd()) {
+               VecOp::eqV(qr_, p0.q(0));
+            } else {
+               stepHalfBondBead(p0.q(0), qr_);
+            }
+            addEqMulVVc(cField(), qr_, p1.q(ns_ - 1 - j), 1.0);
+         }
       }
 
       // Scale cField() by prefactor
