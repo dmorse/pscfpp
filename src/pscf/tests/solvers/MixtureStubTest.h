@@ -62,6 +62,20 @@ public:
       TEST_ASSERT(readThrows(mixtureText("0", "2", "0.05", "0.4")));
    }
 
+   /*
+   * A volume fraction outside [0, 1], a solvent size <= 0, or vMonomer
+   * <= 0 was accepted, and gave a chemical potential or free energy
+   * that is NaN or infinite.
+   */
+   void testReadValueRange()
+   {
+      printMethod(TEST_FUNC);
+      TEST_ASSERT(readThrows(mixtureText("0", "0", "0.05", "-0.25", "1.25")));
+      TEST_ASSERT(readThrows(mixtureText("0", "0", "0.0", "0.4")));
+      TEST_ASSERT(readThrows(mixtureText("0", "0", "0.05", "0.4", "0.6",
+                                         "0.0")));
+   }
+
 private:
 
    /*
@@ -102,6 +116,7 @@ TEST_BEGIN(MixtureStubTest)
 TEST_ADD(MixtureStubTest, testConstructor)
 TEST_ADD(MixtureStubTest, testReadParam)
 TEST_ADD(MixtureStubTest, testReadMonomerIdRange)
+TEST_ADD(MixtureStubTest, testReadValueRange)
 TEST_END(MixtureStubTest)
 
 #endif
