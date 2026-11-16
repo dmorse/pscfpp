@@ -39,7 +39,7 @@ named LinearRamp.  The LinearRamp class allows a user to perform a
 simulation in which almost any physical parameter of the Hamiltonian
 that is represented by a real number, or any set of such parameters,
 can be chosen to vary linearly with the number of simulation steps
-completed since the beginning of the simulation.
+attempted since the beginning of the simulation.
 
 Because the LinearRamp class is the default Ramp algorithm (since it
 is currently the only one), the opening line of a parameter block for
@@ -70,7 +70,12 @@ change specified in the Ramp block.  The change per step required to
 accomplish this is computed for each ramped parameter just before
 beginning a simulation, based on the planned number of BD or attempted
 MC steps given as a parameter to the SIMULATE command in the command
-file.
+file. The parameters advance after every attempted step, including a
+step that is rejected because the compressor failed to converge, so
+that they reach their final values at the end of the simulation even
+if some steps fail. The step counter passed to analyzers counts only
+steps whose compressor converged (in an MC simulation, accepted and
+rejected moves alike), and so lags behind the ramp after a failed step.
 
 \see
 \subpage rp_LinearRamp_page "LinearRamp (manual page)"
