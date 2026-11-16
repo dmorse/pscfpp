@@ -228,6 +228,10 @@ namespace Rp {
          simulator().computeCc();
          simulator().computeDc();
          simulator().computeHamiltonian();
+
+         // Exchange old and new random fields: the new noise of this
+         // step is the old noise of the next step
+         exchangeOldNew();
       } else {
          simulator().restoreState();
          UTIL_CHECK(system().w().hasData());
@@ -245,10 +249,13 @@ namespace Rp {
          if (!simulator().hasDc()) {
             simulator().computeDc();
          }
-      }
 
-      // Exchange old and new random fields
-      exchangeOldNew();
+         // Keep etaOld, the noise that entered the restored state (or
+         // the first noise of the move), as LMBdStep does: the new noise
+         // of the failed step never entered the state, and pairing the
+         // next step with it would give that step only half of the noise
+         // variance.
+      }
 
       return true;
    }
