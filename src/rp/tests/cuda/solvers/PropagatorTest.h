@@ -829,6 +829,56 @@ public:
       }
    
    }
+
+   /*
+   * Test computeQ after solve(head) for a bead block with chain ends.
+   */
+   void testSolveHead1D_bead()
+   {
+      printMethod(TEST_FUNC);
+
+      PolymerModel::setModel(PolymerModel::Bead);
+
+      Rp::Block<1,CUT> block;
+      setupBlock<1>(block);
+      int nBead = block.nBead();
+
+      Mesh<1> mesh;
+      setupMesh<1>(mesh);
+      FFT<1,CUT> fft;
+      fft.setup(mesh.dimensions());
+      UnitCell<1> unitCell;
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+      WaveList<1,CUT> waveList;
+      waveList.allocate(mesh, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
+      block.allocate(1.0);
+      block.propagator(0).setEndFlags(true, true);
+      block.propagator(1).setEndFlags(true, true);
+
+      // Homogeneous field
+      RField<1,CUT> w;
+      w.allocate(mesh.dimensions());
+      double wc = 0.3;
+      VecOp::eqS(w, wc);
+      block.clearUnitCellData();
+      block.setupSolver(w);
+
+      // Head slice 2 for propagator 0, default head for propagator 1
+      RField<1,CUT> head;
+      head.allocate(mesh.dimensions());
+      VecOp::eqS(head, 2.0);
+      block.propagator(0).solve(head);
+      block.propagator(1).solve();
+
+      double expected = 2.0*exp(-wc*nBead);
+      double q0, q1;
+      block.propagator(0).computeQ(q0);
+      block.propagator(1).computeQ(q1);
+      TEST_ASSERT(eq(q0, expected));
+      TEST_ASSERT(eq(q1, expected));
+   }
+
 };
 
 TEST_BEGIN(PropagatorTest)
@@ -844,6 +894,7 @@ TEST_ADD(PropagatorTest, testSolver1D)
 TEST_ADD(PropagatorTest, testSolver1D_bead)
 TEST_ADD(PropagatorTest, testSolver2D)
 TEST_ADD(PropagatorTest, testSolver3D)
+TEST_ADD(PropagatorTest, testSolveHead1D_bead)
 TEST_END(PropagatorTest)
 
 #endif
