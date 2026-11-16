@@ -240,6 +240,27 @@ public:
       }
    }
 
+   void testReadParamDefaultMode()
+   {
+      printMethod(TEST_FUNC);
+
+      // Domain blocks without the optional mode, with and without xMin
+      std::string blocks[2] = {"Domain{ xMax 2.0 nx 5 }",
+                               "Domain{ xMin 0.5 xMax 2.0 nx 5 }"};
+      double xMins[2] = {0.0, 0.5};
+      for (int k = 0; k < 2; ++k) {
+         Domain domain;
+         std::istringstream in(blocks[k]);
+         domain.readParam(in);
+         TEST_ASSERT(domain.mode() == Planar);
+         TEST_ASSERT(!domain.isShell());
+         TEST_ASSERT(eq(domain.xMin(), xMins[k]));
+         TEST_ASSERT(eq(domain.xMax(), 2.0));
+         TEST_ASSERT(domain.nx() == 5);
+         TEST_ASSERT(eq(domain.volume(), 2.0 - xMins[k]));
+      }
+   }
+
 };
 
 TEST_BEGIN(DomainTest)
@@ -254,6 +275,7 @@ TEST_ADD(DomainTest, testSphericalAverageUniform)
 TEST_ADD(DomainTest, testCylindricalAverageLinear)
 TEST_ADD(DomainTest, testSphericalAverageLinear)
 TEST_ADD(DomainTest, testInnerProductResize)
+TEST_ADD(DomainTest, testReadParamDefaultMode)
 TEST_END(DomainTest)
 
 #endif
