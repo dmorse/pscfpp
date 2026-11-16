@@ -51,23 +51,19 @@ respectively.  The sum over species in the above expression for
 \f$ \sigma \f$ includes only polymeric species, excluding any 
 point-like solvent species. 
 
-<em> Do not use with a perturbation </em>: The expression for 
-\f$ \Psi \f$ used by this analyzer uses the value of the total 
-Hamiltonian \f$ H \f$. If a simulation or trajectory analysis is 
-performed using a \ref psfts_perturb_page "perturbation", then
-\f$ H \f$ contains a contribution arising from the perturbation.
-When a perturbation exists, the above expression for \f$ \Psi \f$ is
-correct if and only if the perturbation contribution to \f$ H \f$ is 
-simply proportional to \f$ L^{3} \f$ for variable \f$ L \f$ at fixed 
-values of the w-field on all nodes of the computational mesh, as would 
-be true for any extensive, local functional of the w-fields. This 
-condition is not satisfied for an EinsteinCrystalPerturbation, however,
-because this perturbation is proportional to the difference between the 
-Einstein crystal Hamiltonian (which is a simple local functional that
-would satisfy this condition) and the standard field theoretic 
-Hamiltonian (which is a nonlocal functional that does not satisfy this
-condition). The CubicLengthDerivative analyzer should thus normally be 
-used only for simulations that use an unperturbed Hamiltonian.
+<em> Perturbations </em>: The above expression for \f$ \Psi \f$
+applies to the unperturbed Hamiltonian \f$ H_{0} \f$. If a simulation
+or trajectory analysis uses a \ref psfts_perturb_page "perturbation",
+\f$ H \f$ is the perturbed Hamiltonian, and \f$ \Psi \f$ includes the
+derivative with respect to \f$ L \f$ of the perturbation term, at fixed
+values of the w-fields on the nodes of the mesh. For an
+EinsteinCrystalPerturbation with parameter \f$ \lambda \f$, for which
+\f$ H = \lambda H_{0} + (1-\lambda) H_{EC} \f$, the Einstein crystal
+Hamiltonian \f$ H_{EC} \f$ is proportional to \f$ L^{3} \f$ at fixed
+fields, so that \f$ \Psi = 3H/L + \lambda V \sigma / v
++ \partial \ln N / \partial L \f$. Another type of perturbation can
+be used with this analyzer only if its class defines this derivative
+(function cubicLengthDerivative).
 
 <em> For users who read the source code: </em>
 The quantity \f$ \sigma \f$ defined above is equal to the SCFT 

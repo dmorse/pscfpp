@@ -91,6 +91,17 @@ namespace Rp {
       virtual double chiDerivative(double dH0dChi) const;
 
       /**
+      * Derivative of the perturbation term in H with respect to the
+      * length L of a cubic unit cell.
+      *
+      * The term is (1-lambda)*(H_EC - H0). At fixed values of the fields
+      * on the mesh, H_EC is proportional to the volume L^3.
+      *
+      * \param dH0dL  derivative of H0 with respect to L
+      */
+      virtual double cubicLengthDerivative(double dH0dL) const;
+
+      /**
       * Save any required internal state variables.
       */
       virtual void saveState();

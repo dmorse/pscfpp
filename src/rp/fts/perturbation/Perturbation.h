@@ -131,6 +131,22 @@ namespace Rp {
       virtual double chiDerivative(double dH0dChi) const;
 
       /**
+      * Derivative of the perturbation term in H with respect to the
+      * length of a cubic unit cell.
+      *
+      * Return the derivative with respect to the length L of a cubic
+      * unit cell, at fixed values of the fields on the nodes of the
+      * mesh, of the term that this perturbation adds to the unperturbed
+      * Hamiltonian H0. This function is used by the CubicLengthDerivative
+      * analyzer, and is called after the Hamiltonian has been computed.
+      *
+      * The default implementation throws an Exception.
+      *
+      * \param dH0dL  derivative of H0 with respect to L
+      */
+      virtual double cubicLengthDerivative(double dH0dL) const;
+
+      /**
       * Get parent Simulator<D,T> by const reference.
       */
       Simulator<D,T> const & simulator() const;
