@@ -204,7 +204,7 @@ namespace Rp {
       UTIL_CHECK(bunches.size() == nBunch_);
 
       // Set bunchWavenumbers_, waveBunchIds_, and waveWeights_
-      double wavenumberSq, newWavenumber, oldWavenumber;
+      double wavenumberSq, oldWavenumberSq;
       double count, sum, tot;
       int begin, end, k, iw;
       int nw = 0;
@@ -216,12 +216,12 @@ namespace Rp {
          iw = sortedIds[begin]; // wave id of first wave in bunch
          wavenumberSq = kSq[iw];
          UTIL_CHECK(wavenumberSq >= 0.0);
-         newWavenumber = std::sqrt(wavenumberSq);
-         bunchWavenumbers_[ib] = newWavenumber;
+         bunchWavenumbers_[ib] = std::sqrt(wavenumberSq);
          if (ib > 0) {
-            UTIL_CHECK(newWavenumber - oldWavenumber > 1.0E-8);
+            // Same criterion as in WaveList::sortWaves
+            UTIL_CHECK(wavenumberSq - oldWavenumberSq > 1.0E-8);
          }
-         oldWavenumber = newWavenumber;
+         oldWavenumberSq = wavenumberSq;
 
          // Set bunchIds, unnormalized weights for all waves in this bunch
          sum = 0.0;
