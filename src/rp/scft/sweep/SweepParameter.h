@@ -259,7 +259,7 @@ namespace Rp {
       * \param version archive format version index
       */
       template <class Archive>
-      void serialize(Archive ar, const unsigned int version);
+      void serialize(Archive& ar, const unsigned int version);
 
    private:
 
@@ -337,7 +337,7 @@ namespace Rp {
    */
    template <int D, class T>
    template <class Archive>
-   void SweepParameter<D,T>::serialize(Archive ar, 
+   void SweepParameter<D,T>::serialize(Archive& ar,
                                        const unsigned int version)
    {
       serializeEnum(ar, type_, version);
