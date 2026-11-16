@@ -272,6 +272,61 @@ public:
       }
    }
 
+   /*
+   * As testComputePhiDilute, but with the dilute species last (species
+   * B): the last species was the dependent one, whose phi = 1 - phi_A
+   * lost the precision of phi_B, so the iteration failed. Also an ideal
+   * blend (chi = 0) with mu_A - mu_B = -20 from the guess (0.6, 0.4):
+   * A, the largest species of the guess, is dilute at the solution.
+   */
+   void testComputePhiDiluteLast() {
+      printMethod(TEST_FUNC);
+
+      FhMixture mixture;
+      std::ifstream in;
+      openInputFile("in/FhMixtureBlend", in);
+      mixture.readParam(in);
+      in.close();
+
+      FhInteraction interaction;
+      interaction.setNMonomer(2);
+      interaction.setChi(0, 1, 2.0);
+
+      DArray<double> mu, phi;
+      mu.allocate(2);
+      phi.allocate(2);
+      double dMu[2] = {-45.0, -800.0};
+      double guess[3] = {1.0E-4, 1.0E-30, 1.0E-300};
+      double phiB, xi;
+      for (int i = 0; i < 2; ++i) {
+         for (int j = 0; j < 3; ++j) {
+            mu[0] = 0.0;
+            mu[1] = dMu[i];
+            phi[0] = 1.0 - guess[j];
+            phi[1] = guess[j];
+            xi = 0.0;
+            mixture.computePhi(interaction, mu, phi, xi);
+            TEST_ASSERT(eq(mixture.mu(0), mu[0]));
+            TEST_ASSERT(eq(mixture.mu(1), mu[1]));
+            phiB = std::exp(dMu[i] - 2.0);
+            TEST_ASSERT(std::abs(mixture.phi(1) - phiB) <= 1.0E-12*phiB);
+         }
+      }
+
+      // Ideal blend: phi_A/phi_B = exp(mu_A - mu_B)
+      interaction.setChi(0, 1, 0.0);
+      mu[0] = -20.0;
+      mu[1] = 0.0;
+      phi[0] = 0.6;
+      phi[1] = 0.4;
+      xi = 0.0;
+      mixture.computePhi(interaction, mu, phi, xi);
+      TEST_ASSERT(eq(mixture.mu(0), mu[0]));
+      TEST_ASSERT(eq(mixture.mu(1), mu[1]));
+      double phiA = 1.0/(1.0 + std::exp(20.0));
+      TEST_ASSERT(std::abs(mixture.phi(0) - phiA) <= 1.0E-12*phiA);
+   }
+
 };
 
 TEST_BEGIN(FhMixtureTest)
@@ -282,6 +337,7 @@ TEST_ADD(FhMixtureTest, testComputeMu)
 TEST_ADD(FhMixtureTest, testComputePhi)
 TEST_ADD(FhMixtureTest, testComputePhiSingular)
 TEST_ADD(FhMixtureTest, testComputePhiDilute)
+TEST_ADD(FhMixtureTest, testComputePhiDiluteLast)
 TEST_END(FhMixtureTest)
 
 #endif
