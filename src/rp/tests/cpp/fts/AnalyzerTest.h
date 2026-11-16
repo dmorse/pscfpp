@@ -129,7 +129,8 @@ public:
       TEST_ASSERT(checkAverage(filename, ref));
 
       filename = "out/chiDerivative.ave";
-      ref = 8.2574275e+02;
+      //ref = 8.2574275e+02;  // without the perturbation term
+      ref = 1.5803108e+02;    // with the Einstein crystal term
       TEST_ASSERT(checkAverage(filename, ref));
 
       filename = "out/cubicLengthDerivative.ave";

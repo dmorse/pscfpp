@@ -73,6 +73,16 @@ namespace Rp {
    {  return 0.0; }
 
    /*
+   * Derivative of the perturbation term with respect to chi.
+   */
+   template <int D, class T>
+   double Perturbation<D,T>::chiDerivative(double dH0dChi) const
+   {
+      UTIL_THROW("This perturbation does not define chiDerivative");
+      return 0.0;
+   }
+
+   /*
    * Set a new value for the lambda_ parameter.
    */
    template <int D, class T>

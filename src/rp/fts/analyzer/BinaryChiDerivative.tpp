@@ -12,6 +12,7 @@
 
 #include <rp/system/System.h>
 #include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/perturbation/Perturbation.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
@@ -73,6 +74,11 @@ namespace Rp {
 
       // Convert to derivative of total free energy F
       dfdchi *= (double)nMonomerSystem;
+
+      // Add the derivative of the perturbation term of H, if any
+      if (simulator().hasPerturbation()) {
+         dfdchi += simulator().perturbation().chiDerivative(dfdchi);
+      }
 
       // With N term
       dfdchi += double(meshSize)/(2.0 * chi);

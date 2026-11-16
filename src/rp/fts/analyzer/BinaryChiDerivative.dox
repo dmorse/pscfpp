@@ -41,6 +41,20 @@ and
 Here, \f$ v \f$ is the monomer reference volume and \f$ G \f$ 
 is the total number of nodes in the computational mesh.
 
+If the simulation uses a \ref psfts_perturb_page "perturbation",
+\f$ H \f$ is the perturbed Hamiltonian, and its derivative includes
+that of the perturbation term. For an EinsteinCrystalPerturbation with
+parameter \f$ \lambda \f$,
+\f$ \partial H / \partial \chi
+= \lambda \, \partial H_{0} / \partial \chi
++ (1-\lambda) \, \partial H_{EC} / \partial \chi \f$, in which
+\f$ H_{0} \f$ is the unperturbed Hamiltonian given above, and the
+Einstein crystal Hamiltonian \f$ H_{EC} \f$ depends on \f$ \chi \f$
+only if its parameter \f$ \epsilon \f$ has the default value
+\f$ \epsilon = \chi \f$. Another type of perturbation can be used
+with this analyzer only if its class defines this derivative (function
+chiDerivative).
+
 \section rp_BinaryChiDerivative_parameter_sec Parameter file
 
 Parameter file format:
