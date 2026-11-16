@@ -10,6 +10,9 @@
 
 #include "MixtureTmpl.h"
 #include <util/misc/Log.h>
+#include <cmath>
+#include <iomanip>
+#include <sstream>
 
 namespace Pscf
 {
@@ -128,6 +131,28 @@ namespace Pscf
       if (!(vMonomer_ > 0.0)) {
          Log::file() << "vMonomer = " << vMonomer_ << "\n";
          UTIL_THROW("vMonomer must be positive");
+      }
+
+      // If every species is closed, the volume fractions must add up
+      // to 1, within rounding errors. (The AM iterators of pscf_rpc and
+      // pscf_rpg would converge to a total concentration equal to the
+      // sum of the volume fractions.)
+      if (Composition<WT>::isCanonical()) {
+         WT sum = 0.0;
+         for (int i = 0; i < nPolymer_; ++i) {
+            sum += polymer(i).phi();
+         }
+         for (int i = 0; i < nSolvent_; ++i) {
+            sum += solvent(i).phi();
+         }
+         if (std::abs(sum - 1.0) > 1.0E-10) {
+            std::ostringstream message;
+            message << std::setprecision(16)
+                    << "Volume fractions of the closed species add up "
+                    << "to " << sum << ", but must add up to 1 within "
+                    << "1e-10";
+            UTIL_THROW(message.str().c_str());
+         }
       }
 
    }
