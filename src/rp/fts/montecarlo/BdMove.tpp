@@ -23,6 +23,8 @@
 #include <pscf/backend/VecOp.h>
 #include <pscf/math/IntVec.h>
 
+#include <cmath>
+
 namespace Pscf {
 namespace Rp {
 
@@ -155,7 +157,19 @@ namespace Rp {
       etaOldPtr_ = &etaA_;
       etaNewPtr_ = &etaB_;
 
+      // Draw the "old" noise of the first LM step of this move. Each LM
+      // step adds etaOld + etaNew, so that n steps add the noise
+      // eta_0 + 2 eta_1 + ... + 2 eta_(n-1) + eta_n, with 4n - 2 times
+      // the variance of one noise if all have the same variance, while
+      // n steps of an uninterrupted chain (or of an Euler-Maruyama
+      // algorithm) add 4n times that variance. Each move starts a new
+      // chain: drawing eta_0 with 3 times the usual variance gives the
+      // noise of the move the full variance. (Otherwise, a move with
+      // nStep = 1 would sample at about half the temperature.)
       generateEtaNew();
+      for (int j = 0; j < nMonomer - 1; ++j) {
+         VecOp::mulEqS(etaNew(j), std::sqrt(3.0));
+      }
       exchangeOldNew();
    }
 
