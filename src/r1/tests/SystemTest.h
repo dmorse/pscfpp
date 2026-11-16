@@ -99,6 +99,48 @@ public:
       TEST_ASSERT(sys.iterator().solve() == 1);
    }
 
+   /*
+   * COMPUTE for an open homopolymer B and an open solvent A (mu = 0),
+   * in fields for which phi of the homopolymer (w_B = -800) or of the
+   * solvent (w_A = -800) is above the range of a double: the command
+   * must stop with an Exception. For fields w = 0, it must not.
+   */
+   void testComputeOutOfRange()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestComputeOutOfRange.log");
+
+      double wA[3] = {0.0, -800.0, 0.0};
+      double wB[3] = {-800.0, 0.0, 0.0};
+      for (int k = 0; k < 3; ++k) {
+         std::istringstream in(
+            "System{ Mixture{ nMonomer 2 monomers 1.0 1.0"
+            " nPolymer 1 nSolvent 1"
+            " Polymer{ type linear nBlock 1 blocks 1 1.0 mu 0.0 }"
+            " Solvent{ monomerId 0 size 1.0 mu 0.0 }"
+            " ds 0.01 }"
+            " Interaction{ chi( 0 1 1.0 ) }"
+            " Domain{ mode Planar xMin 0.0 xMax 1.0 nx 11 }"
+            " NrIterator{ epsilon 1.0e-8 } }\n");
+         System sys;
+         sys.readParam(in);
+         int nx = sys.domain().nx();
+         for (int i = 0; i < nx; ++i) {
+            sys.wField(0)[i] = wA[k];
+            sys.wField(1)[i] = wB[k];
+         }
+
+         std::istringstream commands("COMPUTE\nFINISH\n");
+         bool thrown = false;
+         try {
+            sys.readCommands(commands);
+         } catch (Exception& e) {
+            thrown = true;
+         }
+         TEST_ASSERT(thrown == (k < 2));
+      }
+   }
+
    void testSolveMdePlanar()
    {
       printMethod(TEST_FUNC);
@@ -526,6 +568,7 @@ TEST_BEGIN(SystemTest)
 TEST_ADD(SystemTest, testConstructor)
 TEST_ADD(SystemTest, testReadParameters)
 TEST_ADD(SystemTest, testIteratorPlanarNrNan)
+TEST_ADD(SystemTest, testComputeOutOfRange)
 TEST_ADD(SystemTest, testSolveMdePlanar)
 TEST_ADD(SystemTest, testSolveMdeSpherical)
 TEST_ADD(SystemTest, testIteratorPlanarNr1)
