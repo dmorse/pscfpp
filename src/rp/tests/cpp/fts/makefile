@@ -10,16 +10,18 @@ include $(SRC_DIR)/rp/patterns.mk
 # -----------------------------------------------------------------------------
 # Main targets
 
-all: Test
+TEST=$(BLD_DIR)/rp/tests/cpp/fts/Test
 
-Test: Test.o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o Test Test.o $(LIBS)
+all: $(TEST)
 
-run: Test
-	./Test $(SRC_DIR)/rp/tests/cpp/fts/
+$(TEST): $(TEST).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
 
-run-quiet: Test.o Test
-	@./Test $(SRC_DIR)/rp/tests/cpp/fts/ > log
+run: $(TEST)
+	$(TEST) $(SRC_DIR)/rp/tests/cpp/fts/
+
+run-quiet: $(TEST)
+	@$(TEST) $(SRC_DIR)/rp/tests/cpp/fts/ > log
 	@echo `grep failed log` ", "\
              `grep successful log` "in rp/tests/cpp/fts/log" > count
 	@cat count
@@ -29,15 +31,15 @@ clean-outputs:
 	rm -f out/*
 
 clean:
-	rm -f Test
-	rm -f Test.o Test.d
+	rm -f $(TEST)
+	rm -f $(TEST).o $(TEST).d
 	$(MAKE) clean-outputs
 
 .PHONY= all run run-quiet clean-outputs clean
 # -----------------------------------------------------------------------------
 # Include dependency files
 
--include Test.d
+-include $(TEST).d
 -include $(rp_DEPS)
 -include $(pscf_DEPS)
 -include $(util_DEPS)
