@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+from pscfpp.text import *
+import os, re, tempfile
+
+d = tempfile.TemporaryDirectory()
+name = os.path.join(d.name, 'file')
+
+# Write text to the file, and return the text of the file
+def write(text):
+   with open(name, 'w') as file:
+      file.write(text)
+def read():
+   with open(name) as file:
+      return file.read()
+
+# An error leaves the file unchanged: a RecordEditor that sets a field
+# that does not exist, and a FileEditor with a reference to a group
+# that does not exist
+text = 'mesh 32\nchi 10.0\n'
+write(text)
+editor = RecordEditor()
+editor.setFilter('chi', 0)
+editor.setNew('12.0', 2)
+editor.setIsTest(False)
+try:
+   editor.editFile(name)
+except IndexError:
+   pass
+assert read() == text
+
+editor = FileEditor()
+editor.setFilter('x')
+editor.setOld('x')
+editor.setNew(r'\1')
+editor.setIsTest(False)
+for edit in [editor.editFile, editor.editFileBlocks]:
+   write('a\nx\nb\n')
+   try:
+      edit(name)
+   except re.error:
+      pass
+   assert read() == 'a\nx\nb\n'
+
+d.cleanup()
