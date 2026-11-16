@@ -7,6 +7,7 @@
 #include <pscf/chem/Monomer.h>
 
 #include <fstream>
+#include <sstream>
 
 using namespace Pscf;
 using namespace Util;
@@ -46,11 +47,30 @@ public:
       }
    }
 
+   /*
+   * Output to a stream set to fixed format: setf(scientific) without
+   * the floatfield mask gave hexadecimal output, which operator >>
+   * cannot read.
+   */
+   void testWriteFixedStream()
+   {
+      printMethod(TEST_FUNC);
+
+      Monomer v, u;
+      v.setKuhn(1.25);
+      std::stringstream stream;
+      stream << std::fixed << v;
+      TEST_ASSERT(stream.str().find("0x") == std::string::npos);
+      stream >> u;
+      TEST_ASSERT(u.kuhn() == 1.25);
+   }
+
 };
 
 TEST_BEGIN(MonomerTest)
 TEST_ADD(MonomerTest, testConstructor)
 TEST_ADD(MonomerTest, testReadWrite)
+TEST_ADD(MonomerTest, testWriteFixedStream)
 TEST_END(MonomerTest)
 
 #endif
