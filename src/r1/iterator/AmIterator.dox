@@ -118,9 +118,15 @@ the scalar error, depending on the value of the identifier errorType.
     maximum of the absolute magnitude of the elements of the residual 
     vector (the L infinity norm of the residual vector).
 
-  - If errorType == norm, then the scalar error is take to be the ratio 
-    of the L2 norm of the residual vector to the L2 norm of the w field, 
-    as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
+  - If errorType == relNorm (the default), then the scalar error is
+    taken to be the ratio of the L2 norm of the residual vector to the
+    L2 norm of the interaction field, with elements
+    \f$ \sum_{j} \chi_{ij}\phi_{aj} \f$, with which the residual
+    compares the w fields. Unlike the w fields, this field does not
+    contain a field added to the w fields of all monomer types (a
+    pressure-like field), which affects the residual only through the
+    volume fractions. (Stasiak and Matsen, Eur. Phys. J. E, 2011,
+    divide by the L2 norm of the w fields.)
 
 \section r1_AmIterator_residual_sec Residual definition
 

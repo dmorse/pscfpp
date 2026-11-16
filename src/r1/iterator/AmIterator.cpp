@@ -197,5 +197,26 @@ namespace R1 {
    void AmIterator::outputToLog()
    {}
 
+   /*
+   * Return the norm of the interaction field chi phi.
+   */
+   double AmIterator::relNormReference(DArray<double> const & state)
+   {
+      const int nm = mixture().nMonomer();
+      const int nx = domain().nx();
+      double normSq = 0.0;
+      double value;
+      for (int i = 0; i < nm; ++i) {
+         for (int k = 0; k < nx; ++k) {
+            value = 0.0;
+            for (int j = 0; j < nm; ++j) {
+               value += interaction_.chi(i,j)*system().cField(j)[k];
+            }
+            normSq += value*value;
+         }
+      }
+      return sqrt(normSq);
+   }
+
 }
 }
