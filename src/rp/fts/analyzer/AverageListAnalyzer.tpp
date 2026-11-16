@@ -61,6 +61,14 @@ namespace Rp {
    {
       UTIL_CHECK(hasAccumulators_);
       clearAccumulators();
+
+      // output() closes the data file at the end of each run. Open it
+      // again for a later run (e.g., a second SIMULATE), which writes it
+      // anew, as the averages of the run are written anew
+      if (nSamplePerOutput() > 0 && !outputFile_.is_open()) {
+         std::string fileName = AnalyzerT::outputFileName(".dat");
+         system().fileMaster().openOutputFile(fileName, outputFile_);
+      }
    }
 
    /*
