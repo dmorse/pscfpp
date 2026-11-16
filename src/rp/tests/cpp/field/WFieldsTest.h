@@ -21,6 +21,7 @@
 
 #include <util/containers/DArray.h>
 #include <util/misc/FileMaster.h>
+#include <util/misc/Exception.h>
 #include <util/format/Dbl.h>
 
 #include <iostream>
@@ -400,6 +401,65 @@ public:
       comparison.compare(bf, fields.basis());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
+
+   /*
+   * Set fields in basis form in a container that holds fields in r-grid
+   * form only, and has not allocated basis fields (READ_H_BASIS after
+   * READ_H_RGRID, for the external fields).
+   */
+   void testBasisAfterRGrid_lam()
+   {
+      printMethod(TEST_FUNC);
+
+      Rp::Domain<1,CPT> domain;
+      fileMaster_.setRootPrefix(UnitTest::filePrefix());
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_lam.rf", domain);
+
+      DArray< DArray<double> > bf;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf);
+      readFields("in/w_lam.bf", domain, bf);
+      DArray< RField<1,CPT> > rf;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
+      readFields("in/w_lam.rf", domain, rf);
+
+      // readBasis after readRGrid
+      Rp::WFields<1,CPT> fields;
+      fields.setFieldIo(domain.fieldIo());
+      fields.setNMonomer(nMonomer_);
+      fields.setReadUnitCell(domain.unitCell());
+      fields.readRGrid("in/w_lam.rf");
+      TEST_ASSERT(!fields.isAllocatedBasis());
+      bool thrown = false;
+      try {
+         fields.readBasis("in/w_lam.bf");
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+      TEST_ASSERT(fields.isSymmetric());
+      BFieldComparison comparison;
+      comparison.compare(bf, fields.basis());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+
+      // setBasis after setRGrid with an asymmetric field
+      Rp::WFields<1,CPT> fields2;
+      fields2.setFieldIo(domain.fieldIo());
+      fields2.setNMonomer(nMonomer_);
+      fields2.setRGrid(rf);
+      TEST_ASSERT(!fields2.isAllocatedBasis());
+      thrown = false;
+      try {
+         fields2.setBasis(bf);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+      TEST_ASSERT(fields2.isSymmetric());
+      comparison.compare(bf, fields2.basis());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+   }
+
 };
 
 TEST_BEGIN(WFieldsTest)
@@ -410,6 +470,7 @@ TEST_ADD(WFieldsTest, testSetRGrid_2_bcc)
 TEST_ADD(WFieldsTest, testReadBasis_bcc)
 TEST_ADD(WFieldsTest, testReadRGrid_1_bcc)
 TEST_ADD(WFieldsTest, testReadRGrid_2_bcc)
+TEST_ADD(WFieldsTest, testBasisAfterRGrid_lam)
 TEST_END(WFieldsTest)
 
 #endif
