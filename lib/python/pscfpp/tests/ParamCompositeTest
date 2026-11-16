@@ -95,6 +95,11 @@ assert readText(str(p)).Polymer.blocks == [0, 0.3333333]
 p = readText('System{\n  AmIterator{\n    maxItr  +200\n  }\n}\n')
 assert p.AmIterator.maxItr == 200 and isinstance(p.AmIterator.maxItr, int)
 
+# Setting a whole matrix with a nonzero diagonal element
+p = Composite('in/param')
+p.Interaction.chi = [[1.0, 15.0], [15.0, 0.0]]
+assert readText(str(p)).Interaction.chi == [[1.0, 15.0], [15.0, 0.0]]
+
 p = Composite('in/param')
 
 print(p)
