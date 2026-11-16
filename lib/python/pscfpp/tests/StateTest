@@ -45,6 +45,22 @@ t = readThermo(thermo + '''environment-modified stress:
 assert t.environmentStress == [None, 2.5e-3]
 assert readThermo(str(t)).environmentStress == [None, 2.5e-3]
 
+# A homogeneous comparison in mode 0 (pscf_1d)
+t = readThermo(thermo + '''
+f (homo)    =  4.00000000000e+00   [per monomer volume]
+delta f     = -1.05739192260e+00   [per monomer volume]
+
+Species:
+    i      mu(homo)            phi(homo)
+    0   1.00000000000e+01   1.00000000000e+00
+
+''')
+assert t.homogeneous == {'f (homo)': 4.0, 'delta f': -1.0573919226}
+assert t.homogeneousSpecies == [{'i': 0, 'mu(homo)': 10.0, 'phi(homo)': 1.0}]
+u = readThermo(str(t))
+assert u.homogeneous == t.homogeneous
+assert u.homogeneousSpecies == t.homogeneousSpecies
+
 s = State('in/state')
 
 print(s)
