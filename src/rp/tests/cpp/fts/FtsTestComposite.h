@@ -7,6 +7,7 @@
 #include "SimulatorTest.h"
 #include "CompressorTest.h"
 #include "McSimulatorTest.h"
+#include "StructureFactorTest.h"
 #include "BdSimulatorTest.h"
 #include "AnalyzerTest.h"
 #include "IntraTest.h"
@@ -16,6 +17,7 @@ TEST_COMPOSITE_BEGIN(FtsTestComposite)
 TEST_COMPOSITE_ADD_UNIT(SimulatorTest)
 TEST_COMPOSITE_ADD_UNIT(IntraTest)
 TEST_COMPOSITE_ADD_UNIT(CompressorTest)
+TEST_COMPOSITE_ADD_UNIT(StructureFactorTest)
 TEST_COMPOSITE_ADD_UNIT(AnalyzerTest)
 TEST_COMPOSITE_ADD_UNIT(McSimulatorTest)
 TEST_COMPOSITE_ADD_UNIT(BdSimulatorTest)
