@@ -228,7 +228,9 @@ namespace Rp {
       *
       * On return, hasData is true and the persistent isSymmetric flag
       * defined by the class is set to the value of the isSymmetric
-      * input parameter.
+      * input parameter. If the read fails, hasData and isSymmetric are
+      * false, and the field values and the unit cell may have been
+      * modified.
       *
       * As needed, r-grid and/or basis fields may be allocated within
       * this functions, if not allocated on entry. An associated basis
