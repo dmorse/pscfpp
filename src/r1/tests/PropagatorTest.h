@@ -360,6 +360,33 @@ public:
       TEST_ASSERT(eq(sum0, sum1));
    }
 
+   /*
+   * Test a contour step for which the number of contour steps of a
+   * block does not fit an int.
+   */
+   void testTinyDs()
+   {
+      printMethod(TEST_FUNC);
+
+      Domain domain;
+      domain.setPlanarParameters(0.0, 1.0, 11);
+
+      Block b;
+      b.setId(0);
+      b.setLength(0.5);
+      b.setMonomerId(0);
+      b.setKuhn(1.0);
+
+      // length/ds = 5.0E+9 contour steps
+      std::string message;
+      try {
+         b.setDiscretization(domain, 1.0E-10);
+      } catch (Exception& e) {
+         message = e.message();
+      }
+      TEST_ASSERT(message.find("too small") != std::string::npos);
+   }
+
 };
 
 TEST_BEGIN(PropagatorTest)
@@ -370,6 +397,7 @@ TEST_ADD(PropagatorTest, testCylinderSolve1)
 TEST_ADD(PropagatorTest, testCylinderSolve2)
 TEST_ADD(PropagatorTest, testSphereSolve1)
 TEST_ADD(PropagatorTest, testSphereSolve2)
+TEST_ADD(PropagatorTest, testTinyDs)
 TEST_END(PropagatorTest)
 
 #endif

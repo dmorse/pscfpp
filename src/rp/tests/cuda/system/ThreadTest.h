@@ -71,11 +71,46 @@ public:
       Log::file() << lnq << std::endl; 
    }
 
+   /*
+   * Read a parameter file with a contour step for which the number of
+   * contour steps of a block does not fit an int.
+   */
+   void testReadParamTinyDs()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testReadParamTinyDs.log");
+
+      // Parameter file in/thread/param_system_1D, with ds = 1.0E-10
+      // instead of 0.01 (5.6E+9 contour steps for the first block)
+      std::ifstream file;
+      openInputFile("in/thread/param_system_1D", file);
+      std::ostringstream buffer;
+      buffer << file.rdbuf();
+      file.close();
+      std::string text = buffer.str();
+      std::size_t pos = text.find("0.01", text.find("ds"));
+      TEST_ASSERT(pos != std::string::npos);
+      text.replace(pos, 4, "1.0E-10");
+
+      Rp::System<1,CUT> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream in(text);
+      std::string message;
+      try {
+         system.readParam(in);
+      } catch (Exception& e) {
+         message = e.message();
+      }
+      TEST_ASSERT(message.find("too small") != std::string::npos);
+   }
+
 };
 
 TEST_BEGIN(ThreadTest)
 TEST_ADD(ThreadTest, testComputeFreeEnergyThread)
 TEST_ADD(ThreadTest, testComputelnqThread)
+TEST_ADD(ThreadTest, testReadParamTinyDs)
 TEST_END(ThreadTest)
 
 #endif
