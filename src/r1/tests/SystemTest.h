@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <r1/system/System.h>
+#include <r1/system/HomogeneousComparison.h>
 #include <r1/field/Domain.h>
 #include <r1/solvers/Mixture.h>
 #include <r1/solvers/Polymer.h>
@@ -440,6 +441,74 @@ public:
       }
    }
 
+   /*
+   * COMPARE_HOMOGENEOUS 2 takes the concentrations at the first grid
+   * point as the guess of the composition, which need not be valid
+   * volume fractions. Here, the concentration of A there exceeds 1, and
+   * the homogeneous comparison failed. It must give the homogeneous
+   * A/B blend (chi = 1.5) with the chemical potentials of the system.
+   */
+   void testCompareHomogeneousGuess()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestCompareHomogeneousGuess.log");
+
+      System sys;
+      std::ifstream in;
+      openInputFile("in/blend_nr.prm", in);
+      sys.readParam(in);
+      in.close();
+
+      // Fields that attract A to the first two grid points
+      int nx = sys.domain().nx();
+      for (int i = 0; i < nx; ++i) {
+         sys.wField(0)[i] = (i < 2) ? -4.0 : 0.0;
+         sys.wField(1)[i] = 0.0;
+      }
+      sys.mixture().compute(sys.wFields(), sys.cFields());
+      TEST_ASSERT(sys.cField(0)[0] > 1.0);
+
+      HomogeneousComparison comparison(sys);
+      comparison.compute(2);
+      std::ofstream out;
+      openOutputFile("out/SystemTestCompareHomogeneousGuess.homo", out);
+      comparison.output(2, out);
+      out.close();
+
+      // Homogeneous blend: ln(phiA/phiB) + chi*(phiB - phiA) = dMu
+      double chi = 1.5;
+      double dMu = sys.mixture().polymer(0).mu()
+                 - sys.mixture().polymer(1).mu();
+      double lower = 0.0;
+      double upper = 1.0;
+      double phiA = 0.5;
+      for (int i = 0; i < 100; ++i) {
+         phiA = 0.5*(lower + upper);
+         if (log(phiA/(1.0 - phiA)) + chi*(1.0 - 2.0*phiA) > dMu) {
+            upper = phiA;
+         } else {
+            lower = phiA;
+         }
+      }
+      double phiB = 1.0 - phiA;
+      double f = phiA*log(phiA) + phiB*log(phiB) - 1.0 + chi*phiA*phiB;
+
+      // Read f (homo) from the output
+      std::ifstream file;
+      openInputFile("out/SystemTestCompareHomogeneousGuess.homo", file);
+      std::string word;
+      double fHomo = 0.0;
+      while (file >> word) {
+         if (word == "(homo)") {
+            file >> word >> fHomo;
+            break;
+         }
+      }
+      Log::file() << "f (homo) = " << fHomo << ", expected " << f
+                  << std::endl;
+      TEST_ASSERT(std::abs(fHomo - f) < 1.0E-9);
+   }
+
    void testIteratorPlanarAm1()
    {
       printMethod(TEST_FUNC);
@@ -558,6 +627,7 @@ TEST_ADD(SystemTest, testIteratorPlanarNr1)
 TEST_ADD(SystemTest, testIteratorPlanarNr2)
 TEST_ADD(SystemTest, testIteratorPlanarNr3)
 TEST_ADD(SystemTest, testIteratorSphericalShellNr)
+TEST_ADD(SystemTest, testCompareHomogeneousGuess)
 TEST_ADD(SystemTest, testIteratorSphericalNr1)
 TEST_ADD(SystemTest, testIteratorSphericalNr3)
 TEST_ADD(SystemTest, testIteratorPlanarAm1)
