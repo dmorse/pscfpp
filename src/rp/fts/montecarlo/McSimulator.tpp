@@ -127,7 +127,7 @@ namespace Rp {
    * Initialize just prior to a run.
    */
    template <int D, class T>
-   void McSimulator<D,T>::setup(int nStep)
+   void McSimulator<D,T>::setup(int nStep, bool isSimulation)
    {
       UTIL_CHECK((Simulator<D,T>::system().w().hasData()));
 
@@ -138,7 +138,7 @@ namespace Rp {
          Simulator<D,T>::perturbation().setup();
       }
 
-      if (Simulator<D,T>::hasRamp()) {
+      if (isSimulation && Simulator<D,T>::hasRamp()) {
          Simulator<D,T>::ramp().setup(nStep);
       }
 
@@ -146,7 +146,7 @@ namespace Rp {
       Simulator<D,T>::system().compute();
 
       // Compress the initial state (adjust pressure-like field)
-      if (Simulator<D,T>::hasCompressor()) {
+      if (isSimulation && Simulator<D,T>::hasCompressor()) {
          Simulator<D,T>::compressor().compress();
          Simulator<D,T>::compressor().clearTimers();
       }
@@ -162,7 +162,7 @@ namespace Rp {
       Simulator<D,T>::computeHamiltonian();
 
       // Setup MC moves (if any)
-      if (hasMcMoves()) {
+      if (isSimulation && hasMcMoves()) {
          mcMoveManager().setup();
       }
 
@@ -217,7 +217,7 @@ namespace Rp {
       UTIL_CHECK((Simulator<D,T>::hasCompressor()));
 
       // Initial setup
-      setup(nStep);
+      setup(nStep, true);
       iStep_ = 0;
       if (Simulator<D,T>::hasRamp()) {
          Simulator<D,T>::ramp().setParameters(iStep_);
@@ -378,7 +378,7 @@ namespace Rp {
 
          // Initialize analyzers
          if (iStep_ == min) {
-            setup(iStep_);
+            setup(0, false);
          }
 
          // Sample property values only for iStep >= min
