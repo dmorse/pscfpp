@@ -684,6 +684,58 @@ public:
       }
    }
 
+   /*
+   * BinaryStructureFactor with a ramp of the cell parameter: SIMULATE
+   * must stop with an error. ANALYZE of a trajectory written
+   * under such a ramp must use the unit cell of the first sampled frame
+   * (frame 2, for ANALYZE 1 2 with interval 2), and must stop if a later
+   * sampled frame has another unit cell (ANALYZE 0 4).
+   */
+   void testStructureFactorCellRamp()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testStructureFactorCellRamp.log");
+
+      {
+         Rp::System<1,CPT> system;
+         bool success = true;
+         try {
+            simulateCellRamp(system, "BinaryStructureFactor{ interval 1"
+                                     " outputFileName out/cellRampS }");
+         } catch (Exception& e) {
+            success = false;
+         }
+         TEST_ASSERT(!success);
+      }
+
+      {
+         Rp::System<1,CPT> system;
+         simulateCellRamp(system, "TrajectoryWriter{ interval 1"
+                                  " outputFileName out/cellRamp_w.rf }");
+      }
+      int min[2] = {1, 0};
+      int max[2] = {2, 4};
+      std::string interval[2] = {"2", "1"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::System<1,CPT> system;
+         initSystem1D(system, "BdSimulator{ AnalyzerManager{"
+            " baseInterval " + interval[i] +
+            " BinaryStructureFactor{ interval " + interval[i] +
+            " outputFileName out/cellRampS } } }");
+         bool success = analyze(system, min[i], max[i],
+                                "out/cellRamp_w.rf");
+         TEST_ASSERT(success == (i == 0));
+      }
+      Rp::Analyzer<1,CPT>::initStatic();
+
+      // Wavenumber of the first nonzero bunch, for the cell of frame 2
+      std::ifstream file;
+      openInputFile("out/cellRampS", file);
+      double q, s;
+      file >> q >> s >> q >> s;
+      TEST_ASSERT(std::abs(q - 2.0*M_PI/1.7) < 1.0E-6);
+   }
+
 };
 
 TEST_BEGIN(AnalyzerTest)
@@ -697,6 +749,7 @@ TEST_ADD(AnalyzerTest, testTimersWithoutCompressor)
 TEST_ADD(AnalyzerTest, testAnalyzeInputPrefix)
 TEST_ADD(AnalyzerTest, testTrajectoryCellRamp)
 TEST_ADD(AnalyzerTest, testTrajectoryMismatch)
+TEST_ADD(AnalyzerTest, testStructureFactorCellRamp)
 TEST_END(AnalyzerTest)
 
 #endif
