@@ -66,7 +66,11 @@ namespace Rp {
       /**
       * Set new parameters values in associated System and Simulator.
       * 
-      * \param iStep  current simulation step index
+      * The simulators call this function with the number of attempted
+      * steps (0 <= iStep <= nStep), counting steps that failed to
+      * converge, so that the final values are reached at iStep = nStep.
+      *
+      * \param iStep  number of attempted simulation steps
       */
       virtual void setParameters(int iStep) = 0;
       

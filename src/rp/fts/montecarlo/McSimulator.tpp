@@ -246,13 +246,16 @@ namespace Rp {
          bool converged;
          converged = mcMoveManager().chooseMove().move();
 
+         // Advance the ramp after every attempted move, including one
+         // whose compressor failed, so that the parameters reach their
+         // final values at the end of the nStep planned moves
+         if (Simulator<D,T>::hasRamp()) {
+            Simulator<D,T>::ramp().setParameters(iTotalStep_ + 1);
+            updateState();
+         }
+
          if (converged){
             iStep_++;
-
-            if (Simulator<D,T>::hasRamp()) {
-               Simulator<D,T>::ramp().setParameters(iStep_);
-               updateState();
-            }
 
             // Analysis (if any)
             analyzerTimer.start();

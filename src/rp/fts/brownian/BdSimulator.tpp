@@ -260,14 +260,17 @@ namespace Rp {
          bool converged;
          converged = bdStep().step();
 
+         // Advance the ramp after every attempted step, including a
+         // failed one, so that the parameters reach their final values
+         // at the end of the nStep planned steps
+         if (Simulator<D,T>::hasRamp()) {
+            Simulator<D,T>::ramp().setParameters(iTotalStep_ + 1);
+            updateState();
+         }
+
          // Accept step iff compressor converged
          if (converged){
             iStep_++;
-
-            if (Simulator<D,T>::hasRamp()) {
-               Simulator<D,T>::ramp().setParameters(iStep_);
-               updateState();
-            }
 
             // Analysis (if any)
             analyzerTimer.start();

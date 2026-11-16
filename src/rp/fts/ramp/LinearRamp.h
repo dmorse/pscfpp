@@ -69,7 +69,9 @@ namespace Rp {
       /**
       * Set new parameters values in associated System and Simulator.
       * 
-      * \param iStep  current simulation step index
+      * Each parameter is set to initial + (iStep/nStep)*change.
+      *
+      * \param iStep  number of attempted simulation steps
       */
       void setParameters(int iStep) override;
       
