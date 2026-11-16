@@ -11,6 +11,10 @@
 #include <r1/field/GeometryMode.h>
 #include <pscf/solvers/BlockTmpl.tpp>
 
+#include <climits>
+#include <cmath>
+#include <sstream>
+
 namespace Pscf {
    template class BlockTmpl< R1::Propagator, Util::DArray<double> >;
 }
@@ -19,6 +23,34 @@ namespace Pscf {
 namespace R1 {
 
    using namespace Util;
+
+   namespace {
+
+      /*
+      * Return the number of contour points of a block, an odd number
+      * close to length/ds + 1.
+      *
+      * The number of contour steps is computed in double precision. An
+      * Exception is thrown if the result would not fit an int.
+      */
+      int contourNs(double length, double ds)
+      {
+         const double nStep = std::floor(length/ds + 0.5);
+         // The negated comparison is also true for NaN
+         if (!(nStep <= double(INT_MAX - 2))) {
+            std::ostringstream msg;
+            msg << "Contour step ds = " << ds
+                << " too small for block length " << length;
+            UTIL_THROW(msg.str().c_str());
+         }
+         int ns = int(nStep) + 1;
+         if (ns%2 == 0) {
+            ns += 1;
+         }
+         return ns;
+      }
+
+   }
 
    /*
    * Constructor.
@@ -50,10 +82,7 @@ namespace R1 {
 
       // Set contour length discretization
       dsTarget_ = ds;
-      ns_ = floor(length()/dsTarget_ + 0.5) + 1;
-      if (ns_%2 == 0) {
-         ns_ += 1;
-      }
+      ns_ = contourNs(length(), dsTarget_);
       ds_ = length()/double(ns_ - 1);
 
       // Allocate all required memory
@@ -78,10 +107,7 @@ namespace R1 {
          // Reset contour length discretization
          UTIL_CHECK(ns_ > 0);
          int oldNs = ns_;
-         ns_ = floor(length()/dsTarget_ + 0.5) + 1;
-         if (ns_%2 == 0) {
-            ns_ += 1;
-         }
+         ns_ = contourNs(length(), dsTarget_);
          ds_ = length()/double(ns_ - 1);
 
          if (oldNs != ns_) {
