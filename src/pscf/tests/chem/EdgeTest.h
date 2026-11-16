@@ -5,6 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/chem/Edge.h>
+#include <util/archives/MemoryOArchive.h>
+#include <util/archives/MemoryIArchive.h>
 
 #include <cmath>
 #include <fstream>
@@ -157,6 +159,36 @@ public:
       TEST_ASSERT(u.vertexId(1) == 5);
    }
 
+   /*
+   * Edge::serialize omitted the number of beads and the polymer type.
+   */
+   void testSerialize()
+   {
+      printMethod(TEST_FUNC);
+      PolymerModel::setModel(PolymerModel::Bead);
+
+      Edge v, u;
+      v.setId(3);
+      v.setMonomerId(1);
+      v.setVertexIds(2, 5);
+      v.setNBead(7);
+      v.setPolymerType(PolymerType::Linear);
+
+      MemoryOArchive oArchive;
+      oArchive.allocate(64);
+      oArchive << v;
+      MemoryIArchive iArchive;
+      iArchive = oArchive;
+      iArchive >> u;
+      iArchive.release();
+      TEST_ASSERT(u.id() == 3);
+      TEST_ASSERT(u.monomerId() == 1);
+      TEST_ASSERT(u.vertexId(0) == 2);
+      TEST_ASSERT(u.vertexId(1) == 5);
+      TEST_ASSERT(u.nBead() == 7);
+      TEST_ASSERT(u.polymerType() == PolymerType::Linear);
+   }
+
 };
 
 TEST_BEGIN(EdgeTest)
@@ -164,6 +196,7 @@ TEST_ADD(EdgeTest, testConstructor)
 TEST_ADD(EdgeTest, testReadWrite)
 TEST_ADD(EdgeTest, testWriteReadLength)
 TEST_ADD(EdgeTest, testWriteFixedStream)
+TEST_ADD(EdgeTest, testSerialize)
 TEST_END(EdgeTest)
 
 #endif
