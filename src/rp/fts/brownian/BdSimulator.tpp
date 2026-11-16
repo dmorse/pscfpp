@@ -383,6 +383,32 @@ namespace Rp {
       trajectoryReaderPtr->close();
       delete trajectoryReaderPtr;
 
+      // Without any frame in [min, max], the analyzers were not set up
+      // and have no data
+      if (nFrames <= 0) {
+         Log::file() << "No frame with index in [" << min << ", " << max
+                     << "] in trajectory file " << filename << "\n";
+         UTIL_THROW("ANALYZE: no frame in the requested range");
+      }
+
+      // An analyzer whose interval divides no index of a frame read in
+      // [min, max] has no data, and would write NaN averages
+      int nUnsampled = 0;
+      for (int k = 0; k < analyzerManager().size(); ++k) {
+         long interval = analyzerManager()[k].interval();
+         long first = ((min + interval - 1)/interval)*interval;
+         if (first >= iStep_) {
+            ++nUnsampled;
+            Log::file() << "Warning: analyzer "
+                        << analyzerManager()[k].className()
+                        << " sampled no frame in [" << min << ", "
+                        << iStep_ - 1 << "]\n";
+         }
+      }
+      if (nUnsampled == analyzerManager().size()) {
+         UTIL_THROW("ANALYZE: no analyzer sampled any frame");
+      }
+
       // Output results of all analyzers to output files
       analyzerManager().output();
 
