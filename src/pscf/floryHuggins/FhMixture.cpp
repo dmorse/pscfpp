@@ -29,7 +29,8 @@ namespace Pscf {
       dWdC_(),
       dWdPhi_(),
       jacobian_(),
-      phiOld_(),
+      lnPhi_(),
+      lnPhiOld_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
       solverPtr_(0),
@@ -64,6 +65,7 @@ namespace Pscf {
       molecules_.allocate(nMolecule_);
       mu_.allocate(nMolecule_);
       phi_.allocate(nMolecule_);
+      lnPhi_.allocate(nMolecule_);
       for (int i = 0; i < nMolecule_; ++i) {
          readParamComposite(in, molecules_[i]);
       }
@@ -79,6 +81,7 @@ namespace Pscf {
       molecules_.allocate(nMolecule_);
       mu_.allocate(nMolecule_);
       phi_.allocate(nMolecule_);
+      lnPhi_.allocate(nMolecule_);
    }
 
    void FhMixture::setNMonomer(int nMonomer)
@@ -108,6 +111,9 @@ namespace Pscf {
       }
       UTIL_CHECK(sum <= 1.0);
       phi_[nMolecule_ -1] = 1.0 - sum;
+      for (int i = 0; i < nMolecule_; ++i) {
+         lnPhi_[i] = log(phi_[i]);
+      }
 
       computeC();
       hasComposition_ = true;
@@ -166,7 +172,7 @@ namespace Pscf {
       double mu, size;
       for (m = 0; m < nMolecule_; ++m) {
          FhMolecule& mol = molecules_[m];
-         mu = log( phi_[m] );
+         mu = lnPhi_[m];
          mu += xi*mol.size();
          for (c = 0; c < mol.nClump(); ++c) {
             t = mol.clump(c).monomerId();
@@ -194,7 +200,7 @@ namespace Pscf {
          dWdC_.allocate(nMonomer_, nMonomer_);
          dWdPhi_.allocate(nMonomer_, nMolecule_);
          jacobian_.allocate(nMolecule_, nMolecule_);
-         phiOld_.allocate(nMolecule_);
+         lnPhiOld_.allocate(nMolecule_);
          solverPtr_ = new LuSolver();
          solverPtr_->allocate(nMolecule_);
       }
@@ -251,12 +257,12 @@ namespace Pscf {
             }
          }
 
-         // Compute matrix d(mu)/d(Phi), stored in jacobian_
+         // Compute the interaction part of matrix d(mu)/d(Phi), stored
+         // in jacobian_ (the ideal part is added below)
          for (m1 = 0; m1 < nMolecule_; ++m1) {
             for (m2 = 0; m2 < nMolecule_; ++m2) {
                jacobian_(m1, m2) = 0.0;
             }
-            jacobian_(m1, m1) = 1.0/phi_[m1];
          }
          for (m1 = 0; m1 < nMolecule_; ++m1) {
             v1 = molecule(m1).size();
@@ -279,6 +285,23 @@ namespace Pscf {
             jacobian_(m1, mLast) = molecule(m1).size();
          }
 
+         // The Newton variables are xi and ln(phi) of every species
+         // other than the dependent one, mLast, whose phi is 1 minus
+         // the sum of the others. Steps in ln(phi) reach a dilute
+         // species, whose mu depends on ln(phi), in a few steps, and
+         // ln(phi) remains finite where phi underflows to zero. The
+         // columns of these variables are d(mu)/d(ln phi) =
+         // phi*d(mu)/d(phi), plus the ideal part:
+         // d(ln phi[m2])/d(ln phi[m2]) = 1, and
+         // d(ln phi[mLast])/d(ln phi[m2]) = -phi[m2]/phi[mLast].
+         for (m2 = 0; m2 < mLast; ++m2) {
+            for (m1 = 0; m1 < nMolecule_; ++m1) {
+               jacobian_(m1, m2) *= phi_[m2];
+            }
+            jacobian_(m2, m2) += 1.0;
+            jacobian_(mLast, m2) -= phi_[m2]/phi_[mLast];
+         }
+
          // Newton Raphson update of phi and xi fields. The Jacobian is
          // singular if the composition is at a spinodal of the mixture,
          // e.g., at the critical point of a symmetric blend.
@@ -288,28 +311,29 @@ namespace Pscf {
          }
          solverPtr_->solve(residual_, dX_);
 
-         // Store old value of phi
+         // Store old values of ln(phi)
          for (m1 = 0; m1 < nMolecule_; ++m1) {
-            phiOld_[m1] = phi_[m1];
+            lnPhiOld_[m1] = lnPhi_[m1];
          }
 
          // Apply update
          bool inRange = false;
-         for (int j = 0; j < 5; ++j) {
+         double sum;
+         for (int j = 0; j < 30; ++j) {
 
             // Update volume fractions
-            double sum = 0.0;
-            for (m1 = 0; m1 < nMolecule_ - 1; ++m1) {
-               phi_[m1] = phiOld_[m1] - dX_[m1];
+            sum = 0.0;
+            for (m1 = 0; m1 < mLast; ++m1) {
+               lnPhi_[m1] = lnPhiOld_[m1] - dX_[m1];
+               phi_[m1] = std::exp(lnPhi_[m1]);
                sum += phi_[m1];
             }
             phi_[mLast] = 1.0 - sum;
 
-            // Check if all volume fractions are in [0,1]
-            inRange = true;
-            for (m1 = 0; m1 < nMolecule_; ++m1) {
-               if (phi_[m1] < 0.0) inRange = false;
-               if (phi_[m1] > 1.0) inRange = false;
+            // Check if all volume fractions are in (0,1]
+            inRange = (phi_[mLast] > 0.0);
+            for (m1 = 0; m1 < mLast; ++m1) {
+               if (!(lnPhi_[m1] <= 0.0)) inRange = false;
             }
 
             // Exit loop or reduce increment
@@ -323,6 +347,7 @@ namespace Pscf {
 
          }
          if (inRange) {
+            lnPhi_[mLast] = std::log1p(-sum);
             xi = xi - dX_[mLast];
          } else {
             UTIL_THROW("Volume fractions remain out of range");
@@ -387,7 +412,10 @@ namespace Pscf {
       double size;
       for (int i = 0; i < nMolecule_; ++i) {
          size = molecules_[i].size();
-         fHelmholtz_ += phi_[i]*( log(phi_[i]) - 1.0 )/size;
+         // phi*(log(phi) - 1) tends to 0 as phi tends to 0
+         if (phi_[i] > 0.0) {
+            fHelmholtz_ += phi_[i]*( log(phi_[i]) - 1.0 )/size;
+         }
       }
 
       // Add average interaction free energy density per monomer
