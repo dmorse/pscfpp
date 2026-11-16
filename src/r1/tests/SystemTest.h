@@ -389,6 +389,64 @@ public:
       in.close();
    }
 
+   /*
+   * NrIterator for a spherical shell with an inner radius xMin = 1e-9
+   * much smaller than the grid spacing dx = 0.006. A change of w at the
+   * inner grid point then changes no concentration, so the Jacobian is
+   * exactly singular. Its LU decomposition crashed pscf_1d (GSL 2.7 and
+   * later), and the Newton step was undefined. The iteration must
+   * converge to the solution for xMin = 1e-6, whose Jacobian is regular.
+   */
+   void testIteratorSphericalShellNr()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorSphericalShellNr.log");
+
+      System ref;
+      readShellNr(ref, "in/spherical_shell6_nr.prm");
+      TEST_ASSERT(ref.iterator().solve() == 0);
+
+      System sys;
+      readShellNr(sys, "in/spherical_shell9_nr.prm");
+      TEST_ASSERT(sys.iterator().solve() == 0);
+
+      Log::file() << "fHelmholtz (xMin = 1e-9, 1e-6) = "
+                  << sys.fHelmholtz() << "  " << ref.fHelmholtz()
+                  << std::endl;
+      TEST_ASSERT(std::abs(sys.fHelmholtz() - ref.fHelmholtz()) < 1.0E-7);
+      int nx = sys.domain().nx();
+      for (int i = 0; i < 2; ++i) {
+         for (int j = 0; j < nx; ++j) {
+            TEST_ASSERT(std::abs(sys.cField(i)[j] - ref.cField(i)[j])
+                        < 1.0E-4);
+         }
+      }
+   }
+
+   /*
+   * Read a spherical system and set the w fields of a micelle.
+   */
+   void readShellNr(System& sys, char const * filename)
+   {
+      std::ifstream in;
+      openInputFile(filename, in);
+      sys.readParam(in);
+      in.close();
+      int nx = sys.domain().nx();
+      double cs;
+      double chi = 80.0;
+      for (int i = 0; i < nx; ++i) {
+         cs = cos(Constants::Pi*double(i)/double(nx-1));
+         sys.wField(0)[i] = -chi*cs/2.0;
+         sys.wField(1)[i] = +chi*cs/2.0;
+      }
+      double shift = sys.wField(1)[nx-1];
+      for (int i = 0; i < nx; ++i) {
+         sys.wField(0)[i] -= shift;
+         sys.wField(1)[i] -= shift;
+      }
+   }
+
    void testIteratorPlanarAm1()
    {
       printMethod(TEST_FUNC);
@@ -743,6 +801,7 @@ TEST_ADD(SystemTest, testIteratorPlanarNr2)
 TEST_ADD(SystemTest, testIteratorPlanarNr3)
 TEST_ADD(SystemTest, testIteratorSphericalNr1)
 TEST_ADD(SystemTest, testIteratorSphericalNr3)
+TEST_ADD(SystemTest, testIteratorSphericalShellNr)
 TEST_ADD(SystemTest, testIteratorPlanarAm1)
 TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
