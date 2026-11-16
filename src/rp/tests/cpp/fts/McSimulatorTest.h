@@ -7,6 +7,8 @@
 #include <rp/system/System.h>
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/montecarlo/McSimulator.h>
+#include <rp/fts/montecarlo/McMove.h>
+#include <rp/fts/montecarlo/McMoveManager.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
@@ -20,6 +22,9 @@
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -98,6 +103,39 @@ public:
       allocateRGridFields(system, fields);
       Rp::FieldIo<D,CPT> const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
+   }
+
+   /*
+   * Read a 1D diblock melt (16 grid points) with the given McSimulator
+   * block, and set w fields with a cosine exchange component of the
+   * given amplitude.
+   */
+   void initSystem1D(Rp::System<1,CPT>& system,
+                     std::string const & simulatorBlock,
+                     double amplitude = 1.0)
+   {
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } "
+         + simulatorBlock + " }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.5);
+      system.setUnitCell(parameters);
+      DArray< RField<1,CPT> > w;
+      allocateRGridFields(system, w);
+      for (int i = 0; i < 2; ++i) {
+         for (int k = 0; k < 16; ++k) {
+            w[i][k] = (i == 0) ? amplitude*std::cos(2.0*M_PI*k/16.0) : 0.0;
+         }
+      }
+      system.w().setRGrid(w);
    }
 
    void testMcSimulateDiblocks()
@@ -266,6 +304,31 @@ public:
       TEST_ASSERT(hasCurrentCFields(system));
    }
 
+   /*
+   * A run in which every MC move is rejected (RealMove with sigma 1),
+   * so also the last one: the system must be left with the c fields of
+   * its final w fields.
+   */
+   void testRejectedLastMove()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testRejectedLastMove.log");
+
+      Rp::System<1,CPT> system;
+      initSystem1D(system,
+          "McSimulator{ seed 1234 McMoveManager{\n"
+          " RealMove{ probability 1.0 sigma 1.0 }\n"
+          " }\n"
+          " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 } }");
+      Rp::McSimulator<1,CPT>& simulator
+          = dynamic_cast< Rp::McSimulator<1,CPT>& >(system.simulator());
+      system.simulate(3);
+      Rp::McMove<1,CPT>& move = simulator.mcMoveManager()[0];
+      TEST_ASSERT(move.nAttempt() == 3);
+      TEST_ASSERT(move.nAccept() == 0);
+      TEST_ASSERT(hasCurrentCFields(system));
+   }
+
 };
 
 TEST_BEGIN(McSimulatorTest)
@@ -274,6 +337,7 @@ TEST_ADD(McSimulatorTest, testMcSimulateTriblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateBdMoveDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateShiftDiblocks)
 TEST_ADD(McSimulatorTest, testBdMoveFailedLastStep)
+TEST_ADD(McSimulatorTest, testRejectedLastMove)
 TEST_END(McSimulatorTest)
 
 #endif
