@@ -901,7 +901,7 @@ class Matrix:
 #
 def getValue(v):
 
-   if (v.isdigit() == True) or (v[0] == '-' and v[1:].isdigit() == True):
+   if (v.isdigit() == True) or (v[0] in '+-' and v[1:].isdigit() == True):
       val = int(v)
    else:
       try:
