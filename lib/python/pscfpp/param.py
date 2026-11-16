@@ -558,7 +558,7 @@ class Parameter:
          s += depth + f'{self.label:40}'
          s += f'{self.val[0]:>6}'
          for i in range(1, len(self.val)):
-            s += f'{self.val[i]:>7}'
+            s += ' ' + f'{self.val[i]:>6}'
          s += '\n'
       else:
          s += depth + f'{self.label:20}'
