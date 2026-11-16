@@ -480,9 +480,20 @@ namespace Pscf
       //    1. Solve matrix equation: U coeffs_ = v
       //    2. Flip the sign of the resulting coeffs_ vector
 
+      // If U is exactly singular, the coefficients are not defined: for
+      // one basis vector the division gives inf or NaN, and otherwise
+      // LuSolver::solve calls the GSL error handler, which aborts. This
+      // can happen after an update that increased the residual by many
+      // orders of magnitude, when two residual basis vectors are equal
+      // or cancel exactly in floating point arithmetic.
+      bool isSingular = false;
       if (nBasis_ == 1) {
          // Solve explicitly for coefficient
-         coeffs_[0] = v_[0] / U_(0,0);
+         if (U_(0,0) > 0.0) {
+            coeffs_[0] = v_[0] / U_(0,0);
+         } else {
+            isSingular = true;
+         }
       } else
       if (nBasis_ < maxHist_) {
 
@@ -504,11 +515,15 @@ namespace Pscf
          LuSolver solver;
          solver.allocate(nBasis_);
          solver.computeLU(tempU);
-         solver.solve(tempv, tempcoeffs);
+         if (solver.isSingular()) {
+            isSingular = true;
+         } else {
+            solver.solve(tempv, tempcoeffs);
 
-         // Transfer solution to full-sized member variable
-         for (int i = 0; i < nBasis_; ++i) {
-            coeffs_[i] = tempcoeffs[i];
+            // Transfer solution to full-sized member variable
+            for (int i = 0; i < nBasis_; ++i) {
+               coeffs_[i] = tempcoeffs[i];
+            }
          }
 
       } else
@@ -517,8 +532,25 @@ namespace Pscf
          LuSolver solver;
          solver.allocate(maxHist_);
          solver.computeLU(U_);
-         solver.solve(v_, coeffs_);
+         if (solver.isSingular()) {
+            isSingular = true;
+         } else {
+            solver.solve(v_, coeffs_);
+         }
 
+      }
+
+      // If U is singular, discard the basis vectors, so that this
+      // iteration takes a simple mixing step from the current state, as
+      // the first iteration does. Later iterations build a new basis.
+      if (isSingular) {
+         stateBasis_.clear();
+         residualBasis_.clear();
+         nBasis_ = 0;
+         if (verbose_ > 0) {
+            Log::file() << " Singular AM matrix: basis vectors cleared\n";
+         }
+         return;
       }
 
       // Flip the sign of the coeffs_ vector (see comment above)
