@@ -46,7 +46,7 @@ namespace Pscf {
    {
       out << "  " << block.monomerId_;
       out << "  ";
-      out.setf(std::ios::scientific);
+      out.setf(std::ios::scientific, std::ios::floatfield);
       out.width(16);
       out.precision(8);
       out << block.size_;

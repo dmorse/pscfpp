@@ -108,7 +108,7 @@ namespace Pscf
    std::ostream& operator << (std::ostream& out, const RealVec<D, T> &vector)
    {
       for (int i = 0; i < D; ++i) {
-         out.setf(std::ios::scientific);
+         out.setf(std::ios::scientific, std::ios::floatfield);
          out.width(RealVec<D>::Width);
          out.precision(RealVec<D>::Precision);
          out << vector[i];
