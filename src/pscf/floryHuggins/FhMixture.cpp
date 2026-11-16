@@ -14,6 +14,16 @@ namespace Pscf {
 
    using namespace Util;
 
+   namespace {
+
+      /*
+      * Is a species with chemical potential mu absent (mu = -infinity)?
+      */
+      bool isAbsent(double mu)
+      {  return std::isinf(mu) && mu < 0.0; }
+
+   }
+
    /*
    * Constructor.
    */
@@ -206,14 +216,19 @@ namespace Pscf {
       }
 
       // Initial composition: the guess (except for the dependent
-      // species, see below)
+      // species, see below). A species with mu = -infinity (a closed
+      // species with phi = 0) is absent: its phi stays 0.
       validate();
       int m1, m2; // molecule type indices
       for (m1 = 0; m1 < nMolecule_; ++m1) {
-         UTIL_CHECK(phi[m1] > 0.0);
-         UTIL_CHECK(phi[m1] <= 1.0);
-         phi_[m1] = phi[m1];
-         lnPhi_[m1] = log(phi[m1]);
+         if (isAbsent(mu[m1])) {
+            phi_[m1] = 0.0;
+         } else {
+            UTIL_CHECK(phi[m1] > 0.0);
+            UTIL_CHECK(phi[m1] <= 1.0);
+            phi_[m1] = phi[m1];
+         }
+         lnPhi_[m1] = log(phi_[m1]);
       }
       hasComposition_ = true;
 
@@ -240,6 +255,9 @@ namespace Pscf {
          int mMax = 0;
          for (m1 = 1; m1 < nMolecule_; ++m1) {
             if (phi_[m1] > phi_[mMax]) mMax = m1;
+         }
+         if (isAbsent(mu[mMax])) {
+            UTIL_THROW("No species is present (all mu = -infinity)");
          }
          if (mMax != mDep) {
             mDep = mMax;
@@ -325,6 +343,17 @@ namespace Pscf {
             jacobian_(mDep, m2) -= phi_[m2]/phi_[mDep];
          }
 
+         // An absent species has a unit row and a zero residual, so
+         // that its ln(phi) = -infinity does not change
+         for (m1 = 0; m1 < nMolecule_; ++m1) {
+            if (isAbsent(mu[m1])) {
+               for (m2 = 0; m2 < nMolecule_; ++m2) {
+                  jacobian_(m1, m2) = 0.0;
+               }
+               jacobian_(m1, m1) = 1.0;
+            }
+         }
+
          // Newton Raphson update of phi and xi fields. The Jacobian is
          // singular if the composition is at a spinodal of the mixture,
          // e.g., at the critical point of a symmetric blend.
@@ -404,6 +433,7 @@ namespace Pscf {
       double dxi = 0.0;
       double sum = 0.0;
       for (int i=0; i < nMolecule_; ++i) {
+         if (isAbsent(mu[i])) continue;
          dxi += mu[i] - mu_[i];
          sum += molecules_[i].size();
       }
@@ -418,6 +448,10 @@ namespace Pscf {
    {
       error = 0.0;
       for (int i = 0; i < nMolecule_; ++i) {
+         if (isAbsent(mu[i])) {
+            residual_[i] = 0.0;
+            continue;
+         }
          residual_[i] = mu_[i] - mu[i];
          if (std::abs(residual_[i]) > error) {
             error = std::abs(residual_[i]);
@@ -449,7 +483,10 @@ namespace Pscf {
       pressure_ = -fHelmholtz_;
       for (int i = 0; i < nMolecule_; ++i) {
          size = molecules_[i].size();
-         pressure_ += phi_[i]*mu_[i]/size;
+         // phi*mu tends to 0 as phi tends to 0 (mu ~ log(phi))
+         if (phi_[i] > 0.0) {
+            pressure_ += phi_[i]*mu_[i]/size;
+         }
       }
 
    }

@@ -102,6 +102,10 @@ namespace Pscf {
       /**
       * Compute composition from chemical potentials.
       *
+      * A species with mu = -infinity (a closed species with phi = 0)
+      * is absent: its volume fraction is set to zero. The guess of
+      * every other species must be positive.
+      *
       * \param interaction  excess free energy model (input)
       * \param mu  target molecular chemical potentials (input)
       * \param phi guess of molecular volume fractions (input)
