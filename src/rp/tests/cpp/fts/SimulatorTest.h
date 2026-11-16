@@ -362,6 +362,36 @@ public:
       }
    }
 
+   /*
+   * A ramp parameter written with operator << must be read back by
+   * operator >> (as for the parameter file block of a LinearRamp
+   * written by writeParam).
+   */
+   void testRampParameterIo()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testRampParameterIo.log");
+
+      char const * parameters[] = {"v_monomer 0.1", "chi 0 1 0.1"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::RampParameter<1,CPT> original, copy;
+         std::istringstream in(parameters[i]);
+         in >> original;
+         std::ostringstream out;
+         out << original;
+         std::istringstream reread(out.str());
+         bool success = true;
+         try {
+            reread >> copy;
+         } catch (Exception& e) {
+            success = false;
+         }
+         TEST_ASSERT(success);
+         TEST_ASSERT(copy.type() == original.type());
+         TEST_ASSERT(std::abs(copy.change() - original.change()) < 1.0E-15);
+      }
+   }
+
    void testLinearRampPhiMixed()
    {
       printMethod(TEST_FUNC);
@@ -426,6 +456,7 @@ TEST_ADD(SimulatorTest, testComputeHamiltonian)
 TEST_ADD(SimulatorTest, testDc)
 TEST_ADD(SimulatorTest, testHamiltonianSmallPhi)
 TEST_ADD(SimulatorTest, testRampParameterIdRange)
+TEST_ADD(SimulatorTest, testRampParameterIo)
 TEST_ADD(SimulatorTest, testLinearRampPhiMixed)
 TEST_ADD(SimulatorTest, testLinearRampPhiSum)
 TEST_END(SimulatorTest)
