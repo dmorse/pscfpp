@@ -241,9 +241,17 @@ namespace Pscf {
       DMatrix<double> jacobian_;
 
       /**
-      * Array of old molecular volume fractions, for use in computePhi.
+      * Array of logarithms of the molecular volume fractions.
+      *
+      * Chemical potentials are computed from these values, which
+      * remain finite where a volume fraction in phi_ underflows to 0.
       */
-      DArray<double> phiOld_;
+      DArray<double> lnPhi_;
+
+      /**
+      * Array of old values of lnPhi_, for use in computePhi.
+      */
+      DArray<double> lnPhiOld_;
 
       /**
       * Free energy per monomer / kT.
