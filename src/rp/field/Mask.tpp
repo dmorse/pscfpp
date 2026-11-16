@@ -272,6 +272,12 @@ namespace Rp {
       // Preconditions
       UTIL_CHECK(readUnitCellPtr_);
 
+      // Reading can change the field values before it fails: the mask
+      // is invalid until the read is complete
+      hasData_ = false;
+      isSymmetric_ = false;
+      signal().notify();
+
       // If necessary, allocate rgrid_ fields
       if (!isAllocatedRGrid_) {
          Mesh<D> const & mesh = fieldIo().mesh();
