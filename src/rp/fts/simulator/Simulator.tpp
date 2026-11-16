@@ -41,6 +41,10 @@
 
 #include <gsl/gsl_eigen.h>
 
+#include <algorithm>
+#include <cmath>
+#include <limits>
+
 namespace Pscf {
 namespace Rp {
 
@@ -405,20 +409,38 @@ namespace Rp {
       // - A has exactly one zero eigenvalue, with eigenvector (1,...,1)
       // - All other eigenvalues must be negative.
 
-      // Copy eigenpairs with non-null eigenvalues
+      // Identify the null eigenvector as the one closest to (1,...,1),
+      // and compare eigenvalues with a tolerance relative to the largest
+      // magnitude, since all eigenvalues scale with chi.
       int iNull = -1;  // index for null eigenvalue
-      int nNull =  0;  // number of null eigenvalue
-      k = 0;           // re-ordered index for non-null eigenvalue
       double val;
+      double maxOverlap = -1.0;
+      double maxEval = 0.0;
       for (i = 0; i < nMonomer; ++i) {
          val = gsl_vector_get(Avals, i);
-         if (std::abs(val) < 1.0E-8) {
-            ++nNull;
+         UTIL_CHECK(std::isfinite(val));
+         maxEval = std::max(maxEval, std::abs(val));
+         double sum = 0.0;
+         for (j = 0; j < nMonomer; ++j) {
+            sum += gsl_matrix_get(Avecs, j, i);
+         }
+         double overlap = sum*sum/double(nMonomer);
+         if (overlap > maxOverlap) {
+            maxOverlap = overlap;
             iNull = i;
-            UTIL_CHECK(nNull <= 1);
-         } else {
+         }
+      }
+      const double tolerance = 64.0*double(nMonomer)
+                     *std::numeric_limits<double>::epsilon()*maxEval;
+      UTIL_CHECK(std::abs(gsl_vector_get(Avals, iNull)) <= tolerance);
+
+      // Copy eigenpairs with non-null eigenvalues
+      k = 0;           // re-ordered index for non-null eigenvalue
+      for (i = 0; i < nMonomer; ++i) {
+         val = gsl_vector_get(Avals, i);
+         if (i != iNull) {
             chiEvals_[k] = val;
-            UTIL_CHECK(val < 0.0);
+            UTIL_CHECK(val < -tolerance);
             for (j = 0; j < nMonomer; ++j) {
                chiEvecs_(k, j) = gsl_matrix_get(Avecs, j, i);
             }
@@ -430,8 +452,7 @@ namespace Rp {
             ++k;
          }
       }
-      UTIL_CHECK(nNull == 1);
-      UTIL_CHECK(iNull >= 0);
+      UTIL_CHECK(k == nMonomer - 1);
 
       // Set eigenpair with zero eigenvalue
       i = nMonomer - 1;
