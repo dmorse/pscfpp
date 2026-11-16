@@ -406,6 +406,30 @@ public:
       TEST_ASSERT(system.simulator().iTotalStep() == 0);
    }
 
+   /*
+   * A run in which every MC move is rejected (RealMove with sigma 1),
+   * so also the last one: the system must be left with the c fields of
+   * its final w fields.
+   */
+   void testRejectedLastMove()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testRejectedLastMove.log");
+
+      Rp::System<1,CPT> system;
+      initSystem1D(system,
+          "McSimulator{ seed 1234 McMoveManager{"
+          " RealMove{ probability 1.0 sigma 1.0 } }"
+          " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 } }");
+      Rp::McSimulator<1,CPT>& simulator
+          = dynamic_cast< Rp::McSimulator<1,CPT>& >(system.simulator());
+      system.simulate(3);
+      Rp::McMove<1,CPT>& move = simulator.mcMoveManager()[0];
+      TEST_ASSERT(move.nAttempt() == 3);
+      TEST_ASSERT(move.nAccept() == 0);
+      TEST_ASSERT(hasCurrentCFields(system));
+   }
+
 };
 
 TEST_BEGIN(McSimulatorTest)
@@ -417,6 +441,7 @@ TEST_ADD(McSimulatorTest, testBdMoveFailedLastStep)
 TEST_ADD(McSimulatorTest, testRampState)
 TEST_ADD(McSimulatorTest, testRampFailedMoves)
 TEST_ADD(McSimulatorTest, testInitialCompressionFailure)
+TEST_ADD(McSimulatorTest, testRejectedLastMove)
 TEST_END(McSimulatorTest)
 
 #endif
