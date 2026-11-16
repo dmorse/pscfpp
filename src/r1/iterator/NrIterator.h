@@ -138,6 +138,9 @@ namespace R1
       /**
       * Compute and return norm of a residual vector.
       *
+      * The norm is the maximum absolute value of the elements, or
+      * infinity if an element is not finite.
+      *
       * \param residual vector of residuals (errors) (input)
       */
       double residualNorm(Array<double> const & residual) const;
