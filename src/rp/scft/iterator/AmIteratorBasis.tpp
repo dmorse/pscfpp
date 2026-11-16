@@ -434,6 +434,35 @@ namespace Rp {
       }
    }
 
+   /*
+   * Norm of the reference vector of the relNorm error.
+   */
+   template <int D, class T>
+   double AmIteratorBasis<D,T>::relNormReference(VectorT const & state)
+   {
+      const int nMonomer = system().mixture().nMonomer();
+      const int nBasis = system().domain().basis().nBasis();
+
+      // Interaction field chi c
+      double sumSq = 0.0;
+      for (int k = 0; k < nBasis; ++k) {
+         for (int i = 0; i < nMonomer; ++i) {
+            double q = 0.0;
+            for (int j = 0; j < nMonomer; ++j) {
+               q += interaction_.chi(i,j) * system().c().basis(j)[k];
+            }
+            sumSq += q*q;
+         }
+      }
+
+      // Scaled flexible unit cell parameters, as in the state vector
+      for (int k = nMonomer*nBasis; k < state.capacity(); ++k) {
+         sumSq += state[k]*state[k];
+      }
+
+      return std::sqrt(sumSq);
+   }
+
 }
 }
 #endif
