@@ -6,6 +6,7 @@
 */
 
 #include "SolventSpecies.h"
+#include <util/misc/Log.h>
 
 namespace Pscf {
 
@@ -27,6 +28,10 @@ namespace Pscf {
    {
       ParamComposite::read<int>(in, "monomerId", monomerId_);
       ParamComposite::read<double>(in, "size", size_);
+      if (!(size_ > 0.0)) {
+         Log::file() << "size = " << size_ << "\n";
+         UTIL_THROW("Solvent size must be positive");
+      }
 
       // Read phi or mu (but not both) and set ensemble accordingly
       Species<WT>::readParameters(in);
