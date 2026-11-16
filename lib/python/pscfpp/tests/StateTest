@@ -1,6 +1,34 @@
 #!/usr/bin/env python3
 
 from pscfpp.output import *
+import io
+
+# Read a Thermo object from text
+def readThermo(text):
+   t = Thermo()
+   t.read(io.StringIO(text))
+   return t
+
+thermo = '''
+fHelmholtz     2.54644869605e+00
+pressure       2.99799018142e+00
+
+fIdeal         5.48458514628e-01
+fInter         1.99799018143e+00
+
+polymers:
+             phi                 mu
+    0   1.00000000000e+00   5.54443887748e+00
+
+cellParams:
+    0   1.54046133979e+00
+    1   1.60000000000e+00
+
+'''
+
+# Two thermo blocks written to the same file: the first one is read
+t = readThermo(thermo + thermo.replace('2.546', '1.234'))
+assert t.fHelmholtz == 2.54644869605
 
 s = State('in/state')
 
