@@ -380,6 +380,54 @@ public:
       TEST_ASSERT(eq(mixture.pressure(), -f));
    }
 
+   /*
+   * setComposition set the phi of the last species to 1 minus the sum
+   * of the others. A dilute last species was lost (phi = 1e-20 became
+   * 0, and mu = -infinity), and the check that the others add up to at
+   * most 1 failed for an absent last species when the others add up
+   * to 1 plus a rounding error.
+   */
+   void testSetCompositionDilute() {
+      printMethod(TEST_FUNC);
+
+      FhMixture mixture;
+      std::ifstream in;
+      openInputFile("in/FhMixtureBlend", in);
+      mixture.readParam(in);
+      in.close();
+
+      FhInteraction interaction;
+      interaction.setNMonomer(2);
+      interaction.setChi(0, 1, 2.0);
+
+      DArray<double> phi;
+      phi.allocate(2);
+      phi[0] = 1.0 - 1.0E-20;
+      phi[1] = 1.0E-20;
+      mixture.setComposition(phi);
+      TEST_ASSERT(mixture.phi(1) == 1.0E-20);
+      mixture.computeMu(interaction, 0.0);
+      TEST_ASSERT(eq(mixture.mu(1), std::log(1.0E-20) + 2.0));
+
+      FhMixture mixture3;
+      openInputFile("in/FhMixtureBlend3", in);
+      mixture3.readParam(in);
+      in.close();
+      interaction.setChi(0, 1, 1.5);
+
+      // phi3[0] + phi3[1] = 1 + 2.2e-16
+      DArray<double> phi3;
+      phi3.allocate(3);
+      phi3[0] = 0.5;
+      phi3[1] = std::nextafter(0.5, 1.0);
+      phi3[2] = 0.0;
+      mixture3.setComposition(phi3);
+      TEST_ASSERT(mixture3.phi(2) == 0.0);
+      mixture3.computeMu(interaction, 0.0);
+      mixture3.computeFreeEnergy(interaction);
+      TEST_ASSERT(eq(mixture3.fHelmholtz(), std::log(0.5) - 1.0 + 1.5/4.0));
+   }
+
 };
 
 TEST_BEGIN(FhMixtureTest)
@@ -392,6 +440,7 @@ TEST_ADD(FhMixtureTest, testComputePhiSingular)
 TEST_ADD(FhMixtureTest, testComputePhiDilute)
 TEST_ADD(FhMixtureTest, testComputePhiDiluteLast)
 TEST_ADD(FhMixtureTest, testComputePhiAbsent)
+TEST_ADD(FhMixtureTest, testSetCompositionDilute)
 TEST_END(FhMixtureTest)
 
 #endif
