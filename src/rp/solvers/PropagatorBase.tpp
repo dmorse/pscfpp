@@ -191,8 +191,9 @@ namespace Rp {
 
       Q = 0.0;
       if (PolymerModel::isBead() && PropagatorTmplT::isHeadEnd()) {
-         // Compute average of q for last bead of partner
-         Q = Reduce::sum(partner().q(ns_-2)); 
+         // Compute average product of head slice and q for last bead
+         // of partner (a head slice set by solve(head) need not be 1)
+         Q = Reduce::innerProduct(head(), partner().q(ns_-2));
       } else {
          // Compute average product of head slice and partner tail slice
          Q = Reduce::innerProduct(head(), partner().tail()); 
