@@ -19,10 +19,14 @@
 #include <pscf/field/cuda/RField.h>
 #include <pscf/field/cuda/RFieldComparison.h>
 
+#include <pscf/backend/cuda/VecOp.h>
+
 #include <util/misc/FileMaster.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -765,6 +769,76 @@ public:
       TEST_ASSERT(std::abs(cellDiff) < 1.0E-7);
    }
 
+   /*
+   * Blends of A and B homopolymers with a strong external field on A
+   * at three of eight grid points, in closed, mixed and open ensembles.
+   * With errorType relNorm, a converged state must be incompressible to
+   * the accuracy set by epsilon. (An error relative to the norm of the
+   * w fields, which contain the external field, was reported as
+   * converged at states whose total concentration differed from 1 by
+   * about 1e-3.)
+   */
+   void testIterate1D_relNorm_wall()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_relNorm_wall.log");
+
+      std::string species[3][2] = {{"phi 0.5", "phi 0.5"},
+                                   {"phi 0.5", "mu -0.1931471805599453"},
+                                   {"mu -0.1931471805599453",
+                                    "mu -0.1931471805599453"}};
+      for (int k = 0; k < 3; ++k) {
+         Rp::System<1,CUT> system;
+         std::istringstream in(
+            "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 2"
+            " Polymer{ type linear nBlock 1 blocks[ 0 1.0 ] "
+            + species[k][0] + " }"
+            " Polymer{ type linear nBlock 1 blocks[ 1 1.0 ] "
+            + species[k][1] + " } ds 0.01 }"
+            " Interaction{ chi( 1 0 1.0 ) }"
+            " Domain{ mesh 8 lattice lamellar groupName P_-1 }"
+            " AmIteratorGrid{ epsilon 1.0e-6 maxItr 100 maxHist 5"
+            " isFlexible 0 } }\n");
+         system.readParam(in);
+         FSArray<double, 6> parameters;
+         parameters.append(4.0);
+         system.setUnitCell(parameters);
+
+         // External field H = 1000 on A at grid points 3-5, w = h + 0.5
+         DArray< RField<1,CUT> > h, w;
+         h.allocate(2);
+         w.allocate(2);
+         DArray<cudaReal> hHost, wHost;
+         hHost.allocate(8);
+         wHost.allocate(8);
+         for (int m = 0; m < 2; ++m) {
+            for (int i = 0; i < 8; ++i) {
+               hHost[i] = (m == 0 && i >= 3 && i <= 5) ? 1.0E3 : 0.0;
+               wHost[i] = hHost[i] + 0.5;
+            }
+            h[m].allocate(system.domain().mesh().dimensions());
+            w[m].allocate(system.domain().mesh().dimensions());
+            VecOp::eqV(h[m], hHost);
+            VecOp::eqV(w[m], wHost);
+         }
+         system.h().setRGrid(h, false);
+         system.w().setRGrid(w, false);
+
+         TEST_ASSERT(system.iterate() == 0);
+         DArray<cudaReal> c0, c1;
+         c0.allocate(8);
+         c1.allocate(8);
+         VecOp::eqV(c0, system.c().rgrid(0));
+         VecOp::eqV(c1, system.c().rgrid(1));
+         double maxError = 0.0;
+         for (int i = 0; i < 8; ++i) {
+            double error = std::abs(c0[i] + c1[i] - 1.0);
+            if (error > maxError) maxError = error;
+         }
+         TEST_ASSERT(maxError < 1.0E-5);
+      }
+   }
+
 };
 
 TEST_BEGIN(AmIteratorGridTest)
@@ -781,6 +855,7 @@ TEST_ADD(AmIteratorGridTest, testIterate2D_hex_bead_flex)
 TEST_ADD(AmIteratorGridTest, testIterate3D_bcc_rigid)
 TEST_ADD(AmIteratorGridTest, testIterate3D_bcc_flex)
 TEST_ADD(AmIteratorGridTest, testIterate3D_altGyr_flex)
+TEST_ADD(AmIteratorGridTest, testIterate1D_relNorm_wall)
 TEST_END(AmIteratorGridTest)
 
 #endif
