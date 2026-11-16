@@ -190,6 +190,17 @@ namespace Rp {
       */
       void setup(int nStep);
 
+      /**
+      * Recompute the state after the ramp has changed parameters.
+      *
+      * Compresses the fields again if the ramp requires it (see
+      * Ramp::needsCompression), otherwise only computes the c fields
+      * if they are missing. Then recomputes the field components, the
+      * derivatives used by the next step, and the Hamiltonian for the
+      * new parameter values, as setup() does for the initial state.
+      */
+      void updateState();
+
    };
 
    // Inline member functions

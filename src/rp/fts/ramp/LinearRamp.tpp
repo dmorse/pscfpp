@@ -80,6 +80,26 @@ namespace Rp {
       }
    }
 
+   /*
+   * Must the fields be compressed again after a change of parameters?
+   */
+   template <int D, class T>
+   bool LinearRamp<D,T>::needsCompression() const
+   {
+      // The c fields for given w fields, and hence the compression, do
+      // not depend on chi, on the perturbation parameter lambda or on
+      // the monomer reference volume. (setParameters() discards data
+      // that the compressors derive from vMonomer.)
+      for (int i = 0; i < nParameter_; ++i) {
+         std::string const type = parameters_[i].type();
+         if (type != "chi" && type != "lambda_pert"
+             && type != "vMonomer") {
+            return true;
+         }
+      }
+      return false;
+   }
+
    template <int D, class T>
    void LinearRamp<D,T>::output()
    {

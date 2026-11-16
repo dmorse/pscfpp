@@ -74,6 +74,14 @@ namespace Rp {
       void setParameters(int iStep) override;
       
       /**
+      * Must the fields be compressed again after a change of parameters?
+      *
+      * Returns false iff every parameter is of type chi, lambda_pert or
+      * v_monomer.
+      */
+      bool needsCompression() const override;
+
+      /**
       * Output information at the end of a simulation.
       */
       void output() override;

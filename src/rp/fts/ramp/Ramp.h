@@ -71,6 +71,25 @@ namespace Rp {
       virtual void setParameters(int iStep) = 0;
       
       /**
+      * Must the fields be compressed again after a change of parameters?
+      *
+      * Return false only if no parameter varied by this ramp changes
+      * the solution of the modified diffusion equation for given w
+      * fields (as for chi, the perturbation parameter lambda and the
+      * monomer reference volume). The simulators then keep the
+      * compressed w fields and their c fields after a ramp step, and
+      * only recompute the quantities that depend on the changed
+      * parameters (field components, functional derivatives and
+      * Hamiltonian). Otherwise they compress the fields again. Data
+      * that a compressor derives from the changed parameters must be
+      * discarded by Compressor::clearCache() in either case.
+      *
+      * The default implementation returns true.
+      */
+      virtual bool needsCompression() const
+      {  return true; }
+
+      /**
       * Output any results at the end of the simulation.
       *
       * The default implementation is an empty function.
