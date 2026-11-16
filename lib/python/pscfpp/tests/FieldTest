@@ -69,6 +69,12 @@ assert readText(str(f)).data == f.data
 f = readText(header + ''.join(f'{i} 0.5 0.0 0.5 0.0\n' for i in range(3)))
 assert f.type == 'kgrid'
 
+# A second read replaces the contents of the first
+f = Field('in/w.bf')
+with open('in/w.bf') as file:
+   f.read(file)
+assert len(f.data) == f.header['N_basis']
+
 f = Field('in/w.bf')
 
 print(f) 

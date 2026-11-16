@@ -61,6 +61,11 @@ u = readThermo(str(t))
 assert u.homogeneous == t.homogeneous
 assert u.homogeneousSpecies == t.homogeneousSpecies
 
+# A second read replaces all values of the first, e.g. the stress
+t = readThermo(thermo + 'stress:\n    0   1.0e-03\n    1   2.0e-03\n\n')
+t.read(io.StringIO(thermo))
+assert t.stress == None
+
 s = State('in/state')
 
 print(s)
