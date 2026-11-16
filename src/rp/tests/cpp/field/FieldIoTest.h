@@ -21,11 +21,14 @@
 #include <pscf/interaction/Interaction.h>
 
 #include <util/containers/DArray.h>
+#include <util/containers/FSArray.h>
 #include <util/misc/FileMaster.h>
+#include <util/misc/Exception.h>
 #include <util/format/Dbl.h>
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace Util;
 using namespace Pscf;
@@ -82,6 +85,16 @@ public:
       openInputFile(filename, in);
       domain.readRGridFieldHeader(in, nMonomer_);
       in.close();
+   }
+
+   /*
+   * Initialize Rp::Domain<D,CPT> system from the text of a file header.
+   */
+   template <int D>
+   void readHeaderString(std::string header, Rp::Domain<D,CPT>& domain)
+   {
+      std::istringstream in(header);
+      domain.readRGridFieldHeader(in, nMonomer_);
    }
 
    // Allocate an array of fields in symmetry adapated format
@@ -458,6 +471,59 @@ public:
       }
       TEST_ASSERT(comparison.rmsDiff() < 1.0E-11);
 
+   }
+
+   /*
+   * Read a basis file whose header gives a unit cell other than the one
+   * used to construct the basis, as a file written after a flexible-cell
+   * iteration does. The basis is that of a rhombic cell with gamma =
+   * 1.9, the file header gives gamma = 2.1, and the minimum images of
+   * some waves differ between these cells.
+   */
+   void testBasisIo_cellChange()
+   {
+      printMethod(TEST_FUNC);
+
+      Rp::Domain<2,CPT> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeaderString("format 1 0 dim 2 crystal_system rhombic "
+                       "N_cell_param 2 cell_param 1.7 1.9 "
+                       "group_name p_2 N_monomer 2 mesh 12 12", domain);
+      int nBasis = domain.basis().nBasis();
+
+      DArray< DArray<double> > bf_0;
+      allocateFields(nMonomer_, nBasis, bf_0);
+      for (int i = 0; i < nMonomer_; ++i) {
+         for (int j = 0; j < nBasis; ++j) {
+            bf_0[i][j] = 1.0/double(1 + i + j);
+         }
+      }
+
+      // Write bf_0 with the header cell gamma = 2.1, read it back
+      UnitCell<2> unitCell;
+      FSArray<double, 6> parameters;
+      parameters.append(1.7);
+      parameters.append(2.1);
+      unitCell.set(UnitCell<2>::Rhombic, parameters);
+      std::stringstream file;
+      domain.fieldIo().writeFieldsBasis(file, bf_0, unitCell);
+      DArray< DArray<double> > bf_1;
+      allocateFields(nMonomer_, nBasis, bf_1);
+      bool thrown = false;
+      try {
+         domain.fieldIo().readFieldsBasis(file, bf_1, unitCell);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+
+      BFieldComparison comparison;
+      comparison.compare(bf_0, bf_1);
+      if (verbose() > 0) {
+         std::cout  << std::endl;
+         std::cout  << Dbl(comparison.maxDiff(),21,13) << std::endl;
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
    void testRGridIo_lam() 
@@ -1135,6 +1201,7 @@ TEST_ADD(FieldIoTest, testBasisIo_bcc)
 TEST_ADD(FieldIoTest, testBasisIo_c15_1)
 TEST_ADD(FieldIoTest, testBasisIo_altG)
 TEST_ADD(FieldIoTest, testBasisIo_altG_fort)
+TEST_ADD(FieldIoTest, testBasisIo_cellChange)
 TEST_ADD(FieldIoTest, testRGridIo_lam)
 TEST_ADD(FieldIoTest, testRGridIo_hex)
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
