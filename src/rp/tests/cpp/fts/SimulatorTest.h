@@ -15,6 +15,7 @@
 #include <rp/field/WFields.h>
 #include <rp/fts/brownian/BdSimulator.h>
 #include <rp/fts/ramp/LinearRamp.h>
+#include <rp/fts/ramp/RampParameter.h>
 
 #include <pscf/field/cpp/RFieldComparison.h>
 #include <pscf/crystal/BFieldComparison.h>
@@ -156,6 +157,36 @@ public:
       }
       for (int i = 0; i < 2; ++i) {
          TEST_ASSERT(std::abs(simulator.chiEval(i) + 80.0) < 1.0E-10);
+      }
+   }
+
+   /*
+   * A ramp parameter written with operator << must be read back by
+   * operator >> (as for the parameter file block of a LinearRamp
+   * written by writeParam).
+   */
+   void testRampParameterIo()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testRampParameterIo.log");
+
+      char const * parameters[] = {"v_monomer 0.1", "chi 0 1 0.1"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::RampParameter<1,CPT> original, copy;
+         std::istringstream in(parameters[i]);
+         in >> original;
+         std::ostringstream out;
+         out << original;
+         std::istringstream reread(out.str());
+         bool success = true;
+         try {
+            reread >> copy;
+         } catch (Exception& e) {
+            success = false;
+         }
+         TEST_ASSERT(success);
+         TEST_ASSERT(copy.type() == original.type());
+         TEST_ASSERT(std::abs(copy.change() - original.change()) < 1.0E-15);
       }
    }
 
@@ -343,6 +374,7 @@ public:
 TEST_BEGIN(SimulatorTest)
 TEST_ADD(SimulatorTest, testAnalyzeChi)
 TEST_ADD(SimulatorTest, testSimultaneousChiRamp)
+TEST_ADD(SimulatorTest, testRampParameterIo)
 TEST_ADD(SimulatorTest, testSaddlePointField)
 TEST_ADD(SimulatorTest, testComputeHamiltonian)
 TEST_ADD(SimulatorTest, testDc)
