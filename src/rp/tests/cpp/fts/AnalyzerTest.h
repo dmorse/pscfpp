@@ -550,6 +550,36 @@ public:
       }
    }
 
+   /*
+   * ANALYZE with the input prefix out/ must find a trajectory file
+   * named relative to the prefix, and still accept a name that already
+   * includes the prefix.
+   */
+   void testAnalyzeInputPrefix()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testAnalyzeInputPrefix.log");
+
+      writeTrajectory("out/trajectory1D.rf", 1);
+      std::string names[2] = {"trajectory1D.rf",
+                              filePrefix() + "out/trajectory1D.rf"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::System<1,CPT> system;
+         initSystem1D(system, "BdSimulator{ AnalyzerManager{"
+            " HamiltonianAnalyzer{ interval 1"
+            " outputFileName out/analyzePrefix } } }");
+         system.fileMaster().setInputPrefix(filePrefix() + "out/");
+         bool success = true;
+         try {
+            system.simulator().analyze(0, 1, "RGridTrajectoryReader",
+                                       names[i]);
+         } catch (Exception& e) {
+            success = false;
+         }
+         TEST_ASSERT(success);
+      }
+   }
+
 };
 
 TEST_BEGIN(AnalyzerTest)
@@ -560,6 +590,7 @@ TEST_ADD(AnalyzerTest, testAnalyzeFirstFrame)
 TEST_ADD(AnalyzerTest, testAnalyzeBaseInterval)
 TEST_ADD(AnalyzerTest, testAnalyzeNoSample)
 TEST_ADD(AnalyzerTest, testTimersWithoutCompressor)
+TEST_ADD(AnalyzerTest, testAnalyzeInputPrefix)
 TEST_END(AnalyzerTest)
 
 #endif
