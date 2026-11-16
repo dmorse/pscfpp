@@ -28,7 +28,7 @@ namespace R1 {
 
       /*
       * Return the number of contour points of a block, an odd number
-      * close to length/ds + 1.
+      * ns >= 3 close to length/ds + 1.
       *
       * The number of contour steps is computed in double precision. An
       * Exception is thrown if the result would not fit an int.
@@ -46,6 +46,9 @@ namespace R1 {
          int ns = int(nStep) + 1;
          if (ns%2 == 0) {
             ns += 1;
+         }
+         if (ns < 3) {
+            ns = 3;  // ns = 1 (block shorter than ds/2) would give ds = inf
          }
          return ns;
       }
