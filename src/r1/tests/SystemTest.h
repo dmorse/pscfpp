@@ -14,6 +14,7 @@
 #include <r1/sweep/SweepParameter.h>
 
 #include <util/misc/Exception.h>
+#include <util/archives/MemoryOArchive.h>
 
 #include <fstream>
 #include <sstream>
@@ -678,6 +679,23 @@ public:
       }
    }
 
+   /*
+   * SweepParameter::serialize took the archive by value, so that a
+   * SweepParameter could not be written to a MemoryOArchive (whose copy
+   * constructor is private).
+   */
+   void testSweepParameterSerialize()
+   {
+      printMethod(TEST_FUNC);
+
+      SweepParameter p;
+      MemoryOArchive oArchive;
+      oArchive.allocate(64);
+      oArchive << p;
+      TEST_ASSERT(oArchive.cursor() == oArchive.begin()
+                  + sizeof(unsigned int) + sizeof(int) + 2*sizeof(double));
+   }
+
    void testLinearSweepPhiMixed()
    {
       printMethod(TEST_FUNC);
@@ -751,6 +769,7 @@ TEST_ADD(SystemTest, testReadCommandsInput)
 TEST_ADD(SystemTest, testComputeThermo)
 TEST_ADD(SystemTest, testReadCommandsStatus)
 TEST_ADD(SystemTest, testSweepParameterIdRange)
+TEST_ADD(SystemTest, testSweepParameterSerialize)
 TEST_ADD(SystemTest, testLinearSweepPhiMixed)
 TEST_ADD(SystemTest, testLinearSweepPhiSum)
 TEST_END(SystemTest)
