@@ -134,6 +134,10 @@ namespace Rp {
       // Compute eigenvector components of the reference field.
       void computeWcReference();
 
+      // Set default epsilon values and the eigenvector components of
+      // the reference field for the current chi matrix.
+      void updateReference();
+
    };
 
    // Explicit instantiation declarations
