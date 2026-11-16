@@ -1,0 +1,12 @@
+FhMixture{
+   nMonomer  2
+   nMolecule 2
+   FhMolecule{
+      nClump  1
+      clumps  0   1.0
+   }
+   FhMolecule{
+      nClump  1
+      clumps  1   1.0
+   }
+}
