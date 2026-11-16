@@ -29,6 +29,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
+#include <map>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -524,6 +527,178 @@ public:
          std::cout  << Dbl(comparison.maxDiff(),21,13) << std::endl;
       }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+   }
+
+   /*
+   * Write basis fields for a rectangular cell and space group "group"
+   * on a mesh of n0 x n0 points, read the file on a mesh of n1 x n1
+   * points, and compare the Fourier components of all waves that both
+   * meshes represent without aliasing.
+   */
+   void checkBasisIoMesh(std::string group, int n0, int n1)
+   {
+      std::string header = "format 1 0 dim 2 crystal_system rectangular "
+                           "N_cell_param 2 cell_param 1.7 2.1 group_name "
+                           + group + " N_monomer 2 mesh ";
+      Rp::Domain<2,CPT> domain0, domain1;
+      domain0.setFileMaster(fileMaster_);
+      domain1.setFileMaster(fileMaster_);
+      readHeaderString(header + std::to_string(n0) + " "
+                       + std::to_string(n0), domain0);
+      readHeaderString(header + std::to_string(n1) + " "
+                       + std::to_string(n1), domain1);
+
+      DArray< DArray<double> > bf_0, bf_1;
+      allocateFields(nMonomer_, domain0.basis().nBasis(), bf_0);
+      allocateFields(nMonomer_, domain1.basis().nBasis(), bf_1);
+      for (int i = 0; i < nMonomer_; ++i) {
+         for (int j = 0; j < domain0.basis().nBasis(); ++j) {
+            bf_0[i][j] = 1.0/double(1 + i + j);
+         }
+      }
+
+      // Write bf_0 on mesh n0, read it into bf_1 on mesh n1
+      std::stringstream file;
+      domain0.fieldIo().writeFieldsBasis(file, bf_0, domain0.unitCell());
+      bool thrown = false;
+      try {
+         domain1.fieldIo().readFieldsBasis(file, bf_1, domain1.unitCell());
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+
+      // Compare components of waves k with |k_i| < n/2 for n = min(n0,n1)
+      DArray< RFieldDft<2,CPT> > kf_0, kf_1;
+      allocateFields(nMonomer_, domain0.mesh().dimensions(), kf_0);
+      allocateFields(nMonomer_, domain1.mesh().dimensions(), kf_1);
+      domain0.fieldIo().convertBasisToKGrid(bf_0, kf_0);
+      domain1.fieldIo().convertBasisToKGrid(bf_1, kf_1);
+      Mesh<2> dftMesh0(kf_0[0].dftDimensions());
+      Mesh<2> dftMesh1(kf_1[0].dftDimensions());
+      int n = (n0 < n1) ? n0 : n1;
+      IntVec<2> k, p0, p1;
+      int r0, r1;
+      double maxDiff = 0.0;
+      for (k[0] = 1 - n/2; k[0] < n/2; ++k[0]) {
+         for (k[1] = 0; k[1] < n/2; ++k[1]) {
+            p0 = k;
+            p1 = k;
+            if (k[0] < 0) {
+               p0[0] += n0;
+               p1[0] += n1;
+            }
+            r0 = dftMesh0.rank(p0);
+            r1 = dftMesh1.rank(p1);
+            for (int i = 0; i < nMonomer_; ++i) {
+               for (int j = 0; j < 2; ++j) {
+                  double diff = std::abs(kf_0[i][r0][j] - kf_1[i][r1][j]);
+                  if (diff > maxDiff) maxDiff = diff;
+               }
+            }
+         }
+      }
+      if (verbose() > 0) {
+         std::cout << std::endl << group << " " << n0 << " -> " << n1
+                   << " : " << Dbl(maxDiff, 21, 13) << std::endl;
+      }
+      TEST_ASSERT(maxDiff < 1.0E-10);
+   }
+
+   /*
+   * A line of a basis file for star, with field components 0.5.
+   */
+   std::string starLine(Basis<2>::Star const & star)
+   {
+      std::ostringstream out;
+      out << "0.5 0.5 " << star.waveMin[0] << " " << star.waveMin[1]
+          << " " << star.size;
+      return out.str();
+   }
+
+   /*
+   * Write basis fields of a domain, replace some of the data lines,
+   * read the result, and return true iff the read throws.
+   *
+   * \param lines  new data lines, indexed by line number
+   */
+   bool readReplacedBasisThrows(Rp::Domain<2,CPT>& domain,
+                                std::map<int, std::string> const & lines)
+   {
+      DArray< DArray<double> > bf;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf);
+      for (int i = 0; i < nMonomer_; ++i) {
+         for (int j = 0; j < domain.basis().nBasis(); ++j) {
+            bf[i][j] = 1.0/double(1 + i + j);
+         }
+      }
+      std::stringstream file;
+      domain.fieldIo().writeFieldsBasis(file, bf, domain.unitCell());
+      std::string line, text;
+      int iData = -3;  // index of a data line, -3 in the header
+      while (std::getline(file, line)) {
+         if (line.find("N_basis") != std::string::npos) iData = -2;
+         if (lines.count(iData)) line = lines.at(iData);
+         text += line + "\n";
+         if (iData > -3) ++iData;
+      }
+      std::istringstream in(text);
+      try {
+         domain.fieldIo().readFieldsBasis(in, bf, domain.unitCell());
+      } catch (Exception& e) {
+         return true;
+      }
+      return false;
+   }
+
+   /*
+   * Read basis files written for another mesh.
+   */
+   void testBasisIo_mesh()
+   {
+      printMethod(TEST_FUNC);
+
+      // Group without inversion, file for a coarser mesh
+      checkBasisIoMesh("p_m", 12, 16);
+
+      // File for a finer mesh, with more lines than the basis has stars
+      checkBasisIoMesh("p_m", 16, 12);
+
+      // File for a finer mesh, with stars cancelled on the coarser mesh
+      checkBasisIoMesh("p_g", 16, 12);
+
+      // A file for the same mesh must still be rejected if it lists a
+      // cancelled star, or an open star that is not followed by its
+      // partner (in the next line, or at the end of the file)
+      Rp::Domain<2,CPT> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeaderString("format 1 0 dim 2 crystal_system rectangular "
+                       "N_cell_param 2 cell_param 1.7 2.1 group_name p_g "
+                       "N_monomer 2 mesh 12 12", domain);
+      Basis<2> const & basis = domain.basis();
+      int nb = basis.nBasis();
+      int ic = -1, io = -1, il = -1;  // cancelled, first open, last star
+      for (int is = 0; is < basis.nStar(); ++is) {
+         if (basis.star(is).cancel) {
+            if (ic < 0) ic = is;
+         } else {
+            if (io < 0 && basis.star(is).invertFlag == 1) io = is;
+            il = is;
+         }
+      }
+      TEST_ASSERT(ic >= 0 && io >= 0);
+      std::map<int, std::string> lines;
+      lines[0] = starLine(basis.star(ic));
+      TEST_ASSERT(readReplacedBasisThrows(domain, lines));
+      lines.clear();
+      lines[basis.star(io).basisId + 1] = starLine(basis.star(0));
+      TEST_ASSERT(readReplacedBasisThrows(domain, lines));
+      lines.clear();
+      if (basis.star(il).invertFlag == -1) {
+         lines[nb - 2] = starLine(basis.star(0));
+      }
+      lines[nb - 1] = starLine(basis.star(io));
+      TEST_ASSERT(readReplacedBasisThrows(domain, lines));
    }
 
    void testRGridIo_lam() 
@@ -1202,6 +1377,7 @@ TEST_ADD(FieldIoTest, testBasisIo_c15_1)
 TEST_ADD(FieldIoTest, testBasisIo_altG)
 TEST_ADD(FieldIoTest, testBasisIo_altG_fort)
 TEST_ADD(FieldIoTest, testBasisIo_cellChange)
+TEST_ADD(FieldIoTest, testBasisIo_mesh)
 TEST_ADD(FieldIoTest, testRGridIo_lam)
 TEST_ADD(FieldIoTest, testRGridIo_hex)
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
