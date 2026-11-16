@@ -7,6 +7,7 @@
 #include <rp/system/System.h>
 #include <rp/field/Domain.h>
 #include <rp/scft/ScftThermo.h>
+#include <rp/scft/iterator/Iterator.h>
 #include <rp/solvers/MixtureModifier.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/solvers/Polymer.h>
@@ -1299,6 +1300,44 @@ public:
       }
    }
 
+   /*
+   * Solves before and after changes in the set of flexible unit cell
+   * parameters, which change the number of elements of the state
+   * vector, for both SCFT AM iterators. The AM vectors must be
+   * reallocated, also for a continuation.
+   */
+   void testIterate1D_lam_setFlexibleParams()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_setFlexibleParams.log");
+
+      std::string paramFileNames[2] = {"in/diblock/lam/param.flex",
+                                       "in/diblock/lam/param.flex_grid"};
+      for (int k = 0; k < 2; ++k) {
+         Rp::System<1,CPT> system;
+         setupSystem(system, paramFileNames[k]);
+         system.w().readBasis("in/diblock/lam/omega.in");
+         TEST_ASSERT(system.iterate() == 0);
+
+         // Rigid unit cell, then flexible unit cell again
+         FSArray<bool,6> flexibleParams;
+         flexibleParams.append(false);
+         for (int j = 0; j < 2; ++j) {
+            system.iterator().setFlexibleParams(flexibleParams);
+            bool thrown = false;
+            int error = 1;
+            try {
+               error = system.iterate(true);
+            } catch (Exception& e) {
+               thrown = true;
+            }
+            TEST_ASSERT(!thrown);
+            TEST_ASSERT(!error);
+            flexibleParams[0] = true;
+         }
+      }
+   }
+
 };
 
 TEST_BEGIN(AmIteratorBasisTest)
@@ -1324,6 +1363,7 @@ TEST_ADD(AmIteratorBasisTest, testIterate3D_c15_1_flex)
 TEST_ADD(AmIteratorBasisTest, testIterateWithMaskAndH)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_nan)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_relNorm_wall)
+TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_setFlexibleParams)
 TEST_END(AmIteratorBasisTest)
 
 #endif
