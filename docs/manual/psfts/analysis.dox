@@ -58,6 +58,10 @@ does not change during the simulation.  The format of the header of a
 trajectory file is similar to the header of an r-grid field file such
 as that used to read an initial field configuration. The format of each
 frame is similar to that of the data section of an r-grid field file.
+In a simulation with a ramp that changes the unit cell, each frame
+whose unit cell differs from that given in the header also contains a
+line with the label cell_param and the unit cell parameters of that
+frame, which the ANALYZE command uses for that frame.
 
 The current version of PSCF only supports one file format for
 trajectory files, which is written by a class named TrajectoryWriter

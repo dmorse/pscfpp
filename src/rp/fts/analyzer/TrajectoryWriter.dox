@@ -47,7 +47,12 @@ The resulting file contains a header section followed by a sequence
 of frames. The header has the same format as the header of an r-grid 
 field file that holds a single field configuration. Each frame in a
 trajectory file uses the same format as that used for the data 
-section of an r-grid field file. 
+section of an r-grid field file. If the unit cell of a frame differs
+from that of the header, as in a simulation with a LinearRamp that
+changes a cell parameter, the line that gives the step index of the
+frame is followed by a line that contains the label cell_param and
+the unit cell parameters of that frame. The ANALYZE command then sets
+the unit cell of each frame.
 
 */
 
