@@ -14,12 +14,17 @@
 
 #include <rp/fts/compressor/Compressor.h>
 #include <pscf/field/cpp/RFieldComparison.h>
+#include <pscf/backend/cpp/VecOp.h>
+#include <pscf/backend/cpp/Reduce.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/containers/FSArray.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -156,6 +161,63 @@ public:
 
    }
 
+   /*
+   * Noise of a BdMove with a single LM step (nStep = 1).
+   *
+   * The step adds eta - mobility*dc to the exchange component wc(0),
+   * where eta, the sum of the "old" and "new" noise, must have the
+   * Euler-Maruyama variance 2*mobility*meshSize/vSystem at each grid
+   * point. Without the larger variance of the first old noise, eta
+   * would have half of this variance.
+   */
+   void testBdMoveFirstStepNoise()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testBdMoveFirstStepNoise.log");
+
+      Rp::System<3,CPT> system;
+      initSystem(system, "in/param_system_disordered");
+      Rp::McSimulator<3,CPT> simulator(system);
+      std::istringstream in(
+         "McSimulator{ seed 1784106389"
+         " McMoveManager{\n"
+         " BdMove{ probability 1.0 mobility 1.0e-4"
+         " nStep 1 }\n"
+         " }\n"
+         " LrAmCompressor{ epsilon 1.0e-6 maxItr 200 maxHist 30 } }\n");
+      simulator.readParam(in);
+      const double mobility = 1.0E-4;
+
+      // Compressed initial state, its wc(0) and force dc(0)
+      system.w().readRGrid("in/w_dis.rf");
+      simulator.analyzeChi();
+      TEST_ASSERT(simulator.compressor().compress() == 0);
+      simulator.computeWc();
+      simulator.computeCc();
+      simulator.computeDc();
+
+      // eta = wc(0) after - wc(0) before + mobility*dc(0) before
+      RField<3,CPT> eta;
+      eta.allocate(system.domain().mesh().dimensions());
+      VecOp::eqV(eta, simulator.wc(0));
+      VecOp::mulEqS(eta, -1.0);
+      VecOp::addEqVc(eta, simulator.dc(0), mobility);
+      simulator.simulate(1);
+      simulator.computeWc();
+      VecOp::addEqV(eta, simulator.wc(0));
+
+      // Variance of eta over the 16^3 grid points (relative standard
+      // error of the estimate about 0.022)
+      const int meshSize = system.domain().mesh().size();
+      const double vSystem = system.domain().unitCell().volume();
+      double mean = Reduce::sum(eta)/double(meshSize);
+      double variance = Reduce::sumSq(eta)/double(meshSize) - mean*mean;
+      double expected = 2.0*mobility*double(meshSize)/vSystem;
+      Log::file() << "Variance of eta / expected value = "
+                  << variance/expected << std::endl;
+      TEST_ASSERT(std::abs(variance/expected - 1.0) < 0.1);
+   }
+
    void testMcSimulateShiftDiblocks()
    {
       printMethod(TEST_FUNC);
@@ -272,6 +334,7 @@ TEST_BEGIN(McSimulatorTest)
 TEST_ADD(McSimulatorTest, testMcSimulateDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateTriblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateBdMoveDiblocks)
+TEST_ADD(McSimulatorTest, testBdMoveFirstStepNoise)
 TEST_ADD(McSimulatorTest, testMcSimulateShiftDiblocks)
 TEST_ADD(McSimulatorTest, testBdMoveFailedLastStep)
 TEST_END(McSimulatorTest)
