@@ -206,7 +206,8 @@ class RecordEditor:
       newlines = []
       for line in lines:
          record = Record(line)
-         if (self.filter == record.fields[self.filterField]):
+         if (self.filterField < record.size and
+             self.filter == record.fields[self.filterField]):
             record.fields[self.dataField] = self.new
          newlines.append(str(record) + '\n')
       if (not self.isTest):
