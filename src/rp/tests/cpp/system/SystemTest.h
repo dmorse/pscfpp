@@ -29,6 +29,7 @@
 #include <util/misc/Exception.h>
 #include <util/tests/LogFileUnitTest.h>
 
+#include <cstdio>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
@@ -399,6 +400,52 @@ public:
       }
       TEST_ASSERT(comparison3.maxDiff() < 1.0E-10);
 
+   }
+
+   /*
+   * Run a command with invalid arguments, which must throw an Exception
+   * without creating the output file.
+   */
+   template <int D>
+   void checkInvalidCommand(Rp::System<D,CPT>& system,
+                            std::string command,
+                            std::string outFileName)
+   {
+      std::string path = filePrefix() + outFileName;
+      std::remove(path.c_str());
+      std::istringstream in(command + "\nFINISH\n");
+      bool thrown = false;
+      try {
+         system.readCommands(in);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+      std::ifstream file(path.c_str());
+      TEST_ASSERT(!file.is_open());
+   }
+
+   void testExpandReplicateArguments1D_lam()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testExpandReplicateArguments1D_lam.log");
+
+      Rp::System<1,CPT> system;
+      initSystem(system,
+                 "in/diblock/lam/param.flex",
+                 "in/diblock/lam/omega.in");
+      system.w().writeRGrid("out/testExpandReplicate_w.rf");
+      std::string in = "out/testExpandReplicate_w.rf ";
+
+      checkInvalidCommand(system, "EXPAND_RGRID_DIMENSION " + in
+                          + "out/testExpand_d4.rf 4 8 8 8",
+                          "out/testExpand_d4.rf");
+      checkInvalidCommand(system, "EXPAND_RGRID_DIMENSION " + in
+                          + "out/testExpand_n0.rf 3 8 0",
+                          "out/testExpand_n0.rf");
+      checkInvalidCommand(system, "REPLICATE_UNIT_CELL " + in
+                          + "out/testReplicate_0.rf 0",
+                          "out/testReplicate_0.rf");
    }
 
    void testConversion2D_hex()
@@ -835,6 +882,7 @@ TEST_ADD(SystemTest, testConstructor1D)
 TEST_ADD(SystemTest, testScftThermoFileMaster)
 TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion1D_lam)
+TEST_ADD(SystemTest, testExpandReplicateArguments1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
 TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
