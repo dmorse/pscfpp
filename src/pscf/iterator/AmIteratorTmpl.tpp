@@ -494,11 +494,10 @@ namespace Pscf
          } else {
             isSingular = true;
          }
-      } else
-      if (nBasis_ < maxHist_) {
+      } else {
 
-         // Create temporary smaller version of U_, v_, coeffs_ .
-         // This avoids reallocation of U_ with each iteration.
+         // Create temporary versions of U_, v_, coeffs_ with nBasis_
+         // elements. This avoids reallocation of U_ with each iteration.
          DMatrix<double> tempU;
          DArray<double> tempv, tempcoeffs;
          tempU.allocate(nBasis_,nBasis_);
@@ -518,24 +517,25 @@ namespace Pscf
          if (solver.isSingular()) {
             isSingular = true;
          } else {
+
+            // Multiply the diagonal elements of U by 1 + 1.0E-12, and
+            // decompose again. In a long history, the residual basis
+            // vectors can become nearly linearly dependent, so that the
+            // coefficients are dominated by rounding errors. This small
+            // relative increase (a Tikhonov regularization relative to
+            // the norm of each basis vector) bounds the condition number
+            // of the matrix of normalized inner products of the basis
+            // vectors by about 1.0E+12 times nBasis_.
+            for (int i = 0; i < nBasis_; ++i) {
+               tempU(i,i) *= 1.0 + 1.0E-12;
+            }
+            solver.computeLU(tempU);
             solver.solve(tempv, tempcoeffs);
 
             // Transfer solution to full-sized member variable
             for (int i = 0; i < nBasis_; ++i) {
                coeffs_[i] = tempcoeffs[i];
             }
-         }
-
-      } else
-      if (nBasis_ == maxHist_) {
-
-         LuSolver solver;
-         solver.allocate(maxHist_);
-         solver.computeLU(U_);
-         if (solver.isSingular()) {
-            isSingular = true;
-         } else {
-            solver.solve(v_, coeffs_);
          }
 
       }
