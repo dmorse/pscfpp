@@ -400,6 +400,47 @@ public:
    }
 
    /*
+   * Summary log file of a linear sweep.
+   */
+   void testSweepSummary()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestSweepSummary.log");
+
+      // Sweep of chi from 30 to 31 in two steps
+      System sys;
+      std::istringstream in(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 1"
+         " nSolvent 0 Polymer{ type linear nBlock 2"
+         " blocks 0 0.5 1 0.5 phi 1.0 } ds 0.01 }"
+         " Interaction{ chi( 0 1 30.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 0.8 nx 101 }"
+         " NrIterator{ epsilon 1.0e-7 }"
+         " LinearSweep{ ns 2 baseFileName out/SystemTestSweepSummary_"
+         " nParameter 1 parameters[ chi 0 1 1.0 ] } }\n");
+      sys.readParam(in);
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      std::istringstream commands("READ_W in/planar.w\nSWEEP\nFINISH\n");
+      sys.readCommands(commands);
+
+      // One line per converged state: index, s, fHelmholtz, pressure
+      std::ifstream file;
+      openInputFile("out/SystemTestSweepSummary_log", file);
+      int index;
+      double s, f, p;
+      int n = 0;
+      while (file >> index >> s >> f >> p) {
+         TEST_ASSERT(index == n);
+         TEST_ASSERT(eq(s, 0.5*double(n)));
+         ++n;
+      }
+      TEST_ASSERT(n == 3);
+      TEST_ASSERT(fabs(f/sys.fHelmholtz() - 1.0) < 1.0E-6);
+   }
+
+   /*
    * Test NR iterator on input field generated within function.
    */
    void testIteratorPlanarNr1()
@@ -727,6 +768,7 @@ TEST_ADD(SystemTest, testIteratorPlanarBrLambda)
 TEST_ADD(SystemTest, testReadFieldsIncomplete)
 TEST_ADD(SystemTest, testWriteCAfterReadW)
 TEST_ADD(SystemTest, testRemeshExtendInvalid)
+TEST_ADD(SystemTest, testSweepSummary)
 TEST_ADD(SystemTest, testIteratorPlanarNr1)
 TEST_ADD(SystemTest, testIteratorPlanarNr2)
 TEST_ADD(SystemTest, testIteratorPlanarNr3)
