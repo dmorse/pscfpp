@@ -24,4 +24,15 @@ assert repr(D) == str(D)
 assert D.xml().count('<File') == 1 and D.xml().count('<Directory') == 2
 assert D.diff(Directory(os.path.join(d.name, 'sub'))) != ''
 
+# Path of a file relative to the directory of another file
+assert relative_path('a/b/input', 'a/c/output') == '../c/output'
+assert relative_path('./a/input', 'a/output') == 'output'
+assert relative_path('a/input', 'a//output') == 'output'
+try:
+   relative_path('/x/a/input', '/y/output')
+   message = ''
+except Exception as e:
+   message = str(e)
+assert 'common directory' in message
+
 d.cleanup()
