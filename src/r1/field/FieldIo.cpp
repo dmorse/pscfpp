@@ -261,6 +261,10 @@ namespace R1
    void FieldIo::remesh(DArray<Field> const & fields, int nx, 
                         std::string const & filename)
    {
+      // Check nx before an output file is opened
+      if (nx < 2) {
+         UTIL_THROW("Number of grid points nx < 2 in remesh");
+      }
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
       remesh(fields, nx, out);
@@ -273,6 +277,10 @@ namespace R1
    void 
    FieldIo::remesh(DArray<Field> const & fields, int nx, std::ostream& out)
    {
+      if (nx < 2) {
+         UTIL_THROW("Number of grid points nx < 2 in remesh");
+      }
+
       // Query and check dimensions of fields array
       int nm = fields.capacity();
       UTIL_CHECK(nm > 0);
@@ -334,6 +342,10 @@ namespace R1
    FieldIo::extend(DArray<Field> const & fields, int m, 
                    std::string const & filename)
    {
+      // Check m before an output file is opened
+      if (m < 0) {
+         UTIL_THROW("Number of added grid points m < 0 in extend");
+      }
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
       extend(fields, m, out);
@@ -346,6 +358,10 @@ namespace R1
    void 
    FieldIo::extend(DArray<Field> const & fields, int m, std::ostream& out)
    {
+      if (m < 0) {
+         UTIL_THROW("Number of added grid points m < 0 in extend");
+      }
+
       // Query and check dimensions of fields array
       int nm = fields.capacity();
       UTIL_CHECK(nm > 0);
