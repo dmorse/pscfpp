@@ -24,6 +24,7 @@
 
 #include <util/misc/FileMaster.h>
 #include <util/param/Factory.h>
+#include <util/param/Label.h>
 #include <util/containers/FSArray.h>
 #include <util/tests/LogFileUnitTest.h>
 
@@ -632,6 +633,44 @@ public:
       TEST_ASSERT(std::abs(variance/expected - 1.0) < 0.1);
    }
 
+   /*
+   * Does reading an McSimulator with a BdMove of the given nStep
+   * throw an Exception?
+   */
+   bool bdMoveReadThrows(std::string const & nStep)
+   {
+      Rp::System<1,CPT> system;
+      initSystem1D(system, "");
+      Rp::McSimulator<1,CPT> simulator(system);
+      std::istringstream in(
+         "McSimulator{ seed 1234"
+         " McMoveManager{ BdMove{ probability 1.0 mobility 1.0e-4"
+         " nStep " + nStep + " } }"
+         " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 } }\n");
+      bool thrown = false;
+      try {
+         simulator.readParam(in);
+      } catch (Exception& e) {
+         Label::clear();
+         thrown = true;
+      }
+      return thrown;
+   }
+
+   /*
+   * The number nStep of BD steps per BdMove must be a positive integer.
+   */
+   void testBdMoveNStep()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testBdMoveNStep.log");
+
+      TEST_ASSERT(bdMoveReadThrows("2.5"));
+      TEST_ASSERT(bdMoveReadThrows("0"));
+      TEST_ASSERT(bdMoveReadThrows("-3"));
+      TEST_ASSERT(!bdMoveReadThrows("3"));
+   }
+
 };
 
 TEST_BEGIN(McSimulatorTest)
@@ -646,6 +685,7 @@ TEST_ADD(McSimulatorTest, testInitialCompressionFailure)
 TEST_ADD(McSimulatorTest, testRejectedLastMove)
 TEST_ADD(McSimulatorTest, testBdMoveFirstStepNoise)
 TEST_ADD(McSimulatorTest, testBdMoveFailedStepNoise)
+TEST_ADD(McSimulatorTest, testBdMoveNStep)
 TEST_END(McSimulatorTest)
 
 #endif
