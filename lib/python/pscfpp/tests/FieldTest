@@ -61,6 +61,14 @@ for text, values, nColumn in [(blockc, {'nx': 3, 'n_block': 2, 'n_solvent': 1}, 
       assert [len(row) for row in h.data] == [nColumn]*3
    assert g.data == f.data
 
+# The format of a mesh field file is given by its number of columns:
+# an r-grid file with integer values, and a k-grid file
+f = readText(header + '1 0\n1 0\n0 1\n0 1\n')
+assert f.type == 'rgrid'
+assert readText(str(f)).data == f.data
+f = readText(header + ''.join(f'{i} 0.5 0.0 0.5 0.0\n' for i in range(3)))
+assert f.type == 'kgrid'
+
 f = Field('in/w.bf')
 
 print(f) 
