@@ -61,7 +61,7 @@ during such a ramp.
 The initial value of each parameter that is varied by a LinearRamp is
 equal to the value that would have been used in the simulation if the
 Ramp block were absent. This value is usually known from the values of
-rameters defined earlier in the parameter file. In the case of unit
+parameters defined earlier in the parameter file. In the case of unit
 cell parameters, it may instead be set to values given in the header
 of a field file that contains the initial field configuration, which
 must be read before beginning a simulation.  The final value at the
