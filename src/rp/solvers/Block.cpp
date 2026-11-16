@@ -22,11 +22,44 @@
 
 #include <pscf/solvers/BlockTmpl.tpp>
 
+#include <climits>
+#include <cmath>
+#include <sstream>
+
 namespace Pscf {
 namespace Rp {
 
    // Namespaces from which names may be used without qualification
    using namespace Util;
+
+   namespace {
+
+      /*
+      * Return the number of contour points of a thread block.
+      *
+      * Returns 2m + 1, in which m is the integer nearest to
+      * length/(2 ds), or 1 if that integer is 0. The integer is computed
+      * in double precision, and an Exception is thrown if the result
+      * would not fit an int.
+      */
+      int threadNs(double length, double ds)
+      {
+         const double m = std::floor(length/(2.0*ds) + 0.5);
+         // The negated comparison is also true for NaN
+         if (!(m < 0.5*double(INT_MAX))) {
+            std::ostringstream msg;
+            msg << "Contour step ds = " << ds
+                << " too small for block length " << length;
+            UTIL_THROW(msg.str().c_str());
+         }
+         int tempNs = int(m);
+         if (tempNs == 0) {
+            tempNs = 1;                     // ensure ns >= 3
+         }
+         return 2*tempNs + 1;
+      }
+
+   }
 
    /*
    * Constructor.
@@ -122,12 +155,7 @@ namespace Rp {
          // Set contour length discretization for this block
          const double length = Edge::length();
          UTIL_CHECK(length > 0.0);
-         int tempNs;
-         tempNs = floor(length / (2.0 *ds) + 0.5);
-         if (tempNs == 0) {
-            tempNs = 1;                     // ensure ns_ >= 3
-         }
-         ns_ = 2*tempNs + 1;
+         ns_ = threadNs(length, ds);
          ds_ = length/double(ns_-1);
       } else 
       if (PolymerModel::isBead()) {
@@ -159,11 +187,7 @@ namespace Rp {
          // Reset contour length discretization
          UTIL_CHECK(dsTarget_ > 0);
          const double length = Edge::length();
-         int tempNs = floor( length / (2.0 *dsTarget_) + 0.5 );
-         if (tempNs == 0) {
-            tempNs = 1;
-         }
-         ns_ = 2*tempNs + 1;
+         ns_ = threadNs(length, dsTarget_);
          ds_ = length / double(ns_-1);
 
          // Reallocate propagators if ns_ has changed
