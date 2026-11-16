@@ -681,6 +681,7 @@ public:
 };
 
 TEST_BEGIN(PolymerCorrelationTest)
+TEST_ADD(PolymerCorrelationTest, testDefaultConstructor)
 TEST_ADD(PolymerCorrelationTest, testConstructor)
 TEST_ADD(PolymerCorrelationTest, testReadParamHomoPolymerThread)
 TEST_ADD(PolymerCorrelationTest, testReadParamDiblockThread)
