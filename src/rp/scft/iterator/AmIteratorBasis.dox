@@ -119,7 +119,8 @@ parameters. The meaning of the various parameters are described below:
     <td> scaleStress* </td>
     <td> Constant factor by which stress components are multiplied in
          the definition of the residual attempted if isFlexible is
-         true (10.0 by default). </td>
+         true (10.0 by default). Must be nonzero if isFlexible is
+         true. </td>
   </tr>
   <tr>
     <td> lambda* </td>

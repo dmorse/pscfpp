@@ -104,6 +104,12 @@ namespace Rp {
       scaleStress_ = 10.0; // Default value
       ParamComposite::readOptional(in, "scaleStress", scaleStress_);
 
+      // The stress residuals are multiplied by scaleStress, and the
+      // unit cell parameters are recovered by dividing by it
+      if (Iterator<D,T>::isFlexible_ && scaleStress_ == 0.0) {
+         UTIL_THROW("scaleStress must be nonzero if isFlexible is true");
+      }
+
       // Read optional mixing parameters (lambda, useLambdaRamp, and r)
       AmIterTmplT::readMixingParameters(in);
 
