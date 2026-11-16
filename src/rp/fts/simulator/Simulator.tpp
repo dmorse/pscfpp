@@ -445,6 +445,12 @@ namespace Rp {
          }
       }
 
+      // Free GSL objects
+      gsl_matrix_free(A);
+      gsl_vector_free(Avals);
+      gsl_matrix_free(Avecs);
+      gsl_eigen_symmv_free(work);
+
       // Normalize all eigenvectors so that the sum of squares = nMonomer
       double vec, norm, prefactor;
       for (i = 0;  i < nMonomer; ++i) {
