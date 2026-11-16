@@ -7,6 +7,8 @@
 #include <rp/system/System.h>
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/montecarlo/McSimulator.h>
+#include <rp/fts/montecarlo/McMove.h>
+#include <rp/fts/montecarlo/McMoveManager.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
@@ -20,6 +22,9 @@
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -100,6 +105,39 @@ public:
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
    }
 
+   /*
+   * Read a 1D diblock melt (16 grid points) with the given McSimulator
+   * block, and set w fields with a cosine exchange component of the
+   * given amplitude.
+   */
+   void initSystem1D(Rp::System<1,CPT>& system,
+                     std::string const & simulatorBlock,
+                     double amplitude = 1.0)
+   {
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } "
+         + simulatorBlock + " }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.5);
+      system.setUnitCell(parameters);
+      DArray< RField<1,CPT> > w;
+      allocateRGridFields(system, w);
+      for (int i = 0; i < 2; ++i) {
+         for (int k = 0; k < 16; ++k) {
+            w[i][k] = (i == 0) ? amplitude*std::cos(2.0*M_PI*k/16.0) : 0.0;
+         }
+      }
+      system.w().setRGrid(w);
+   }
+
    void testMcSimulateDiblocks()
    {
       printMethod(TEST_FUNC);
@@ -126,6 +164,60 @@ public:
       comparison.compare(rf_0, system.w().rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
 
+   }
+
+   /*
+   * MC moves that change the fields by almost nothing (RealMove with
+   * sigma 1e-7), under ramps of chi (no compression needed after a
+   * ramp step) and of a statistical segment length (the c fields of
+   * given w fields change). The stored Hamiltonian must follow the
+   * ramp, so that every move is accepted, and after the run the fields
+   * must be compressed for the final parameters.
+   */
+   void testRampState()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testMcRampState.log");
+
+      std::string ramps[2] = {"chi 0 1 6.0", "kuhn 0 0.2"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::System<1,CPT> system;
+         initSystem1D(system,
+             "McSimulator{ seed 1234 McMoveManager{\n"
+             " RealMove{ probability 1.0 sigma 1.0e-7 }\n"
+             " }\n"
+             " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 }"
+             " LinearRamp{ nParameter 1 parameters[ " + ramps[i]
+             + " ] } }");
+         Rp::McSimulator<1,CPT>& simulator
+             = dynamic_cast< Rp::McSimulator<1,CPT>& >(system.simulator());
+         system.simulate(10);
+
+         Rp::McMove<1,CPT>& move = simulator.mcMoveManager()[0];
+         TEST_ASSERT(move.nAttempt() == 10);
+         TEST_ASSERT(move.nAccept() == 10);
+
+         // The stored Hamiltonian is that of the final parameters
+         TEST_ASSERT(simulator.hasHamiltonian());
+         double hamiltonian = simulator.hamiltonian();
+         system.compute();
+         double maxResid = 0.0;
+         for (int k = 0; k < 16; ++k) {
+            double resid = system.c().rgrid(0)[k]
+                         + system.c().rgrid(1)[k] - 1.0;
+            if (std::abs(resid) > maxResid) maxResid = std::abs(resid);
+         }
+         simulator.clearData();
+         simulator.computeWc();
+         simulator.computeHamiltonian();
+         double hDiff = std::abs(simulator.hamiltonian() - hamiltonian);
+         if (verbose() > 0) {
+            std::cout << "\nmax |sum c - 1| = " << maxResid
+                      << ", H diff = " << hDiff;
+         }
+         TEST_ASSERT(maxResid < 1.0E-6);
+         TEST_ASSERT(hDiff < 1.0E-10*std::abs(hamiltonian));
+      }
    }
 
    void testMcSimulateBdMoveDiblocks()
@@ -270,6 +362,7 @@ public:
 
 TEST_BEGIN(McSimulatorTest)
 TEST_ADD(McSimulatorTest, testMcSimulateDiblocks)
+TEST_ADD(McSimulatorTest, testRampState)
 TEST_ADD(McSimulatorTest, testMcSimulateTriblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateBdMoveDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateShiftDiblocks)
