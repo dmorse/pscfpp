@@ -380,6 +380,29 @@ public:
       TEST_ASSERT(std::abs(chi - 12.0) < 1.0E-12);
    }
 
+   /*
+   * A simulation whose initial compression fails (maxItr = 1, from
+   * fields far from the saddle point) must stop with an Exception.
+   */
+   void testInitialCompressionFailure()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testInitialCompressionFailure.log");
+
+      Rp::System<1,CPT> system;
+      initSystem1D(system,
+          "BdSimulator{ seed 1234 LMBdStep{ mobility 0.001 }"
+          " LrAmCompressor{ epsilon 1.0e-8 maxItr 1 maxHist 20 } }");
+      bool thrown = false;
+      try {
+         system.simulate(2);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+      TEST_ASSERT(system.simulator().iTotalStep() == 0);
+   }
+
 };
 
 TEST_BEGIN(BdSimulatorTest)
@@ -392,6 +415,7 @@ TEST_ADD(BdSimulatorTest, testPredCorrBdStepTriblocks)
 TEST_ADD(BdSimulatorTest, testVMonomerRampLrCompressor)
 TEST_ADD(BdSimulatorTest, testRampState)
 TEST_ADD(BdSimulatorTest, testRampFailedSteps)
+TEST_ADD(BdSimulatorTest, testInitialCompressionFailure)
 TEST_END(BdSimulatorTest)
 
 #endif

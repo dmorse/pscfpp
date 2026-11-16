@@ -382,6 +382,30 @@ public:
       TEST_ASSERT(std::abs(chi - 12.0) < 1.0E-12);
    }
 
+   /*
+   * A simulation whose initial compression fails (maxItr = 1, from
+   * fields far from the saddle point) must stop with an Exception.
+   */
+   void testInitialCompressionFailure()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testMcInitialCompressionFailure.log");
+
+      Rp::System<1,CPT> system;
+      initSystem1D(system,
+          "McSimulator{ seed 1234 McMoveManager{"
+          " RealMove{ probability 1.0 sigma 0.1 } }"
+          " LrAmCompressor{ epsilon 1.0e-8 maxItr 1 maxHist 20 } }");
+      bool thrown = false;
+      try {
+         system.simulate(2);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+      TEST_ASSERT(system.simulator().iTotalStep() == 0);
+   }
+
 };
 
 TEST_BEGIN(McSimulatorTest)
@@ -392,6 +416,7 @@ TEST_ADD(McSimulatorTest, testMcSimulateShiftDiblocks)
 TEST_ADD(McSimulatorTest, testBdMoveFailedLastStep)
 TEST_ADD(McSimulatorTest, testRampState)
 TEST_ADD(McSimulatorTest, testRampFailedMoves)
+TEST_ADD(McSimulatorTest, testInitialCompressionFailure)
 TEST_END(McSimulatorTest)
 
 #endif
