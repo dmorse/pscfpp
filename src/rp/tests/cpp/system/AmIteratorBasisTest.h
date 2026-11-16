@@ -1338,6 +1338,36 @@ public:
       }
    }
 
+   /*
+   * A flexible unit cell with scaleStress 0 must be rejected, for both
+   * SCFT AM iterators.
+   */
+   void testReadParam_scaleStress()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testReadParam_scaleStress.log");
+
+      std::string iterators[2] = {"AmIteratorBasis", "AmIteratorGrid"};
+      for (int k = 0; k < 2; ++k) {
+         Rp::System<1,CPT> system;
+         std::istringstream in(
+            "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 1"
+            " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+            " phi 1.0 } ds 0.01 } Interaction{ chi( 1 0 15.0 ) }"
+            " Domain{ mesh 32 lattice lamellar groupName P_-1 } "
+            + iterators[k] + "{ epsilon 1.0e-8 isFlexible 1"
+            " scaleStress 0.0 } }\n");
+         bool thrown = false;
+         try {
+            system.readParam(in);
+         } catch (Exception& e) {
+            thrown = true;
+            Label::clear();
+         }
+         TEST_ASSERT(thrown);
+      }
+   }
+
 };
 
 TEST_BEGIN(AmIteratorBasisTest)
@@ -1364,6 +1394,7 @@ TEST_ADD(AmIteratorBasisTest, testIterateWithMaskAndH)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_nan)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_relNorm_wall)
 TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_setFlexibleParams)
+TEST_ADD(AmIteratorBasisTest, testReadParam_scaleStress)
 TEST_END(AmIteratorBasisTest)
 
 #endif
