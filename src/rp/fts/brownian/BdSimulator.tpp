@@ -320,27 +320,26 @@ namespace Rp {
       trajectoryReaderPtr->open(filename);
       trajectoryReaderPtr->readHeader();
 
-      // Main loop over trajectory frames
+      // Main loop over trajectory frames. A frame is read only if its
+      // index is at most max, so that the system is left with frame max
+      // and any frames after max are never read.
       Timer timer;
       timer.start();
-      bool hasFrame = trajectoryReaderPtr->readFrame();
+      iStep_ = 0;
+      while (iStep_ <= max && trajectoryReaderPtr->readFrame()) {
+         Simulator<D,T>::clearData();
 
-      for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
-         if (hasFrame) {
-            Simulator<D,T>::clearData();
-
-            // Initialize analyzers
-            if (iStep_ == min) {
-               setup(iStep_);
-            }
-
-            // Sample property values only for iStep >= min
-            if (iStep_ >= min) {
-               analyzerManager().sample(iStep_);
-            }
+         // Initialize analyzers
+         if (iStep_ == min) {
+            setup(iStep_);
          }
 
-         hasFrame = trajectoryReaderPtr->readFrame();
+         // Sample property values only for iStep >= min
+         if (iStep_ >= min) {
+            analyzerManager().sample(iStep_);
+         }
+
+         ++iStep_;
       }
       timer.stop();
       Log::file() << "end main loop" << std::endl;
