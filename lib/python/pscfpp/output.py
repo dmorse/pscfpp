@@ -234,8 +234,8 @@ class Thermo:
       hasPolymersBlock = False
       while line != '':
 
-         # Read free energy contributions (optional)
-         if line.startswith('fIdeal'):
+         # Read free energy contributions (each one optional)
+         if line.startswith(('fIdeal', 'fInter', 'fExt')):
             while line.strip() != '':
                l = line.split()
                if l[0] == 'fIdeal':
