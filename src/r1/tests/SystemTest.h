@@ -68,6 +68,37 @@ public:
       TEST_ASSERT(sys.domain().mode() == Planar);
    }
 
+   /*
+   * NrIterator for a homopolymer A and a solvent B, with a NaN in the
+   * field of B at one grid point, which makes the concentration of B
+   * NaN. A residual that is not finite must not be accepted as
+   * converged.
+   */
+   void testIteratorPlanarNrNan()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorPlanarNrNan.log");
+
+      std::istringstream in(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0"
+         " nPolymer 1 nSolvent 1"
+         " Polymer{ type linear nBlock 1 blocks 0 1.0 phi 0.5 }"
+         " Solvent{ monomerId 1 size 1.0 phi 0.5 }"
+         " ds 0.01 }"
+         " Interaction{ chi( 0 1 1.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 1.0 nx 11 }"
+         " NrIterator{ epsilon 1.0e-8 } }\n");
+      System sys;
+      sys.readParam(in);
+      int nx = sys.domain().nx();
+      for (int i = 0; i < nx; ++i) {
+         sys.wField(0)[i] = 0.0;
+         sys.wField(1)[i] = 0.0;
+      }
+      sys.wField(1)[nx/2] = std::nan("");
+      TEST_ASSERT(sys.iterator().solve() == 1);
+   }
+
    void testSolveMdePlanar()
    {
       printMethod(TEST_FUNC);
@@ -494,6 +525,7 @@ public:
 TEST_BEGIN(SystemTest)
 TEST_ADD(SystemTest, testConstructor)
 TEST_ADD(SystemTest, testReadParameters)
+TEST_ADD(SystemTest, testIteratorPlanarNrNan)
 TEST_ADD(SystemTest, testSolveMdePlanar)
 TEST_ADD(SystemTest, testSolveMdeSpherical)
 TEST_ADD(SystemTest, testIteratorPlanarNr1)
