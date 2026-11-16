@@ -87,6 +87,10 @@ with warnings.catch_warnings(record=True) as w:
 assert len(w) == 0
 assert readText(str(p)).Interaction.chi[1][0] == 17.0
 
+# Values of a parameter on one line that are wider than their columns
+p = readText('System{\n  Polymer{\n    blocks  0  0.3333333\n  }\n}\n')
+assert readText(str(p)).Polymer.blocks == [0, 0.3333333]
+
 p = Composite('in/param')
 
 print(p)
