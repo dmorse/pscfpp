@@ -8,6 +8,9 @@
 #include <rp/fts/simulator/Simulator.h>
 #include <rp/fts/brownian/BdSimulator.h>
 #include <rp/fts/analyzer/AnalyzerManager.h>
+#include <rp/fts/analyzer/BinaryChiDerivative.h>
+#include <rp/fts/perturbation/Perturbation.h>
+#include <rp/field/FieldIo.h>
 #include <rp/fts/trajectory/RGridTrajectoryReader.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
@@ -27,6 +30,22 @@
 
 using namespace Util;
 using namespace Pscf;
+
+/*
+* BinaryChiDerivative with a public compute function.
+*/
+class TestChiDerivative : public Rp::BinaryChiDerivative<1,CPT>
+{
+public:
+
+   TestChiDerivative(Rp::Simulator<1,CPT>& simulator,
+                     Rp::System<1,CPT>& system)
+    : Rp::BinaryChiDerivative<1,CPT>(simulator, system)
+   {}
+
+   using Rp::BinaryChiDerivative<1,CPT>::compute;
+
+};
 
 class AnalyzerTest : public LogFileUnitTest
 {
@@ -796,6 +815,71 @@ public:
       }
    }
 
+   /*
+   * Set chi of the 1D diblock melt (which has an Einstein crystal
+   * perturbation with the default epsilon = chi), and return the
+   * Hamiltonian of the current w fields.
+   */
+   double hamiltonianAtChi(Rp::System<1,CPT>& system, double chi)
+   {
+      Rp::Simulator<1,CPT>& simulator = system.simulator();
+      system.interaction().setChi(0, 1, chi);
+      simulator.analyzeChi();
+      simulator.perturbation().setup();
+      simulator.clearData();
+      simulator.computeWc();
+      simulator.computeHamiltonian();
+      return simulator.hamiltonian();
+   }
+
+   /*
+   * BinaryChiDerivative with an EinsteinCrystalPerturbation (lambda
+   * 0.25, default epsilon): the value must be the derivative of H with
+   * respect to chi at fixed w fields, computed here by central finite
+   * differences, plus the term G/(2 chi) of the normalization.
+   */
+   void testChiDerivativePerturbation()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testChiDerivativePerturbation.log");
+
+      // Reference field of the perturbation: half of the w fields
+      {
+         Rp::System<1,CPT> system;
+         initSystem1D(system, "");
+         DArray< RField<1,CPT> > w;
+         w.allocate(2);
+         for (int i = 0; i < 2; ++i) {
+            w[i].allocate(system.domain().mesh().dimensions());
+            for (int k = 0; k < 16; ++k) {
+               w[i][k] = 0.5*system.w().rgrid(i)[k];
+            }
+         }
+         system.domain().fieldIo().writeFieldsRGrid("out/chiDerivRef.rf",
+                                  w, system.domain().unitCell(), false);
+      }
+
+      Rp::System<1,CPT> system;
+      initSystem1D(system, "BdSimulator{ seed 1234"
+         " EinsteinCrystalPerturbation{ lambda 0.25"
+         " fieldFileName out/chiDerivRef.rf } }");
+      system.compute();
+
+      double chi = 10.0;
+      double delta = 1.0E-3;
+      double hPlus = hamiltonianAtChi(system, chi + delta);
+      double hMinus = hamiltonianAtChi(system, chi - delta);
+      hamiltonianAtChi(system, chi);
+      TestChiDerivative analyzer(system.simulator(), system);
+      double value = analyzer.compute();
+      double expected = (hPlus - hMinus)/(2.0*delta) + 16.0/(2.0*chi);
+      if (verbose() > 0) {
+         std::cout << "\nanalyzer = " << value
+                   << ", finite differences = " << expected;
+      }
+      TEST_ASSERT(std::abs(value - expected) < 1.0E-6*std::abs(expected));
+   }
+
 };
 
 TEST_BEGIN(AnalyzerTest)
@@ -811,6 +895,7 @@ TEST_ADD(AnalyzerTest, testTrajectoryCellRamp)
 TEST_ADD(AnalyzerTest, testTrajectoryMismatch)
 TEST_ADD(AnalyzerTest, testStructureFactorCellRamp)
 TEST_ADD(AnalyzerTest, testStructureFactorCloseBunches)
+TEST_ADD(AnalyzerTest, testChiDerivativePerturbation)
 TEST_END(AnalyzerTest)
 
 #endif
