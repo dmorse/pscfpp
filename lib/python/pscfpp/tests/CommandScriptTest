@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pscfpp.command import *
-import os, tempfile
+import io, os, tempfile
 
 # Read a command file with the given text
 def readText(text):
@@ -21,6 +21,15 @@ assert str(p[1]) == 'WRITE_TIMERS \t out/timers'
 p = readText('READ_W in/w\n\nITERATE\nFINISH\n')
 assert len(p) == 3
 assert p['ITERATE'].label == 'ITERATE'
+
+# An open file object, and a command that appears three times
+p = Script(io.StringIO('''WRITE_Q_SLICE  out/qs_0  0 0 0 0
+WRITE_Q_SLICE  out/qs_1  0 0 0 1
+WRITE_Q_SLICE  out/qs_2  0 0 0 2
+FINISH
+'''))
+assert len(p) == 4
+assert [c.param() for c in p['WRITE_Q_SLICE']] == ['out/qs_0', 'out/qs_1', 'out/qs_2']
 
 p = Script('in/command')
 
