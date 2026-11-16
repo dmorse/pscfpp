@@ -15,6 +15,7 @@
 #include <rp/field/FieldIo.h>
 #include <rp/field/CFields.h>
 #include <rp/field/WFields.h>
+#include <rp/fts/brownian/BdSimulator.h>
 
 #include <pscf/field/cpp/RFieldComparison.h>
 #include <pscf/crystal/BFieldComparison.h>
@@ -417,6 +418,58 @@ public:
       TEST_ASSERT(message.find("add up to zero") != std::string::npos);
    }
 
+   /*
+   * A LinearRamp that changes all chi entries of a ternary blend of
+   * homopolymers from 8 to 80 in one step. The complete new matrix is
+   * valid, but the matrix after the change of only its first entry has
+   * a positive eigenvalue of the projected chi matrix.
+   */
+   void testSimultaneousChiRamp()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testSimultaneousChiRamp.log");
+
+      Rp::System<1,CPT> system1;
+      std::istringstream in(
+         "System{ Mixture{ nMonomer 3 monomers[ 1 1 1 ] nPolymer 3"
+         " Polymer{ type linear nBlock 1 blocks[ 0 1 ]"
+         " phi 0.3333333333333333 }"
+         " Polymer{ type linear nBlock 1 blocks[ 1 1 ]"
+         " phi 0.3333333333333333 }"
+         " Polymer{ type linear nBlock 1 blocks[ 2 1 ]"
+         " phi 0.3333333333333334 }"
+         " ds 0.05 } Interaction{ chi( 0 1 8 0 2 8 1 2 8 ) }"
+         " Domain{ mesh 8 lattice lamellar } }\n");
+      system1.readParam(in);
+      Rp::BdSimulator<1,CPT> simulator(system1);
+      std::istringstream simulatorIn("BdSimulator{ seed 1234 }\n");
+      simulator.readParam(simulatorIn);
+      simulator.analyzeChi();
+
+      Rp::LinearRamp<1,CPT> ramp(simulator);
+      std::istringstream rampIn(
+         "LinearRamp{ nParameter 3 parameters["
+         " chi 0 1 72 chi 0 2 72 chi 1 2 72 ] }\n");
+      ramp.readParam(rampIn);
+      ramp.setup(1);
+      bool success = true;
+      try {
+         ramp.setParameters(1);
+      } catch (Exception& e) {
+         success = false;
+      }
+      TEST_ASSERT(success);
+      for (int i = 0; i < 3; ++i) {
+         for (int j = i + 1; j < 3; ++j) {
+            TEST_ASSERT(std::abs(system1.interaction().chi(i,j) - 80.0)
+                        < 1.0E-12);
+         }
+      }
+      for (int i = 0; i < 2; ++i) {
+         TEST_ASSERT(std::abs(simulator.chiEval(i) + 80.0) < 1.0E-10);
+      }
+   }
+
 };
 
 TEST_BEGIN(SimulatorTest)
@@ -428,6 +481,7 @@ TEST_ADD(SimulatorTest, testHamiltonianSmallPhi)
 TEST_ADD(SimulatorTest, testRampParameterIdRange)
 TEST_ADD(SimulatorTest, testLinearRampPhiMixed)
 TEST_ADD(SimulatorTest, testLinearRampPhiSum)
+TEST_ADD(SimulatorTest, testSimultaneousChiRamp)
 TEST_END(SimulatorTest)
 
 #endif
