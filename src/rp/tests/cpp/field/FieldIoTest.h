@@ -541,6 +541,40 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
    }
 
+   /*
+   * Write a single field without symmetry to a named r-grid file (as
+   * WRITE_Q_SLICE does in a system without a group), and read it back.
+   */
+   void testRGridIo_singleField()
+   {
+      printMethod(TEST_FUNC);
+
+      Rp::Domain<1,CPT> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_lam.rf", domain);
+      DArray< RField<1,CPT> > rf;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
+      readFields("in/w_lam.rf", domain, rf);
+
+      bool isSymmetric = false;
+      domain.fieldIo().writeFieldRGrid("out/w_lam_0.rf", rf[0],
+                                       domain.unitCell(), isSymmetric);
+      RField<1,CPT> field;
+      bool thrown = false;
+      try {
+         isSymmetric = domain.fieldIo().readFieldRGrid("out/w_lam_0.rf",
+                                               field, domain.unitCell());
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+      TEST_ASSERT(!isSymmetric);
+
+      RFieldComparison<1,CPT> comparison;
+      comparison.compare(rf[0], field);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+   }
+
    void testConvertBasisKGridBasis_bcc() 
    {
       printMethod(TEST_FUNC);
@@ -1138,6 +1172,7 @@ TEST_ADD(FieldIoTest, testBasisIo_altG_fort)
 TEST_ADD(FieldIoTest, testRGridIo_lam)
 TEST_ADD(FieldIoTest, testRGridIo_hex)
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
+TEST_ADD(FieldIoTest, testRGridIo_singleField)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_altG)
