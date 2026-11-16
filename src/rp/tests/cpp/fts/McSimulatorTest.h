@@ -13,11 +13,14 @@
 #include <rp/field/CFields.h>
 
 #include <rp/fts/compressor/Compressor.h>
+#include <rp/fts/compressor/LrAmCompressor.h>
+#include <rp/fts/compressor/CompressorFactory.h>
 #include <pscf/field/cpp/RFieldComparison.h>
 #include <pscf/backend/cpp/VecOp.h>
 #include <pscf/backend/cpp/Reduce.h>
 
 #include <util/misc/FileMaster.h>
+#include <util/param/Factory.h>
 #include <util/containers/FSArray.h>
 #include <util/tests/LogFileUnitTest.h>
 
@@ -28,6 +31,85 @@
 
 using namespace Util;
 using namespace Pscf;
+
+/*
+* LrAmCompressor that reports a failure for one chosen call of
+* compress(), counted from 0 (after running the LrAmCompressor).
+*/
+class FailingLrAmCompressor : public Rp::LrAmCompressor<3,CPT>
+{
+
+public:
+
+   FailingLrAmCompressor(Rp::System<3,CPT>& system)
+    : Rp::LrAmCompressor<3,CPT>(system),
+      iCall_(0),
+      iFail_(-1)
+   {  ParamComposite::setClassName("FailingLrAmCompressor"); }
+
+   void setFailure(int iFail)
+   {
+      iFail_ = iFail;
+      iCall_ = 0;
+   }
+
+   int compress() override
+   {
+      int error = Rp::LrAmCompressor<3,CPT>::compress();
+      int iCall = iCall_;
+      ++iCall_;
+      return (iCall == iFail_) ? 1 : error;
+   }
+
+private:
+
+   int iCall_;
+   int iFail_;
+
+};
+
+/*
+* Factory for FailingLrAmCompressor.
+*/
+class FailingLrAmCompressorFactory
+ : public Factory< Rp::Compressor<3,CPT> >
+{
+
+public:
+
+   FailingLrAmCompressorFactory(Rp::System<3,CPT>& system)
+    : systemPtr_(&system)
+   {}
+
+   Rp::Compressor<3,CPT>* factory(std::string const & className) const
+   {
+      if (className == "FailingLrAmCompressor") {
+         return new FailingLrAmCompressor(*systemPtr_);
+      }
+      return 0;
+   }
+
+private:
+
+   Rp::System<3,CPT>* systemPtr_;
+
+};
+
+/*
+* McSimulator with a public compressorFactory() function.
+*/
+class McSimulatorWithFactory : public Rp::McSimulator<3,CPT>
+{
+
+public:
+
+   McSimulatorWithFactory(Rp::System<3,CPT>& system)
+    : Rp::McSimulator<3,CPT>(system)
+   {}
+
+   using Rp::Simulator<3,CPT>::compressorFactory;
+
+};
 
 class McSimulatorTest : public LogFileUnitTest
 {
@@ -218,6 +300,71 @@ public:
       TEST_ASSERT(std::abs(variance/expected - 1.0) < 0.1);
    }
 
+   /*
+   * Noise of a BdMove of two LM steps, whose first step fails.
+   *
+   * The second step starts again from the initial state, and adds
+   * eta - mobility*dc to the exchange component wc(0), as in
+   * testBdMoveFirstStepNoise. Here eta must be the sum of the first
+   * old noise of the move and a new noise, with the Euler-Maruyama
+   * variance. If the new noise of the failed step became the old noise
+   * of the second step, eta would have half of this variance.
+   */
+   void testBdMoveFailedStepNoise()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testBdMoveFailedStepNoise.log");
+
+      Rp::System<3,CPT> system;
+      initSystem(system, "in/param_system_disordered");
+      McSimulatorWithFactory simulator(system);
+      FailingLrAmCompressorFactory factory(system);
+      simulator.compressorFactory().addSubfactory(factory);
+      std::istringstream in(
+         "McSimulator{ seed 1784106389"
+         " McMoveManager{\n"
+         " BdMove{ probability 1.0 mobility 1.0e-4"
+         " nStep 2 }\n"
+         " }\n"
+         " FailingLrAmCompressor{ epsilon 1.0e-6 maxItr 200"
+         " maxHist 30 } }\n");
+      simulator.readParam(in);
+      const double mobility = 1.0E-4;
+
+      // Compressed initial state, its wc(0) and force dc(0)
+      system.w().readRGrid("in/w_dis.rf");
+      simulator.analyzeChi();
+      TEST_ASSERT(simulator.compressor().compress() == 0);
+      simulator.computeWc();
+      simulator.computeCc();
+      simulator.computeDc();
+
+      // eta = wc(0) after - wc(0) before + mobility*dc(0) before
+      RField<3,CPT> eta;
+      eta.allocate(system.domain().mesh().dimensions());
+      VecOp::eqV(eta, simulator.wc(0));
+      VecOp::mulEqS(eta, -1.0);
+      VecOp::addEqVc(eta, simulator.dc(0), mobility);
+
+      // Calls of compress(): initial compression (0), BD steps (1, 2)
+      FailingLrAmCompressor& compressor
+         = dynamic_cast<FailingLrAmCompressor&>(simulator.compressor());
+      compressor.setFailure(1);
+      simulator.simulate(1);
+      simulator.computeWc();
+      VecOp::addEqV(eta, simulator.wc(0));
+
+      // Variance of eta over the 16^3 grid points
+      const int meshSize = system.domain().mesh().size();
+      const double vSystem = system.domain().unitCell().volume();
+      double mean = Reduce::sum(eta)/double(meshSize);
+      double variance = Reduce::sumSq(eta)/double(meshSize) - mean*mean;
+      double expected = 2.0*mobility*double(meshSize)/vSystem;
+      Log::file() << "Variance of eta / expected value = "
+                  << variance/expected << std::endl;
+      TEST_ASSERT(std::abs(variance/expected - 1.0) < 0.1);
+   }
+
    void testMcSimulateShiftDiblocks()
    {
       printMethod(TEST_FUNC);
@@ -335,6 +482,7 @@ TEST_ADD(McSimulatorTest, testMcSimulateDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateTriblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateBdMoveDiblocks)
 TEST_ADD(McSimulatorTest, testBdMoveFirstStepNoise)
+TEST_ADD(McSimulatorTest, testBdMoveFailedStepNoise)
 TEST_ADD(McSimulatorTest, testMcSimulateShiftDiblocks)
 TEST_ADD(McSimulatorTest, testBdMoveFailedLastStep)
 TEST_END(McSimulatorTest)
