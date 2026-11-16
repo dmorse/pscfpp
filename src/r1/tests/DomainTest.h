@@ -219,6 +219,27 @@ public:
       TEST_ASSERT(std::abs(computed - predicted) < 1.0E-4);
    }
 
+   void testInnerProductResize()
+   {
+      printMethod(TEST_FUNC);
+
+      // Inner products after changes in the number of grid points
+      Domain domain;
+      int sizes[3] = {9, 5, 17};
+      for (int k = 0; k < 3; ++k) {
+         int nx = sizes[k];
+         domain.setPlanarParameters(0.0, 2.0, nx);
+         DArray<double> f, g;
+         f.allocate(nx);
+         g.allocate(nx);
+         for (int i = 0; i < nx; ++i) {
+            f[i] = 1.5;
+            g[i] = 2.0;
+         }
+         TEST_ASSERT(eq(domain.innerProduct(f, g), 3.0));
+      }
+   }
+
 };
 
 TEST_BEGIN(DomainTest)
@@ -232,6 +253,7 @@ TEST_ADD(DomainTest, testCylindricalAverageUniform)
 TEST_ADD(DomainTest, testSphericalAverageUniform)
 TEST_ADD(DomainTest, testCylindricalAverageLinear)
 TEST_ADD(DomainTest, testSphericalAverageLinear)
+TEST_ADD(DomainTest, testInnerProductResize)
 TEST_END(DomainTest)
 
 #endif
