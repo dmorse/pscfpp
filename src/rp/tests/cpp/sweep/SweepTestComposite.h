@@ -6,10 +6,12 @@
 // include the headers for individual tests
 #include "BasisFieldStateTest.h"
 #include "SweepTest.h"
+#include "SweepParameterTest.h"
 
 TEST_COMPOSITE_BEGIN(SweepTestComposite)
 TEST_COMPOSITE_ADD_UNIT(BasisFieldStateTest)
 TEST_COMPOSITE_ADD_UNIT(SweepTest)
+TEST_COMPOSITE_ADD_UNIT(SweepParameterTest)
 TEST_COMPOSITE_END
 
 #endif

@@ -8,6 +8,7 @@
 #include <r1/system/HomogeneousComparison.h>
 #include <r1/sweep/SweepParameter.h>
 #include <util/archives/MemoryOArchive.h>
+#include <util/archives/MemoryIArchive.h>
 #include <r1/field/Domain.h>
 #include <r1/solvers/Mixture.h>
 #include <r1/solvers/Polymer.h>
@@ -528,6 +529,42 @@ public:
                   + sizeof(unsigned int) + sizeof(int) + 2*sizeof(double));
    }
 
+   /*
+   * Loading a SweepParameter into a new object wrote the identifiers to
+   * an array that was not allocated.
+   */
+   void testSweepParameterLoad()
+   {
+      printMethod(TEST_FUNC);
+
+      // Record of a block length parameter (type 0) with ids 0 and 1
+      unsigned int type = 0;
+      int nId = 2;
+      int id0 = 0;
+      int id1 = 1;
+      double initial = 0.5;
+      double change = 0.25;
+      MemoryOArchive oArchive;
+      oArchive.allocate(64);
+      oArchive << type;
+      oArchive << nId;
+      oArchive << id0;
+      oArchive << id1;
+      oArchive << initial;
+      oArchive << change;
+
+      SweepParameter p;
+      MemoryIArchive iArchive;
+      iArchive = oArchive;
+      iArchive >> p;
+      iArchive.release();
+      TEST_ASSERT(p.type() == "block");
+      TEST_ASSERT(p.id(0) == 0);
+      TEST_ASSERT(p.id(1) == 1);
+      TEST_ASSERT(p.initial() == 0.5);
+      TEST_ASSERT(p.change() == 0.25);
+   }
+
    void testIteratorPlanarAm1()
    {
       printMethod(TEST_FUNC);
@@ -648,6 +685,7 @@ TEST_ADD(SystemTest, testIteratorPlanarNr3)
 TEST_ADD(SystemTest, testIteratorSphericalShellNr)
 TEST_ADD(SystemTest, testCompareHomogeneousGuess)
 TEST_ADD(SystemTest, testSweepParameterSerialize)
+TEST_ADD(SystemTest, testSweepParameterLoad)
 TEST_ADD(SystemTest, testIteratorSphericalNr1)
 TEST_ADD(SystemTest, testIteratorSphericalNr3)
 TEST_ADD(SystemTest, testIteratorPlanarAm1)
