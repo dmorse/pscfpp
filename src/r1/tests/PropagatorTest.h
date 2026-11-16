@@ -361,6 +361,46 @@ public:
    }
 
    /*
+   * Test a block shorter than ds/2 in a homogeneous field.
+   */
+   void testShortBlock()
+   {
+      printMethod(TEST_FUNC);
+
+      int nx = 11;
+      Domain domain;
+      domain.setPlanarParameters(0.0, 1.0, nx);
+
+      Block b;
+      b.setId(0);
+      b.setLength(0.004);
+      b.setMonomerId(0);
+      b.setKuhn(1.0);
+      b.setDiscretization(domain, 0.01);
+
+      DArray<double> w;
+      w.allocate(nx);
+      double wc = 0.3;
+      for (int i = 0; i < nx; ++i) {
+         w[i] = wc;
+      }
+
+      // Length 0.004 set before setDiscretization, then 0.002
+      for (int k = 0; k < 2; ++k) {
+         if (k == 1) {
+            b.setLength(0.002);
+         }
+         TEST_ASSERT(b.ns() >= 3);
+         b.setupSolver(w);
+         b.propagator(0).solve();
+         double expected = exp(-wc*b.length());
+         for (int i = 0; i < nx; ++i) {
+            TEST_ASSERT(eq(b.propagator(0).tail()[i], expected));
+         }
+      }
+   }
+
+   /*
    * Test a contour step for which the number of contour steps of a
    * block does not fit an int.
    */
@@ -397,6 +437,7 @@ TEST_ADD(PropagatorTest, testCylinderSolve1)
 TEST_ADD(PropagatorTest, testCylinderSolve2)
 TEST_ADD(PropagatorTest, testSphereSolve1)
 TEST_ADD(PropagatorTest, testSphereSolve2)
+TEST_ADD(PropagatorTest, testShortBlock)
 TEST_ADD(PropagatorTest, testTinyDs)
 TEST_END(PropagatorTest)
 
