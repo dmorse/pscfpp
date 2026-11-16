@@ -10,6 +10,7 @@
 #include <util/math/Constants.h>
 
 #include <fstream>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -72,7 +73,7 @@ public:
 
       //std::cout << "\n Head:\n";
       for (int i = 0; i < nx; ++i) {
-         TEST_ASSERT(abs(b.propagator(0).head()[i] - 1.0) < 1.0E-8);
+         TEST_ASSERT(std::abs(b.propagator(0).head()[i] - 1.0) < 1.0E-8);
          //std::cout << "  " << b.propagator(0).head()[i];
       }
       //std::cout << "\n";
@@ -81,7 +82,7 @@ public:
       double expected = exp(-wc*b.length());
       for (int i = 0; i < nx; ++i) {
          //std::cout << "  " << b.propagator(0).tail()[i];
-         TEST_ASSERT(abs(b.propagator(0).tail()[i] - expected) < 1.0E-5);
+         TEST_ASSERT(std::abs(b.propagator(0).tail()[i] - expected) < 1.0E-5);
       }
       //std::cout << "\n";
       //std::cout << exp(-wc*b.length()) << "\n";
@@ -142,11 +143,11 @@ public:
       double head, tail, ratio;
       for (int i = 0; i < nx; ++i) {
          head = b.propagator(0).head()[i];
-         if (abs(head) > 1.0E-6) {
+         if (std::abs(head) > 1.0E-6) {
             tail = b.propagator(0).tail()[i];
             ratio = tail/head;
             //std::cout << "  " << ratio ;
-            TEST_ASSERT( abs(ratio - expected) < 1.0E-5 );
+            TEST_ASSERT( std::abs(ratio - expected) < 1.0E-5 );
          }
       }
       //std::cout << "\n";

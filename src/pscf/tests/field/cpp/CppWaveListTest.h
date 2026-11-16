@@ -15,6 +15,8 @@
 #include <util/containers/DArray.h>
 #include <util/math/Constants.h>
 
+#include <cmath>
+
 using namespace Util;
 using namespace Pscf;
 
@@ -142,7 +144,7 @@ public:
          val = cell1.ksq(vec);
          
          TEST_ASSERT(vec == minImages[rank]);
-         TEST_ASSERT(abs(val - ksq[rank]) < tolerance_);
+         TEST_ASSERT(std::abs(val - ksq[rank]) < tolerance_);
          TEST_ASSERT((flag == FFT<1,CPT>::hasImplicitInverse(temp, meshDims1)));
       }
 
@@ -180,7 +182,7 @@ public:
          val = cell2.ksq(vec);
          
          TEST_ASSERT(vec == minImages[iter.rank()]);
-         TEST_ASSERT(abs(val - ksq[iter.rank()]) < tolerance_);
+         TEST_ASSERT(std::abs(val - ksq[iter.rank()]) < tolerance_);
       }
    }
 
@@ -216,7 +218,7 @@ public:
          val = cell3.ksq(vec);
 
          TEST_ASSERT(vec == minImages[iter.rank()]);
-         TEST_ASSERT(abs(val - ksq[iter.rank()]) < tolerance_);
+         TEST_ASSERT(std::abs(val - ksq[iter.rank()]) < tolerance_);
       }
    }
 
@@ -249,8 +251,8 @@ public:
          vec = shiftToMinimum(temp, mesh1.dimensions(), cell1);
          val = cell1.ksq(vec);
 
-         TEST_ASSERT(abs(val - ksq[iter.rank()]) < tolerance_);
-         TEST_ASSERT(abs(val - ksq2[iter.rank()]) < tolerance_);
+         TEST_ASSERT(std::abs(val - ksq[iter.rank()]) < tolerance_);
+         TEST_ASSERT(std::abs(val - ksq2[iter.rank()]) < tolerance_);
       }
    }
 
@@ -293,8 +295,8 @@ public:
          vec = shiftToMinimum(pos, mesh2.dimensions(), cell);
          val = cell.ksq(vec);
 
-         TEST_ASSERT(abs(val - ksq[iter.rank()]) < tolerance_);
-         TEST_ASSERT(abs(val - ksq2[iter.rank()]) < tolerance_);
+         TEST_ASSERT(std::abs(val - ksq[iter.rank()]) < tolerance_);
+         TEST_ASSERT(std::abs(val - ksq2[iter.rank()]) < tolerance_);
       }
    }
 
@@ -331,8 +333,8 @@ public:
          vec = shiftToMinimum(temp, mesh3.dimensions(), cell);
          val = cell.ksq(vec);
 
-         TEST_ASSERT(abs(val - ksq[iter.rank()]) < tolerance_);
-         TEST_ASSERT(abs(val - ksq2[iter.rank()]) < tolerance_);
+         TEST_ASSERT(std::abs(val - ksq[iter.rank()]) < tolerance_);
+         TEST_ASSERT(std::abs(val - ksq2[iter.rank()]) < tolerance_);
       }
    }
 
@@ -362,7 +364,7 @@ public:
                val *= 2.0;
             }
          }
-         TEST_ASSERT(abs(val - dksq[iter.rank()]) < tolerance_);
+         TEST_ASSERT(std::abs(val - dksq[iter.rank()]) < tolerance_);
       }
    }
 
@@ -390,7 +392,7 @@ public:
                   val *= 2.0;
                }
             }
-            TEST_ASSERT(abs(val - dksq[iter.rank()]) < tolerance_);
+            TEST_ASSERT(std::abs(val - dksq[iter.rank()]) < tolerance_);
          }
       }
    }
@@ -419,7 +421,7 @@ public:
                   val *= 2.0;
                }
             }
-            TEST_ASSERT(abs(val - dksq[iter.rank()]) < tolerance_);
+            TEST_ASSERT(std::abs(val - dksq[iter.rank()]) < tolerance_);
          }
       }
    }
@@ -532,11 +534,11 @@ public:
          val = cell3.ksq(vec);
 
          TEST_ASSERT(vec == minImages[iter.rank()]);
-         TEST_ASSERT(abs(val - ksq[iter.rank()]) < tolerance_);
+         TEST_ASSERT(std::abs(val - ksq[iter.rank()]) < tolerance_);
 
          for (int i = 0; i < cell3.nParameter(); i++) {
             val = cell3.dksq(vec, i);
-            TEST_ASSERT(abs(val - dksq[i][iter.rank()]) < tolerance_);
+            TEST_ASSERT(std::abs(val - dksq[i][iter.rank()]) < tolerance_);
          }
       }
    }
