@@ -138,23 +138,31 @@ class Field:
          raise Exception('Not valid field file.')
 
       if self.type != 'fd1d':
-         lineCount = 1
-         while lineCount <= 15:
+         # Label and value lines alternate. The group_name is optional,
+         # so the number of header lines is not fixed: the header ends
+         # with the number of basis functions (basis files) or with the
+         # mesh dimensions (r-grid and k-grid files).
+         while True:
+            line = openFile.readline()
+            if line == '':
+               raise Exception('Incomplete field file header.')
+            name = line.split()[0]
             line = openFile.readline()
             l = line.split()
-            lineCount += 1
-            if lineCount%2 == 0:
-               name = l[0]
-               if name == 'N_basis' or name == "N_star":
-                  self.type = 'basis'
+            if name == 'mesh' or name == 'ngrid' or name == 'cell_param':
+               d = []
+               for i in range(0, len(l)):
+                  d.append(getValue(l[i]))
+               self.header[name] = d
             else:
-               if name == 'mesh' or name == 'ngrid' or name == 'cell_param':
-                  d = []
-                  for i in range(0, len(l)):
-                     d.append(getValue(l[i]))
-                  self.header[name] = d
-               else:
-                  self.header[name] = getValue(l[0])
+               self.header[name] = getValue(l[0])
+            if name == 'N_basis' or name == "N_star":
+               self.type = 'basis'
+               break
+            if name == 'mesh' or name == 'ngrid':
+               break
+         line = openFile.readline()
+         l = line.split()
       else:
             line = openFile.readline()
             l = line.split()
