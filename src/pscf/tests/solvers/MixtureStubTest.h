@@ -102,6 +102,27 @@ public:
                                          "0.0")));
    }
 
+   /*
+   * The volume fractions of a closed mixture must add up to 1 within
+   * rounding errors (1e-10). A mixture with phi = 0.6 and 0.5 was
+   * accepted, and pscf_rpc then converged to a state with a total
+   * concentration of 1.1.
+   */
+   void testReadPhiSum()
+   {
+      printMethod(TEST_FUNC);
+      TEST_ASSERT(readThrows(mixtureText("0", "0", "0.05", "0.5")));
+      TEST_ASSERT(readThrows(mixtureText("0", "0", "0.05", "0.400001")));
+
+      // Fractions that add up to 1 within a rounding error are kept
+      std::istringstream in(mixtureText("0", "0", "0.05", "0.4",
+                                        "0.6000000000000001"));
+      MixtureStub mix;
+      mix.readParam(in);
+      TEST_ASSERT(mix.polymer(0).phi() == 0.6000000000000001);
+      TEST_ASSERT(mix.solvent(0).phi() == 0.4);
+   }
+
 private:
 
    /*
@@ -144,6 +165,7 @@ TEST_ADD(MixtureStubTest, testReadParam)
 TEST_ADD(MixtureStubTest, testFhMixtureShortBlocks)
 TEST_ADD(MixtureStubTest, testReadMonomerIdRange)
 TEST_ADD(MixtureStubTest, testReadValueRange)
+TEST_ADD(MixtureStubTest, testReadPhiSum)
 TEST_END(MixtureStubTest)
 
 #endif
