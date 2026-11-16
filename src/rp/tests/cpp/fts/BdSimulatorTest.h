@@ -10,6 +10,7 @@
 #include <rp/fts/brownian/PredCorrBdStep.h>
 #include <rp/fts/brownian/LMBdStep.h>
 #include <rp/system/System.h>
+#include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
 
 #include <rp/fts/compressor/Compressor.h>
@@ -18,9 +19,13 @@
 #include <pscf/field/cpp/RFieldComparison.h>
 
 #include <util/misc/FileMaster.h>
+#include <util/containers/FSArray.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -102,6 +107,40 @@ public:
    }
 
    /*
+   * Read a 1D diblock melt (16 grid points) with the given BdSimulator
+   * block, and set w fields with a cosine exchange component of the
+   * given amplitude.
+   */
+   void initSystem1D(Rp::System<1,CPT>& system,
+                     std::string const & simulatorBlock,
+                     double amplitude = 1.0)
+   {
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } "
+         + simulatorBlock + " }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.5);
+      system.setUnitCell(parameters);
+      DArray< RField<1,CPT> > w;
+      w.allocate(2);
+      for (int i = 0; i < 2; ++i) {
+         w[i].allocate(system.domain().mesh().dimensions());
+         for (int k = 0; k < 16; ++k) {
+            w[i][k] = (i == 0) ? amplitude*std::cos(2.0*M_PI*k/16.0) : 0.0;
+         }
+      }
+      system.w().setRGrid(w);
+   }
+
+   /*
    * Generic BdSimulator test function template.
    */ 
    void testBdSimulator(Rp::System<3,CPT>& system, 
@@ -171,6 +210,27 @@ public:
                      "in/w_explicitBd_diblock_ref.rf", 
                      "out/testExplicitBdStepDiblocks.log");                                                               
    }
+
+   /*
+   * The generic block label BdStep selects the default BD step
+   * algorithm, LMBdStep, as stated in the manual.
+   */
+   void testBdStepLabel()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testBdStepLabel.log");
+
+      Rp::System<1,CPT> system;
+      initSystem1D(system,
+          "BdSimulator{ seed 1234 BdStep{ mobility 0.001 }"
+          " Compressor{ epsilon 1.0e-8 } }");
+      Rp::BdSimulator<1,CPT>& simulator
+          = dynamic_cast< Rp::BdSimulator<1,CPT>& >(system.simulator());
+      TEST_ASSERT(simulator.hasBdStep());
+      Rp::BdStep<1,CPT>* stepPtr = &simulator.bdStep();
+      bool isLMBdStep = dynamic_cast< Rp::LMBdStep<1,CPT>* >(stepPtr);
+      TEST_ASSERT(isLMBdStep);
+   }
    
    void testExplicitBdStepTriblocks()
    {
@@ -214,6 +274,7 @@ TEST_BEGIN(BdSimulatorTest)
 TEST_ADD(BdSimulatorTest, testLMBdStepDiblocks)
 TEST_ADD(BdSimulatorTest, testLMBdStepTriblocks)
 TEST_ADD(BdSimulatorTest, testExplicitBdStepDiblocks)
+TEST_ADD(BdSimulatorTest, testBdStepLabel)
 TEST_ADD(BdSimulatorTest, testExplicitBdStepTriblocks)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepDiblocks)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepTriblocks)
