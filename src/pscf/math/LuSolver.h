@@ -51,6 +51,9 @@ namespace Pscf
       /**
       * Compute the LU decomposition for later use.
       *
+      * The decomposition is completed also for a singular matrix A,
+      * with a zero pivot, which isSingular() then reports.
+      *
       * \param A the square matrix A in problem Ax=b.
       */
       void computeLU(const Matrix<double>& A);
@@ -62,6 +65,23 @@ namespace Pscf
       * \param x the solution vector
       */
       void solve(Array<double>& b, Array<double>& x);
+
+      /**
+      * Solve Ax = b by a basic solution, also for a singular matrix A.
+      *
+      * The component of x of each zero pivot of the LU decomposition
+      * is set to zero, and the equation of that pivot is not used. The
+      * result solves Ax = b if b lies in the range of A and the number
+      * of zero pivots equals the rank deficiency of A, i.e., if each
+      * zero pivot belongs to a column that depends on the preceding
+      * columns (as for a matrix with a single null direction).
+      * Otherwise it need not solve the system, so callers must check
+      * the residual. Use solve() for a matrix that is not singular.
+      *
+      * \param b the RHS vector
+      * \param x the solution vector (must not be b)
+      */
+      void solveBasic(Array<double> const & b, Array<double>& x) const;
 
       /** 
       * Compute inverse of matrix A.
