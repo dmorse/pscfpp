@@ -228,7 +228,8 @@ public:
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
-      sys.iterator().solve();
+      int error = sys.iterator().solve();
+      TEST_ASSERT(error == 0);
 
       openOutputFile("out/finalPlanarNr1.w", out);
       fieldIo.writeFields(sys.wFields(), out);
@@ -265,7 +266,8 @@ public:
       fieldIo.readFields(sys.wFields(), in);
       in.close();
 
-      sys.iterator().solve();
+      int error = sys.iterator().solve();
+      TEST_ASSERT(error == 0);
 
       std::ofstream out;
       out.open("out/planarNr2.c");
@@ -353,7 +355,8 @@ public:
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
-      sys.iterator().solve();
+      int error = sys.iterator().solve();
+      TEST_ASSERT(error == 0);
 
       openOutputFile("out/finalSphericalNr1.w", out);
       fieldIo.writeFields(sys.wFields(), out);
@@ -434,7 +437,8 @@ public:
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
-      sys.iterator().solve();
+      int error = sys.iterator().solve();
+      TEST_ASSERT(error == 0);
 
       openOutputFile("out/finalPlanarAm.w", out);
       fieldIo.writeFields(sys.wFields(), out);
