@@ -375,9 +375,10 @@ namespace Rp {
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(hasData_);
 
+      bool writeHeader = true;
       fieldIo().writeFieldRGrid(out, rgrid_,
                                 *writeUnitCellPtr_,
-                                isSymmetric_);
+                                writeHeader, isSymmetric_);
    }
 
    /*
