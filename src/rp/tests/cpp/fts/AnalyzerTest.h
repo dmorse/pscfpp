@@ -736,6 +736,65 @@ public:
       TEST_ASSERT(std::abs(q - 2.0*M_PI/1.7) < 1.0E-6);
    }
 
+   /*
+   * SIMULATE with a BinaryStructureFactor in a rectangular cell 3.2 x
+   * 3.2000000064 on a 4 x 4 mesh, in which two bunches of waves differ
+   * by 1.5E-8 in |k|^2, but only by 4E-9 in |k|: the 9 bunches must be
+   * written in order of increasing wavenumber.
+   */
+   void testStructureFactorCloseBunches()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testStructureFactorCloseBunches.log");
+
+      Rp::Analyzer<2,CPT>::initStatic();
+      Rp::System<2,CPT> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.05 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 4 4 lattice rectangular }"
+         " BdSimulator{ seed 1234 LMBdStep{ mobility 0.01 }"
+         " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 }"
+         " AnalyzerManager{ BinaryStructureFactor{ interval 1"
+         " outputFileName out/closeBunches } } } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(3.2);
+      parameters.append(3.2000000064);
+      system.setUnitCell(parameters);
+      DArray< RField<2,CPT> > w;
+      w.allocate(2);
+      for (int i = 0; i < 2; ++i) {
+         w[i].allocate(system.domain().mesh().dimensions());
+         for (int k = 0; k < 16; ++k) {
+            w[i][k] = (i == 0) ? std::cos(2.0*M_PI*(k/4)/4.0) : 0.0;
+         }
+      }
+      system.w().setRGrid(w);
+
+      bool success = true;
+      try {
+         system.simulate(1);
+      } catch (Exception& e) {
+         success = false;
+      }
+      TEST_ASSERT(success);
+      TEST_ASSERT(countLines("out/closeBunches") == 9);
+      std::ifstream file;
+      openInputFile("out/closeBunches", file);
+      double q, s, qOld = -1.0;
+      for (int i = 0; i < 9; ++i) {
+         file >> q >> s;
+         TEST_ASSERT(q > qOld);
+         qOld = q;
+      }
+   }
+
 };
 
 TEST_BEGIN(AnalyzerTest)
@@ -750,6 +809,7 @@ TEST_ADD(AnalyzerTest, testAnalyzeInputPrefix)
 TEST_ADD(AnalyzerTest, testTrajectoryCellRamp)
 TEST_ADD(AnalyzerTest, testTrajectoryMismatch)
 TEST_ADD(AnalyzerTest, testStructureFactorCellRamp)
+TEST_ADD(AnalyzerTest, testStructureFactorCloseBunches)
 TEST_END(AnalyzerTest)
 
 #endif
