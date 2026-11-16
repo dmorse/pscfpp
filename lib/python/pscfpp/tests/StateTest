@@ -37,6 +37,14 @@ u = readThermo(str(t))
 assert u.fIdeal == None and u.fInter == t.fInter
 assert u.polymers[0].mu == t.polymers[0].mu
 
+# An environment-modified stress listed only for lattice parameter 1
+t = readThermo(thermo + '''environment-modified stress:
+    1   2.50000000000e-03
+
+''')
+assert t.environmentStress == [None, 2.5e-3]
+assert readThermo(str(t)).environmentStress == [None, 2.5e-3]
+
 s = State('in/state')
 
 print(s)
