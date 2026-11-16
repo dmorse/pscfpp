@@ -357,6 +357,49 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
+   /*
+   * An r-grid read that fails must mark the mask as invalid.
+   */
+   void testReadRGrid_truncated()
+   {
+      printMethod(TEST_FUNC);
+
+      Rp::Domain<1,CPT> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/mask.rf", domain);
+
+      Rp::Mask<1,CPT> mask;
+      mask.setFieldIo(domain.fieldIo());
+      mask.setReadUnitCell(domain.unitCell());
+      std::ifstream in;
+      openInputFile("in/mask.bf", in);
+      mask.readBasis(in);
+      in.close();
+      TEST_ASSERT(mask.hasData());
+
+      // Header of in/mask.rf, followed by 5 of 64 data lines
+      std::stringstream file;
+      std::string line;
+      openInputFile("in/mask.rf", in);
+      for (int i = 0; i < 15 && std::getline(in, line); ++i) {
+         file << line << "\n";
+      }
+      in.close();
+      for (int i = 0; i < 5; ++i) {
+         file << "0.5\n";
+      }
+
+      bool thrown = false;
+      try {
+         mask.readRGrid(file, true);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+      TEST_ASSERT(!mask.hasData());
+      TEST_ASSERT(!mask.isSymmetric());
+   }
+
    void testPhiTot()
    {
       printMethod(TEST_FUNC);
@@ -408,6 +451,7 @@ TEST_ADD(MaskTest, testReadRGrid_1)
 TEST_ADD(MaskTest, testReadRGrid_2)
 TEST_ADD(MaskTest, testPhiTot)
 TEST_ADD(MaskTest, testWriteRGrid)
+TEST_ADD(MaskTest, testReadRGrid_truncated)
 TEST_END(MaskTest)
 
 #endif
