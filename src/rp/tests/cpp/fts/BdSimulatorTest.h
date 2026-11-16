@@ -28,6 +28,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <cmath>
 
 using namespace Util;
@@ -483,6 +484,49 @@ public:
       TEST_ASSERT(isLMBdStep);
    }
 
+   /*
+   * Run LMBdStep simulations of nSteps[0], nSteps[1], ... steps in
+   * turn (one SIMULATE each), and copy the final w fields to w.
+   */
+   void runLMBdStep(std::vector<int> const & nSteps,
+                    DArray< RField<1,CPT> >& w)
+   {
+      Rp::System<1,CPT> system;
+      initSystem1D(system,
+          "BdSimulator{ seed 1234 LMBdStep{ mobility 0.001 }"
+          " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 } }");
+      for (unsigned int i = 0; i < nSteps.size(); ++i) {
+         system.simulate(nSteps[i]);
+      }
+      allocateRGridFields(system, w);
+      for (int i = 0; i < 2; ++i) {
+         w[i] = system.w().rgrid(i);
+      }
+   }
+
+   /*
+   * A run split into SIMULATE 2, SIMULATE 1 and SIMULATE 3 must give
+   * the same trajectory as SIMULATE 6, bitwise: each SIMULATE must
+   * continue the LM noise chain of the previous one.
+   */
+   void testLMBdStepSplitRun()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLMBdStepSplitRun.log");
+
+      DArray< RField<1,CPT> > w1, w2;
+      std::vector<int> nSteps(1, 6);
+      runLMBdStep(nSteps, w1);
+      nSteps.clear();
+      nSteps.push_back(2);
+      nSteps.push_back(1);
+      nSteps.push_back(3);
+      runLMBdStep(nSteps, w2);
+      RFieldComparison<1,CPT> comparison;
+      comparison.compare(w1, w2);
+      TEST_ASSERT(comparison.maxDiff() == 0.0);
+   }
+
 };
 
 TEST_BEGIN(BdSimulatorTest)
@@ -499,6 +543,7 @@ TEST_ADD(BdSimulatorTest, testInitialCompressionFailure)
 TEST_ADD(BdSimulatorTest, testFailedLastStep)
 TEST_ADD(BdSimulatorTest, testGenericLabels)
 TEST_ADD(BdSimulatorTest, testBdStepLabel)
+TEST_ADD(BdSimulatorTest, testLMBdStepSplitRun)
 TEST_END(BdSimulatorTest)
 
 #endif
