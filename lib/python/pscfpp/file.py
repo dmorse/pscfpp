@@ -246,7 +246,7 @@ class Directory(File):
             r.append( str(self.files[x]) + '\n' )
         for x in self.dirs.keys():
             r.append( repr(self.dirs[x])  )
-        return join(r,'')
+        return ''.join(r)
 
     ##
     # String representation of a directory.
@@ -258,7 +258,7 @@ class Directory(File):
             r.append( str(self.files[x]) + '\n' )
         for x in self.dirs.keys() :
             r.append( str(self.dirs[x]) )
-        return join(r,'')
+        return ''.join(r)
 
     ##
     # XML string representation of a directory.
@@ -272,7 +272,7 @@ class Directory(File):
         for x in self.dirs.keys() :
             r.append( self.dirs[x].xml(n_indent)  )
         r.append( indent + '</Directory>'+'\n')
-        return join(r,'')
+        return ''.join(r)
 
     ##
     # Write XML representation to file.
@@ -358,5 +358,5 @@ class Directory(File):
             if not x in self.dirs.keys(): 
                 r.append('< ' + other.dirs[x].path + '\n' )
         # Return true if all tests passed
-        return join(r,'')
+        return ''.join(r)
 
