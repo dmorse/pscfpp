@@ -6,6 +6,8 @@
 
 #include <r1/system/System.h>
 #include <r1/system/HomogeneousComparison.h>
+#include <r1/sweep/SweepParameter.h>
+#include <util/archives/MemoryOArchive.h>
 #include <r1/field/Domain.h>
 #include <r1/solvers/Mixture.h>
 #include <r1/solvers/Polymer.h>
@@ -509,6 +511,23 @@ public:
       TEST_ASSERT(std::abs(fHomo - f) < 1.0E-9);
    }
 
+   /*
+   * SweepParameter::serialize took the archive by value, so that a
+   * SweepParameter could not be written to a MemoryOArchive (whose copy
+   * constructor is private).
+   */
+   void testSweepParameterSerialize()
+   {
+      printMethod(TEST_FUNC);
+
+      SweepParameter p;
+      MemoryOArchive oArchive;
+      oArchive.allocate(64);
+      oArchive << p;
+      TEST_ASSERT(oArchive.cursor() == oArchive.begin()
+                  + sizeof(unsigned int) + sizeof(int) + 2*sizeof(double));
+   }
+
    void testIteratorPlanarAm1()
    {
       printMethod(TEST_FUNC);
@@ -628,6 +647,7 @@ TEST_ADD(SystemTest, testIteratorPlanarNr2)
 TEST_ADD(SystemTest, testIteratorPlanarNr3)
 TEST_ADD(SystemTest, testIteratorSphericalShellNr)
 TEST_ADD(SystemTest, testCompareHomogeneousGuess)
+TEST_ADD(SystemTest, testSweepParameterSerialize)
 TEST_ADD(SystemTest, testIteratorSphericalNr1)
 TEST_ADD(SystemTest, testIteratorSphericalNr3)
 TEST_ADD(SystemTest, testIteratorPlanarAm1)

@@ -5,6 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/chem/Monomer.h>
+#include <util/archives/MemoryOArchive.h>
+#include <util/archives/MemoryIArchive.h>
 
 #include <fstream>
 #include <sstream>
@@ -65,12 +67,54 @@ public:
       TEST_ASSERT(u.kuhn() == 1.25);
    }
 
+   /*
+   * Monomer::serialize took the archive by value, so it read from a
+   * copy of a MemoryIArchive, whose cursor then did not advance, and it
+   * could not write to a MemoryOArchive (private copy constructor).
+   */
+   void testSerialize()
+   {
+      printMethod(TEST_FUNC);
+
+      // Read from data written as primitive types
+      int id = 3;
+      double kuhn = 1.25;
+      int i1 = 13;
+      MemoryOArchive oArchive;
+      oArchive.allocate(64);
+      oArchive << id;
+      oArchive << kuhn;
+      oArchive << i1;
+
+      Monomer u;
+      int i2 = 0;
+      MemoryIArchive iArchive;
+      iArchive = oArchive;
+      iArchive >> u;
+      iArchive >> i2;
+      TEST_ASSERT(u.id() == 3);
+      TEST_ASSERT(u.kuhn() == 1.25);
+      TEST_ASSERT(i2 == 13);
+      iArchive.release();
+
+      // Write
+      Monomer v;
+      v.setId(4);
+      v.setKuhn(2.5);
+      MemoryOArchive oArchive2;
+      oArchive2.allocate(64);
+      oArchive2 << v;
+      TEST_ASSERT(oArchive2.cursor()
+                  == oArchive2.begin() + sizeof(int) + sizeof(double));
+   }
+
 };
 
 TEST_BEGIN(MonomerTest)
 TEST_ADD(MonomerTest, testConstructor)
 TEST_ADD(MonomerTest, testReadWrite)
 TEST_ADD(MonomerTest, testWriteFixedStream)
+TEST_ADD(MonomerTest, testSerialize)
 TEST_END(MonomerTest)
 
 #endif
