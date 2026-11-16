@@ -11,6 +11,14 @@ value is an averaged over all wavevectors in a set (or "bunch") of
 wavevectors of equal magnitude. This class can also optionally 
 output structure factors for all individual wavevectors.
 
+All sampled configurations must have the same unit cell, which defines
+the wavevectors. A simulation with a LinearRamp that changes a cell
+parameter (cell_param) therefore cannot use this analyzer: the SIMULATE
+command stops with an error at the first sample after the unit cell
+has changed. In the analysis of a trajectory file, the unit cell of the
+first sampled frame defines the wavevectors, and a different unit cell
+in a later sampled frame stops the ANALYZE command with an error.
+
 \see BinaryStructureFactor (class API)
 
 \section rp_BinaryStructureFactor_formula_sec Theory
