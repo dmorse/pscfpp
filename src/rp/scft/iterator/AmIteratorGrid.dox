@@ -82,7 +82,8 @@ below:
     <td> scaleStress* </td>
     <td> Constant factor by which stress components are multipled in
          the definition of the residual vector if isFlexible is true 
-         (10.0 by default). </td>
+         (10.0 by default). Must be nonzero if isFlexible is true.
+         </td>
   </tr>
   <tr>
     <td> lambda* </td>
