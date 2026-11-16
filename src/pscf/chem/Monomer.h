@@ -75,7 +75,7 @@ namespace Pscf
       * \param version archive format version index
       */
       template <class Archive>
-      void serialize(Archive ar, const unsigned int version);
+      void serialize(Archive& ar, const unsigned int version);
 
    private:
 
@@ -143,7 +143,7 @@ namespace Pscf
    * Serialize to or from an archive.
    */
    template <class Archive>
-   void Monomer::serialize(Archive ar, const unsigned int version)
+   void Monomer::serialize(Archive& ar, const unsigned int version)
    {
       ar & id_;
       ar & kuhn_;
