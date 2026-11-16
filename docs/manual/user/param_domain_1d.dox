@@ -29,7 +29,6 @@ with a 1D planar geometry:
      xMax     8.0
      nx       401
   }
-}
 \endcode
 Here is an Domain block that might be used for a simulation of a
 spherical geometry, such as that used to simulate a spherical micelle:

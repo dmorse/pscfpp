@@ -30,7 +30,7 @@ namespace R1
       mode_ = Planar;
       isShell_ = false;
       xMin_ = 0.0;
-      read(in, "mode", mode_);
+      readOptional(in, "mode", mode_);
       if (mode_ == Planar) {
          readOptional(in, "xMin", xMin_);
       } else {

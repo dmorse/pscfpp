@@ -3,52 +3,52 @@ namespace R1 {
 /*! 
 \page r1_Domain_page R1::Domain
 
-A Pscf::R1::Domain<D> object represents a spatial domain and discretization
-in a simulation of a D-dimensional periodic structure.
+A Pscf::R1::Domain object represents a one-dimensional coordinate interval
+and its discretization in planar, cylindrical, or spherical geometry.
 
 \sa Pscf::R1::Domain
 
 The parameter file format for a Domain is:
 \code
 Domain{
-  geometryMode  enumeration
-  xmin*         real (0.0 by default)
-  xmax          real
+  mode*         enumeration (planar by default)
+  xMin*         real (0.0 by default)
+  xMax          real
   nx            int
 }
 \endcode
 Parameters and subblocks are described below:
 <table>
   <tr>
-    <td> geometryMode </td>
+    <td> mode* </td>
     <td> 
       Enumeration value of type "R1::GeometryMode".
       String representations of  allowed values are "planar", "cylindrical" 
-      or "spherical" 
+      or "spherical". Optional, with "planar" as the default.
     </td>
   </tr>
   <tr>
-    <td> xmin* </td>
+    <td> xMin* </td>
     <td> Minimum coordinate value, at lower boundary of the domain.
          (real, optional, 0.0 by default)
     </td>
   </tr>
   <tr>
-    <td> xmax </td>
+    <td> xMax </td>
     <td> Maximum coordinate value, at upper boundary of the domain  </td>
   </tr>
   <tr>
     <td> nx </td>
-    <td> Number of grid points, including endpoints at xmin and xmax </td>
+    <td> Number of grid points, including endpoints at xMin and xMax </td>
   </tr>
 </table>
 Comments:
 
-     - For cylindrical and spherical modes, omit xmin to simulate a 
+     - For cylindrical and spherical modes, omit xMin to simulate a
        simply connected cylindrical or spherical region, or include
        to simulate an annular shell. 
 
-     - For cylindrical and spherical modes, if xmin is present, it 
+     - For cylindrical and spherical modes, if xMin is present, it
        must be assigned a value xMin > 0.
 
 */
