@@ -310,8 +310,18 @@ namespace R1
             needsJacobian_ = false;
          }
 
-         // Compute Newton-Raphson increment dOmega_
-         solver_.solve(residual_, dOmega_);
+         // Compute Newton-Raphson increment dOmega_. The Jacobian is
+         // singular (it has a zero pivot) if changes of w at a grid
+         // point change no concentration, as at the inner boundary of
+         // a spherical shell with xMin much smaller than dx. A basic
+         // solution then leaves a combination of those w unchanged;
+         // the test of the residual below rejects the step if the
+         // equations have no solution.
+         if (solver_.isSingular()) {
+            solver_.solveBasic(residual_, dOmega_);
+         } else {
+            solver_.solve(residual_, dOmega_);
+         }
 
          // Try full Newton-Raphson update
          incrementWFields(system().wFields(), dOmega_, wFieldsNew_);
