@@ -24,6 +24,7 @@ namespace Pscf {
    *   - an array of two QT propagator objects, one per direction
    *   - a FT monomer concentration field for the block
    *   - a kuhn length
+   *   - a constant field shift wShift
    *
    * These are in addition to the members of the Edge base class.
    *
@@ -100,6 +101,15 @@ namespace Pscf {
    * blocks in order to divide each block into an even integer number of
    * steps of equal length.
    *
+   * Field shift: a Block solves the MDE in the field w - wShift, where
+   * w is the field of its monomer type and wShift is a constant set by
+   * the function that sets up the solver (see the compute function of
+   * the Polymer class of each implementation). Such a constant
+   * multiplies each propagator q(s) by a known factor, exp(wShift*s)
+   * along the block, which PolymerTmpl::solve() removes from ln q
+   * analytically. Solving in a shifted field keeps the propagators
+   * representable for long chains.
+   *
    * \ingroup Pscf_Solver_Module
    */
    template <class QT, class FT>
@@ -163,6 +173,15 @@ namespace Pscf {
       */
       double kuhn() const;
 
+      /**
+      * Get the constant subtracted from w by the MDE solver.
+      *
+      * The propagators of this block are solutions of the MDE in the
+      * field w - wShift(), in which w is the field of its monomer type.
+      * The value is zero unless the solver was set up with a shift.
+      */
+      double wShift() const;
+
    protected:
 
       /**
@@ -180,6 +199,13 @@ namespace Pscf {
       */
       FT& cField();
 
+      /**
+      * Set the constant subtracted from w by the MDE solver.
+      *
+      * \param wShift  constant field shift
+      */
+      void setWShift(double wShift);
+
    private:
 
       /// Pair of Propagator objects (one for each direction).
@@ -190,6 +216,9 @@ namespace Pscf {
 
       /// Monomer statistical segment length.
       double kuhn_;
+
+      /// Constant subtracted from w by the MDE solver.
+      double wShift_;
 
    };
 
@@ -231,6 +260,20 @@ namespace Pscf {
    template <class QT, class FT> inline
    double BlockTmpl<QT,FT>::kuhn() const
    {  return kuhn_; }
+
+   /*
+   * Get the constant subtracted from w by the MDE solver.
+   */
+   template <class QT, class FT> inline
+   double BlockTmpl<QT,FT>::wShift() const
+   {  return wShift_; }
+
+   /*
+   * Set the constant subtracted from w by the MDE solver.
+   */
+   template <class QT, class FT> inline
+   void BlockTmpl<QT,FT>::setWShift(double wShift)
+   {  wShift_ = wShift; }
 
 }
 #endif

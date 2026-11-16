@@ -111,10 +111,11 @@ namespace R1 {
    *
    * in which ds_ is the contour step and 
    *
-   *           H = -(b^2/6)d^2/dx^2 + w 
+   *           H = -(b^2/6)d^2/dx^2 + w - wShift
    *
    * is a finite difference representation of the "Hamiltonian" 
-   * operator, in which b = kuhn() is the statistical segment length. 
+   * operator, in which b = kuhn() is the statistical segment length
+   * and wShift is a constant.
    *
    * This function sets up arrays containing diagonal and off-diagonal 
    * elements of the matrices A and B, and computes the LU 
@@ -123,7 +124,7 @@ namespace R1 {
    * domain().nx() - 1 upper and lower off-diagonal elements of A and B
    * are denoted by uA_, lA_, uB_, and lB_, respectively
    */
-   void Block::setupSolver(DArray<double> const& w)
+   void Block::setupSolver(DArray<double> const& w, double wShift)
    {
       // Preconditions
       UTIL_CHECK(domainPtr_);
@@ -142,10 +143,13 @@ namespace R1 {
       // Set step size (in case block length has changed)
       ds_ = length()/double(ns_ - 1);
 
+      // Store the constant subtracted from w
+      setWShift(wShift);
+
       // Chemical potential terms in matrix A
       double halfDs = 0.5*ds_;
       for (int i = 0; i < nx; ++i) {
-         dA_[i] = halfDs*w[i];
+         dA_[i] = halfDs*(w[i] - wShift);
       }
 
       // Second derivative terms in matrix A

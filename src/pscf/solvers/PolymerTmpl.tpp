@@ -9,8 +9,12 @@
 */
 
 #include "PolymerTmpl.h"                   
+#include <pscf/chem/PolymerModel.h>
 #include <pscf/math/arithmetic.h>
 #include <util/containers/Pair.h>
+
+#include <cmath>
+#include <limits>
 
 namespace Pscf {
 
@@ -24,7 +28,10 @@ namespace Pscf {
    PolymerTmpl<BT,PT,WT>::PolymerTmpl()
     : PolymerSpeciesT(),
       blocks_()
-   {  ParamComposite::setClassName("PolymerTmpl"); }
+   {
+      assign(qShifted_, 0.0);
+      ParamComposite::setClassName("PolymerTmpl");
+   }
 
    /*
    * Allocate blocks array.
@@ -170,19 +177,101 @@ namespace Pscf {
          propagator(j).solve();
       }
 
-      // Compute molecular partition function Q
+      // Compute partition function Q of the propagators, which are
+      // solutions in the shifted fields w - wShift of all blocks
       WT Q;
       block(0).propagator(0).computeQ(Q);
 
       // The PT::computeQ function returns an overall spatial average.
       // Correct for possible partial occupation of the unit cell.
       divEq(Q, phiTot);
+      assign(qShifted_, Q);
 
-      // Set ln q and compute phi or mu, depending on the ensemble
+      // Remove the field shifts: the shift of a block multiplies Q by
+      // exp(wShift*length) (thread) or exp(wShift*nBead) (bead), so
+      // ln q = ln Q - sum over blocks of these exponents
+      double lnShift = 0.0;
+      for (int j = 0; j < PolymerSpeciesT::nBlock(); ++j) {
+         if (PolymerModel::isThread()) {
+            lnShift += block(j).wShift() * block(j).length();
+         } else {
+            lnShift += block(j).wShift() * (double) block(j).nBead();
+         }
+      }
       WT lnQ;
       assignLog(lnQ, Q);
+      subEq(lnQ, lnShift);
+
+      // Set ln q and compute phi or mu, depending on the ensemble
       SpeciesT::setLnQ(lnQ);
 
+   }
+
+   /*
+   * Raise the field shifts of all blocks if qShifted() is too small.
+   */
+   template <class BT, class PT, typename WT>
+   void PolymerTmpl<BT,PT,WT>::raiseShifts(
+                   std::vector<double> & shifts,
+                   std::function<void(int, double)> const & setupBlock,
+                   std::function<double(int)> const & solveBlock,
+                   double phiTot)
+   {
+      // A raise by logLimit in ln q cannot make a q below qMin overflow
+      const double logLimit
+                  = std::log(std::numeric_limits<double>::max()) - 32.0;
+      const double qMin = std::exp(-logLimit);
+      if (!(qShifted_ < qMin)) return;
+
+      const int nb = PolymerSpeciesT::nBlock();
+      const bool isThread = PolymerModel::isThread();
+
+      // Raise shifts until an average q of shifted propagators is one,
+      // given the initial q, the length l over which the shifts apply,
+      // and a function raise(c) that adds c to the shifts concerned,
+      // solves, and returns the new q
+      auto raiseToOne = [&](double q, double l,
+                            std::function<double(double)> const & raise) {
+         for (int k = 0; k < 1000 && q < qMin; ++k) {
+            q = raise(logLimit/l);
+         }
+         if (q >= qMin && std::isfinite(q)) {
+            raise(-std::log(q)/l);
+         }
+      };
+
+      // Calibrate each block alone
+      const std::vector<double> initial(shifts);
+      for (int j = 0; j < nb; ++j) {
+         auto raiseBlock = [&](double c) -> double {
+            shifts[j] += c;
+            setupBlock(j, shifts[j]);
+            return solveBlock(j);
+         };
+         const double l = isThread ? block(j).length()
+                                   : (double) block(j).nBead();
+         raiseToOne(raiseBlock(0.0), l, raiseBlock);
+      }
+
+      // Solve the polymer, and raise all shifts by a common constant
+      const double n = isThread ? PolymerSpeciesT::length()
+                                : (double) PolymerSpeciesT::nBead();
+      auto raisePolymer = [&](double c) -> double {
+         for (int j = 0; j < nb; ++j) {
+            shifts[j] += c;
+            setupBlock(j, shifts[j]);
+         }
+         solve(phiTot);
+         return qShifted_;
+      };
+      raiseToOne(raisePolymer(0.0), n, raisePolymer);
+
+      // If the result is not representable, raise the initial shifts
+      // by a common constant only
+      if (!(qShifted_ >= qMin && std::isfinite(qShifted_))) {
+         shifts = initial;
+         raiseToOne(raisePolymer(0.0), n, raisePolymer);
+      }
    }
 
    /*

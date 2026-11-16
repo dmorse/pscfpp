@@ -237,26 +237,29 @@ namespace Rp {
    */
    template <int D>
    void
-   Block<D,CPT>::setupSolver(RField<D,CPT> const& w)
+   Block<D,CPT>::setupSolver(RField<D,CPT> const& w, double wShift)
    {
       // Preconditions
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(isAllocated_);
 
-      // Compute expW arrays
+      // Store the constant subtracted from w
+      BlockTmplT::setWShift(wShift);
+
+      // Compute expW arrays for the shifted field w - wShift
       double arg;
       if (PolymerModel::isThread()) {
          double c = -0.5*ds_;
          for (int i = 0; i < nx; ++i) {
-            arg = c*w[i];
+            arg = c*(w[i] - wShift);
             expW_[i]  = exp(arg);
             expW2_[i] = exp(0.5*arg);
          }
       } else
       if (PolymerModel::isBead()) {
          for (int i = 0; i < nx; ++i) {
-            arg = -w[i];
+            arg = -(w[i] - wShift);
             expW_[i]  = exp(arg);
             expWInv_[i] = 1.0/expW_[i];
          }

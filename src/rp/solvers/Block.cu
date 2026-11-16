@@ -438,19 +438,25 @@ namespace Rp {
    */
    template <int D>
    void
-   Block<D,CUT>::setupSolver(RField<D,CUT> const & w)
+   Block<D,CUT>::setupSolver(RField<D,CUT> const & w, double wShift)
    {
       // Preconditions
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(isAllocated_);
 
-      // Populate expW_
+      // Store the constant subtracted from w
+      BlockTmplT::setWShift(wShift);
+
+      // Populate expW_ for the shifted field w - wShift, which is
+      // stored temporarily in expW2_ (thread) or expWInv_ (bead)
       if (PolymerModel::isThread()) {
-         VecOp::expVc(expW_, w, -0.5 * ds_);
-         VecOp::expVc(expW2_, w, -0.25 * ds_);
+         VecOp::subVS(expW2_, w, wShift);
+         VecOp::expVc(expW_, expW2_, -0.5 * ds_);
+         VecOp::expVc(expW2_, expW2_, -0.25 * ds_);
       } else {
-         VecOp::expVc(expW_, w, -1.0);
+         VecOp::subVS(expWInv_, w, wShift);
+         VecOp::expVc(expW_, expWInv_, -1.0);
          VecOp::divSV(expWInv_, 1.0, expW_);
       }
 

@@ -157,9 +157,17 @@ namespace Rp {
       * entering the loop used to solve the MDE for either propagator.
       * This function is called by Polymer<D>::compute.
       *
+      * The solver uses the field w - wShift, in which wShift is a
+      * constant (Polymer::compute passes the shift described there).
+      * This multiplies each propagator by exp(wShift*s) along the
+      * block (thread model) or by exp(wShift) per bead (bead model),
+      * which PolymerTmpl::solve removes from ln q. The value is stored
+      * and returned by wShift().
+      *
       * \param w  chemical potential field for this monomer type
+      * \param wShift  constant subtracted from w (default 0)
       */
-      void setupSolver(RField<D,CUT> const & w);
+      void setupSolver(RField<D,CUT> const & w, double wShift = 0.0);
 
       ///@}
       /// \name MDE Step Functions

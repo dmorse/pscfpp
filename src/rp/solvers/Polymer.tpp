@@ -12,8 +12,13 @@
 #include <rp/solvers/Block.h>
 #include <rp/solvers/Propagator.h>
 #include <pscf/field/RField.h>
+#include <pscf/backend/Reduce.h>
+#include <pscf/backend/VecOp.h>
 #include <pscf/solvers/PolymerTmpl.tpp>
 #include <pscf/chem/PolymerModel.h>
+
+#include <cmath>
+#include <vector>
 
 namespace Pscf {
 namespace Rp {
@@ -60,26 +65,55 @@ namespace Rp {
    void Polymer<D,T>::compute(DArray< RField<D,T> > const & wFields,
                               double phiTot)
    {
-      // Setup solvers for all blocks
-      int monomerId;
-      for (int j = 0; j < nBlock(); ++j) {
-         monomerId = block(j).monomerId();
-         block(j).setupSolver(wFields[monomerId]);
+      // Setup solvers for all blocks. Each block solves the MDE in the
+      // field w of its monomer type minus the shift
+      // min(w) - ln<exp(-n(w - min(w)))>/n (see Polymer.h), which
+      // PolymerTmpl::solve removes from ln q analytically.
+      const double n = PolymerModel::isThread() ? length()
+                                                : (double) nBead();
+      const int nb = nBlock();
+      std::vector<double> shifts(nb);
+      for (int j = 0; j < nb; ++j) {
+         RField<D,T> const & w = wFields[block(j).monomerId()];
+         if (wWork_.capacity() != w.capacity()) {
+            if (wWork_.isAllocated()) wWork_.deallocate();
+            wWork_.allocate(w.meshDimensions());
+         }
+         const double wMin = Reduce::min(w);
+         VecOp::subVS(wWork_, w, wMin);
+         VecOp::expVc(wWork_, wWork_, -n);
+         shifts[j] = wMin
+                  - std::log(Reduce::sum(wWork_)/double(w.capacity()))/n;
+         block(j).setupSolver(w, shifts[j]);
       }
 
       // Call base class PolymerTmpl solve() function
       // This solves the MDE for all propagators in a precalculated order
       PolymerTmplT::solve(phiTot);
 
-      // Compute block concentration fields
+      // If qShifted() is too small, raise the shifts (see raiseShifts)
+      auto setupBlock = [&](int j, double s) {
+         block(j).setupSolver(wFields[block(j).monomerId()], s);
+      };
+      auto solveBlock = [&](int j) -> double {
+         VecOp::eqS(wWork_, 1.0);
+         PropagatorT& p = block(j).propagator(0);
+         p.solve(wWork_);
+         // The last slice (tail() is not defined for a bead chain end)
+         return Reduce::sum(p.q(p.ns()-1))/double(wWork_.capacity());
+      };
+      PolymerTmplT::raiseShifts(shifts, setupBlock, solveBlock, phiTot);
+
+      // Compute block concentration fields, normalizing products of
+      // the shifted propagators by their own partition function
       double prefactor;
       if (PolymerModel::isThread()) {
-         prefactor = phi() / ( q() * length() );
+         prefactor = phi() / ( qShifted() * length() );
          for (int i = 0; i < nBlock(); ++i) {
             block(i).computeConcentrationThread(prefactor);
          }
       } else {
-         prefactor = phi() / ( q() * (double)nBead() );
+         prefactor = phi() / ( qShifted() * (double)nBead() );
          for (int i = 0; i < nBlock(); ++i) {
             block(i).computeConcentrationBead(prefactor);
          }
@@ -98,12 +132,12 @@ namespace Rp {
       // Compute stress contributions for all blocks
       double prefactor;
       if (PolymerModel::isThread()) {
-         prefactor = phi() / ( q() * length() );
+         prefactor = phi() / ( qShifted() * length() );
          for (int i = 0; i < nBlock(); ++i) {
             block(i).computeStressThread(prefactor);
          }
       } else {
-         prefactor = phi() / ( q() * (double)nBead() );
+         prefactor = phi() / ( qShifted() * (double)nBead() );
          for (int i = 0; i < nBlock(); ++i) {
             block(i).computeStressBead(prefactor);
          }
