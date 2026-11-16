@@ -125,6 +125,10 @@ namespace Pscf
       // Optionally read monomer reference value
       vMonomer_ = 1.0; // Default value
       readOptional(in, "vMonomer", vMonomer_);
+      if (!(vMonomer_ > 0.0)) {
+         Log::file() << "vMonomer = " << vMonomer_ << "\n";
+         UTIL_THROW("vMonomer must be positive");
+      }
 
    }
 
