@@ -192,7 +192,11 @@ namespace Pscf {
       * that have an implicit inverse and and 1.0 otherwise. If isReaField
       * is false, then the weight factor is 1.0 for all wavevectors. The
       * inclusion of a weight factor is designed to simplify use of this
-      * array to compute stress.
+      * array to compute stress. In a cell with a variable angle, the
+      * minimum image of a wavevector can be tied with other images, with
+      * |k|^2 equal within a fraction 1.0E-9, whose |k|^2 has other
+      * derivatives (e.g., in a rhombic cell at 120 degrees). The
+      * derivative is then averaged over these images.
       *
       * Values of the grid array index j correspond to the the rank of
       * the k-space mesh used for discrete Fourier transforms.
