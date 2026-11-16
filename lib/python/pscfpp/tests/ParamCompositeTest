@@ -34,6 +34,12 @@ assert p.Mixture.nMonomer == 2
 assert p.Mixture.monomers == [2.0, 1.0]
 assert p.Interaction.chi == [[0, 25.0], [25.0, 0]]
 
+# A chi matrix with indices larger than 9
+p = readText('System{\n  Interaction{\n    chi(\n      1  0  2.0\n'
+             + '     10  9  3.0\n    )\n  }\n}\n')
+assert len(p.Interaction.chi) == 11
+assert p.Interaction.chi[9][10] == 3.0
+
 p = Composite('in/param')
 
 print(p)
