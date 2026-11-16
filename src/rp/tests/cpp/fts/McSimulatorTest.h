@@ -17,9 +17,13 @@
 
 #include <util/misc/FileMaster.h>
 #include <util/containers/FSArray.h>
+#include <util/param/Label.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -98,6 +102,39 @@ public:
       allocateRGridFields(system, fields);
       Rp::FieldIo<D,CPT> const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
+   }
+
+   /*
+   * Read a 1D diblock melt (16 grid points) with the given McSimulator
+   * block, and set w fields with a cosine exchange component of the
+   * given amplitude.
+   */
+   void initSystem1D(Rp::System<1,CPT>& system,
+                     std::string const & simulatorBlock,
+                     double amplitude = 1.0)
+   {
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } "
+         + simulatorBlock + " }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.5);
+      system.setUnitCell(parameters);
+      DArray< RField<1,CPT> > w;
+      allocateRGridFields(system, w);
+      for (int i = 0; i < 2; ++i) {
+         for (int k = 0; k < 16; ++k) {
+            w[i][k] = (i == 0) ? amplitude*std::cos(2.0*M_PI*k/16.0) : 0.0;
+         }
+      }
+      system.w().setRGrid(w);
    }
 
    void testMcSimulateDiblocks()
@@ -182,6 +219,46 @@ public:
       comparison.compare(rf_0, system.w().rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
 
+   }
+
+   /*
+   * Does reading an McSimulator with a BdMove of the given nStep
+   * throw an Exception?
+   */
+   bool bdMoveReadThrows(std::string const & nStep)
+   {
+      Rp::System<1,CPT> system;
+      initSystem1D(system, "");
+      Rp::McSimulator<1,CPT> simulator(system);
+      std::istringstream in(
+         "McSimulator{ seed 1234"
+         " McMoveManager{\n"
+         " BdMove{ probability 1.0 mobility 1.0e-4"
+         " nStep " + nStep + " }\n"
+         " }\n"
+         " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 } }\n");
+      bool thrown = false;
+      try {
+         simulator.readParam(in);
+      } catch (Exception& e) {
+         Label::clear();
+         thrown = true;
+      }
+      return thrown;
+   }
+
+   /*
+   * The number nStep of BD steps per BdMove must be a positive integer.
+   */
+   void testBdMoveNStep()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testBdMoveNStep.log");
+
+      TEST_ASSERT(bdMoveReadThrows("2.5"));
+      TEST_ASSERT(bdMoveReadThrows("0"));
+      TEST_ASSERT(bdMoveReadThrows("-3"));
+      TEST_ASSERT(!bdMoveReadThrows("3"));
    }
 
    void testMcSimulateTriblocks()
@@ -273,6 +350,7 @@ TEST_ADD(McSimulatorTest, testMcSimulateDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateTriblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateBdMoveDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateShiftDiblocks)
+TEST_ADD(McSimulatorTest, testBdMoveNStep)
 TEST_ADD(McSimulatorTest, testBdMoveFailedLastStep)
 TEST_END(McSimulatorTest)
 
