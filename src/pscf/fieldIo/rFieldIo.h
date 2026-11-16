@@ -241,7 +241,6 @@ namespace Pscf {
    *
    * \param in  input file stream
    * \param fields  array of field components
-   * \param unitCell associated crystallographic unit cell
    * \param mesh associated computational mesh
    * \param basis associated symmetry adapted basis
    * \param nStarIn number of stars declared in headers
@@ -249,7 +248,6 @@ namespace Pscf {
    template <int D>
    void readBasisData(std::istream& in,
                       DArray< DArray<double> >& fields,
-                      UnitCell<D> const& unitCell,
                       Mesh<D> const& mesh,
                       Basis<D> const& basis,
                       int nStarIn);
@@ -265,7 +263,6 @@ namespace Pscf {
    *
    * \param in  input file stream
    * \param field  components of a single field
-   * \param unitCell associated crystallographic unit cell
    * \param mesh associated computational mesh
    * \param basis associated symmetry adapted basis
    * \param nStarIn number of stars declared in headers
@@ -273,7 +270,6 @@ namespace Pscf {
    template <int D>
    void readBasisData(std::istream& in,
                       DArray<double>& field,
-                      UnitCell<D> const& unitCell,
                       Mesh<D> const& mesh,
                       Basis<D> const& basis,
                       int nStarIn);

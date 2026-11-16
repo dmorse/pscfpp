@@ -310,8 +310,7 @@ namespace Rp {
       UTIL_CHECK(isAllocatedBasis_);
 
       // Read data in basis form (array basis_)
-      Pscf::readBasisData(in, basis_,
-                          *readUnitCellPtr_, mesh, basis, nBasisIn);
+      Pscf::readBasisData(in, basis_, mesh, basis, nBasisIn);
 
       // Convert to r-grid form (array rgrid_)
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
