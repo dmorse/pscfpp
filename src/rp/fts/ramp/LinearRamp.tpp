@@ -100,7 +100,7 @@ namespace Rp {
       for (int i = 0; i < nParameter_; ++i) {
          std::string const type = parameters_[i].type();
          if (type != "chi" && type != "lambda_pert"
-             && type != "vMonomer") {
+             && type != "v_monomer") {
             return true;
          }
       }
