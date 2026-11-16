@@ -126,7 +126,7 @@ namespace Rp {
       double mobility_;
 
       // Number of BD steps per MC move.
-      double nStep_;
+      int nStep_;
 
       // Private member functions
 
