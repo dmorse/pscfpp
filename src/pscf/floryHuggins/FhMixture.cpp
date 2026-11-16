@@ -111,16 +111,23 @@ namespace Pscf {
       validate();
       UTIL_ASSERT(phi.capacity() == nMolecule_);
 
-      // Set molecular volume fractions
+      // Set molecular volume fractions. The phi of the species with
+      // the largest phi is 1 minus the sum of the others: that of any
+      // other species would lose its precision if it is dilute.
+      int iMax = 0;
+      for (int i = 1; i < nMolecule_; ++i) {
+         if (phi[i] > phi[iMax]) iMax = i;
+      }
       double sum = 0;
-      for (int i = 0; i < nMolecule_ - 1; ++i) {
+      for (int i = 0; i < nMolecule_; ++i) {
+         if (i == iMax) continue;
          UTIL_CHECK(phi[i] >= 0.0);
          UTIL_CHECK(phi[i] <= 1.0);
          phi_[i] = phi[i];
          sum += phi[i];
       }
       UTIL_CHECK(sum <= 1.0);
-      phi_[nMolecule_ -1] = 1.0 - sum;
+      phi_[iMax] = 1.0 - sum;
       for (int i = 0; i < nMolecule_; ++i) {
          lnPhi_[i] = log(phi_[i]);
       }
