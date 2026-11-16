@@ -123,7 +123,7 @@ namespace Pscf
          if ((input >> length) && length == block.length_) {
             precision = 14;
          }
-         out.setf(std::ios::scientific);
+         out.setf(std::ios::scientific, std::ios::floatfield);
          out.width(24);
          out.precision(precision);
          out << block.length_;
