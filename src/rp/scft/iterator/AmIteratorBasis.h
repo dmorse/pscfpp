@@ -146,6 +146,20 @@ namespace Rp {
       */
       void outputToLog() override;
 
+      /**
+      * Return the norm of the reference vector of the relNorm error.
+      *
+      * The reference vector is the interaction field chi c, with which
+      * the residual compares the w fields, followed by the scaled
+      * flexible unit cell parameters, as in the state vector. Unlike
+      * the w fields, it does not contain the external fields, a field
+      * common to all monomer types (a pressure field), or arbitrary
+      * constants.
+      *
+      * \param state  current state vector
+      */
+      double relNormReference(VectorT const & state) override;
+
    };
 
    // Explicit instantiation declarations

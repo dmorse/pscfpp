@@ -216,6 +216,16 @@ spatially homgeneous constant. To obtain a unique solution, in this case
 the spatial average of the Laplace multiplier field \f$ \xi({\bf r}) \f$ 
 is implicitly set to zero by convention.
 
+\section rp_AmIteratorBasis_relNorm_sec Error type relNorm
+
+If errorType is relNorm (the default), the scalar error is the ratio
+\f$ |{\bf R}|/|{\bf Q}| \f$ of the L2 norms of the residual vector and
+of a reference vector \f$ {\bf Q} \f$. The field elements of
+\f$ {\bf Q} \f$ are the components of the interaction field,
+\f$ Q_{ai} = \sum_{j} \chi_{ij}\phi_{aj} \f$. If the unit cell is
+flexible, \f$ {\bf Q} \f$ also contains the scaled flexible unit cell
+parameters, as the state vector does.
+
 */
 
 } // namespace Rp

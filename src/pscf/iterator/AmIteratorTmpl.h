@@ -206,9 +206,10 @@ namespace Pscf {
       * If errorType is relNorm, the scalar error is the L2 norm of the
       * residual divided by the value returned by this function. The
       * default implementation returns the L2 norm of the state vector.
-      * A subclass whose state vector can vanish at a state that must
-      * be accepted, such as a change relative to the initial state,
-      * must override this function.
+      * A subclass must override this function if its state vector can
+      * vanish at a state that must be accepted (e.g., a change relative
+      * to the initial state), or can contain large parts on which the
+      * residual does not depend.
       *
       * \param state  current state vector
       */

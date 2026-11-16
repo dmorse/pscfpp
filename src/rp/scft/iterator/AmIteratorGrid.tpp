@@ -30,6 +30,8 @@
 #include <util/containers/FSArray.h>
 #include <util/global.h>
 
+#include <cmath>
+
 #include <pscf/iterator/AmIteratorTmpl.tpp> // base template impl.
 
 namespace Pscf {
@@ -443,6 +445,42 @@ namespace Rp {
          }
          UTIL_CHECK(counter == nFlex);
       }
+   }
+
+   /*
+   * Norm of the reference vector of the relNorm error.
+   */
+   template <int D, class T>
+   double AmIteratorGrid<D,T>::relNormReference(VectorT const & state)
+   {
+      const int nMonomer = system().mixture().nMonomer();
+      const int nMesh = system().domain().mesh().size();
+      if (!referenceWork_.isAllocated()) {
+         referenceWork_.allocate(nMesh);
+      }
+
+      // Interaction field chi c
+      double sumSq = 0.0;
+      for (int i = 0; i < nMonomer; ++i) {
+         VecOp::eqS(referenceWork_, 0.0);
+         for (int j = 0; j < nMonomer; ++j) {
+            VecOp::addEqVc(referenceWork_, system().c().rgrid(j),
+                           interaction_.chi(i,j));
+         }
+         sumSq += Reduce::sumSq(referenceWork_);
+      }
+
+      // Scaled flexible unit cell parameters, as in the state vector
+      const int nFlex = state.capacity() - nMonomer*nMesh;
+      if (nFlex > 0) {
+         DArray<RealT> parameters(nFlex);
+         VecOp::eqV(parameters, state, 0, nMonomer*nMesh, nFlex);
+         for (int k = 0; k < nFlex; ++k) {
+            sumSq += parameters[k]*parameters[k];
+         }
+      }
+
+      return std::sqrt(sumSq);
    }
 
 }
