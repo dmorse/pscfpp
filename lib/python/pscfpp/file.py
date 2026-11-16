@@ -124,14 +124,14 @@ class File:
     # String representation of file data.
     #
     def __repr__(self):
-        if scan:
+        if self.scan:
            return '%-40s  size= %10d  mtime= %10d' \
               % (self.path, self.size, self.mtime)
         else:
            return self.path
 
     def xml(self,indent=''):
-        if scan:
+        if self.scan:
            return indent + '<File path ="' + self.path   + '"' \
                          + ' size ="' + str(self.size)  + '"' \
                          + ' mtime="' + str(self.mtime) + '" />\n'
