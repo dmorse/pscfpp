@@ -189,9 +189,11 @@ namespace Pscf {
          for (int j = 0; j < nMonomer; ++j) {
             x = real(fields[j][rank]);
             y = imag(fields[j][rank]);
+            // The space separates x and y also if y fills its width
+            // (e.g., a negative number with a three-digit exponent)
             out << "  "
                 << Dbl(x, 21, 13)
-                << Dbl(y, 21, 13);
+                << " " << Dbl(y, 20, 13);
          }
          out << std::endl;
          ++i;
@@ -219,7 +221,7 @@ namespace Pscf {
          out << Int(rank, 5);
          out << "  "
              << Dbl(x, 21, 13)
-             << Dbl(y, 21, 13);
+             << " " << Dbl(y, 20, 13);
          out << std::endl;
          ++i;
       }
