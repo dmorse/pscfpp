@@ -72,19 +72,26 @@ namespace Rp {
 
       // Update the system parameter values
       double newVal;
+      bool hasChi = false;
       for (int i = 0; i < nParameter_; ++i) {
          newVal = parameters_[i].initial() + s*parameters_[i].change();
          parameters_[i].update(newVal);
 
-         // Update chiEvals and chiEvecs if parameter is chi
+         // A change of several chi entries need only give a valid chi
+         // matrix once all of them are set: analyze chi after the loop
          if (parameters_[i].type() == "chi") {
-            Ramp<D,T>::simulator().analyzeChi();
+            hasChi = true;
          } else
          if (parameters_[i].type() != "lambda_pert") {
             // Other parameters may change data stored by the compressor
             Ramp<D,T>::simulator().compressor().clearCache();
          }
 
+      }
+
+      // Update chiEvals and chiEvecs if any parameter is chi
+      if (hasChi) {
+         Ramp<D,T>::simulator().analyzeChi();
       }
    }
 
