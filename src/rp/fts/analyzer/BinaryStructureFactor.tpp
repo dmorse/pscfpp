@@ -19,6 +19,7 @@
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/IntVec.h>
+#include <pscf/crystal/waveNorm.h>
 
 #include <util/param/ParamComposite.h>
 #include <util/containers/Array.h>
@@ -240,7 +241,8 @@ namespace Rp {
          bunchWavenumbers_[ib] = std::sqrt(wavenumberSq);
          if (ib > 0) {
             // Same criterion as in WaveList::sortWaves
-            UTIL_CHECK(wavenumberSq - oldWavenumberSq > 1.0E-8);
+            UTIL_CHECK(wavenumberSq > oldWavenumberSq);
+            UTIL_CHECK(!equalWaveNorm(wavenumberSq, oldWavenumberSq));
          }
          oldWavenumberSq = wavenumberSq;
 
@@ -260,7 +262,7 @@ namespace Rp {
             // count = 1.0;   // Uncomment to weight waves equally
             waveWeights_[iw] = count;
             sum += count;
-            UTIL_CHECK(std::abs(kSq[iw] - wavenumberSq) < 1.0E-8);
+            UTIL_CHECK(equalWaveNorm(kSq[iw], wavenumberSq));
          }
 
          // Normalize weights for all waves in this bunch
