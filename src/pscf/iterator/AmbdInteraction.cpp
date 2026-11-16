@@ -61,11 +61,12 @@ namespace Pscf
          }
       }
 
+      // The AM residual is defined with the inverse of chi
       if (nMonomer() == 2) {
          double det = chi_(0,0)*chi_(1, 1) - chi_(0,1)*chi_(1,0);
          double norm = chi_(0,0)*chi_(0, 0) + chi_(1,1)*chi_(1,1)
                      + 2.0*chi_(0,1)*chi_(1,0);
-         if (fabs(det/norm) < 1.0E-8) {
+         if (!(fabs(det) > 1.0E-8*norm)) {
             UTIL_THROW("Singular chi matrix");
          }
          chiInverse_(0,1) = -chi_(0,1)/det;
@@ -77,6 +78,9 @@ namespace Pscf
          LuSolver solver;
          solver.allocate(nMonomer());
          solver.computeLU(chi_);
+         if (solver.isSingular()) {
+            UTIL_THROW("Singular chi matrix");
+         }
          solver.inverse(chiInverse_);
       }
 
@@ -92,6 +96,19 @@ namespace Pscf
          for (k = 0; k < nMonomer_; ++k) { //row
             p_(k,i) = p_(0,i);
          }
+      }
+
+      // The residual divides by sum, the sum of the elements of the
+      // inverse of chi, which can vanish for an invertible chi (e.g.,
+      // chi_01 = chi_12 = 10, chi_02 = 40 and a zero diagonal)
+      double maxAbsChi = 0.0;
+      for (i = 0; i < nMonomer_; ++i) {
+         for (j = 0; j < nMonomer_; ++j) {
+            if (fabs(chi_(i,j)) > maxAbsChi) maxAbsChi = fabs(chi_(i,j));
+         }
+      }
+      if (!(fabs(sum)*maxAbsChi > 1.0E-10)) {
+         UTIL_THROW("Sum of elements of the inverse chi matrix is zero");
       }
 
       for (i = 0; i < nMonomer_; ++i) { //row
