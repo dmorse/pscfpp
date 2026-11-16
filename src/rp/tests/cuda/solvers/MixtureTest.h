@@ -761,6 +761,78 @@ public:
       TEST_ASSERT(std::abs(lnQBead - lnQRef) < 1.0E-10*std::abs(lnQRef));
    }
 
+   /*
+   * Bead chains in fields equal to h at some grid points and 0 at the
+   * others: a homopolymer of one bead of type 0 (phi 0.25) and a
+   * diblock of 4 + 4 beads of types 0 and 1 (phi 0.75), with h at the
+   * odd grid points for type 0, and at grid points 0 and 4 for type 1.
+   * For h = 2000, the reciprocal Boltzmann weight exp(h - s) of a bead
+   * at those points (s the field shift) is above the range of a double.
+   * The concentrations must be finite, those of the homopolymer must be
+   * phi exp(-w)/<exp(-w)>, those of each block must add up to its share
+   * of phi, and they must agree with those for h = 300 (for which the
+   * weight exp(-300) is negligible).
+   */
+   void testSolverBeadStrongField()
+   {
+      printMethod(TEST_FUNC);
+      PolymerModel::setModel(PolymerModel::Bead);
+      double h[2] = {2000.0, 300.0};
+      double c[2][2][8];
+      for (int k = 0; k < 2; ++k) {
+         Rp::Mixture<1,CUT> mixture;
+         UnitCell<1> unitCell;
+         Mesh<1> mesh;
+         FFT<1,CUT> fft;
+         WaveList<1,CUT> waveList;
+         DArray< RField<1,CUT> > wFields;
+         DArray< RField<1,CUT> > cFields;
+         std::istringstream in(
+            "Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 2 "
+            "Polymer{ type linear nBlock 1 blocks[ 0 1 ] phi 0.25 } "
+            "Polymer{ type linear nBlock 2 blocks[ 0 4 1 4 ] phi 0.75 } "
+            "} lamellar 2.0 8");
+         setupMixture1D(in, mixture, unitCell, mesh, fft, waveList,
+                        wFields, cFields);
+         int nx = mesh.size();
+         HostSendArray<cudaReal,CUT> w_h(nx);
+         HostRecvArray<cudaReal,CUT> c_h(nx);
+         for (int i = 0; i < nx; ++i) {
+            w_h[i] = (i % 2 == 1) ? h[k] : 0.0;
+         }
+         wFields[0] = w_h;
+         for (int i = 0; i < nx; ++i) {
+            w_h[i] = (i % 4 == 0) ? h[k] : 0.0;
+         }
+         wFields[1] = w_h;
+         mixture.compute(wFields, cFields);
+
+         c_h = mixture.polymer(0).block(0).cField();
+         for (int i = 0; i < nx; ++i) {
+            double cRef = (i % 2 == 0) ? 0.5 : 0.0;
+            TEST_ASSERT(std::abs(c_h[i] - cRef) < 1.0E-12);
+         }
+         for (int j = 0; j < 2; ++j) {
+            RField<1,CUT> const & cBlock
+                                = mixture.polymer(1).block(j).cField();
+            double sum = Reduce::sum(cBlock)/double(nx);
+            TEST_ASSERT(std::abs(sum - 0.375) < 1.0E-10);
+         }
+         for (int m = 0; m < 2; ++m) {
+            c_h = cFields[m];
+            for (int i = 0; i < nx; ++i) {
+               c[k][m][i] = c_h[i];
+               TEST_ASSERT(std::isfinite(c[k][m][i]));
+            }
+         }
+      }
+      for (int m = 0; m < 2; ++m) {
+         for (int i = 0; i < 8; ++i) {
+            TEST_ASSERT(std::abs(c[0][m][i] - c[1][m][i]) < 1.0E-12);
+         }
+      }
+   }
+
 };
 
 TEST_BEGIN(MixtureTest)
@@ -775,6 +847,7 @@ TEST_ADD(MixtureTest, testSolver3D)
 TEST_ADD(MixtureTest, testSolverLargeSolvent)
 TEST_ADD(MixtureTest, testSolverLongChain)
 TEST_ADD(MixtureTest, testSolverRaisedShift)
+TEST_ADD(MixtureTest, testSolverBeadStrongField)
 TEST_END(MixtureTest)
 
 #endif
