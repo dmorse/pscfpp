@@ -22,6 +22,8 @@
 #include <rp/environment/EnvironmentFactory.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/solvers/MixtureModifier.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
 #include <rp/field/Domain.h>
 #include <rp/field/FieldIo.h>
 #include <rp/field/Mask.h>
@@ -53,6 +55,7 @@
 
 #include <string>
 #include <unistd.h>
+#include <cmath>
 
 namespace Pscf {
 namespace Rp {
@@ -513,6 +516,34 @@ namespace Rp {
          if (command == "COMPUTE") {
             // Solve the modified diffusion equation, without iteration
             compute();
+
+            // Stop if ln q or phi of a species is not finite (out of the
+            // range of floating point numbers, e.g., phi = exp(mu + ln q) of
+            // an open species): then c and the thermodynamic properties are
+            // not finite either
+            bool isFinite = true;
+            double lnQ, phi;
+            for (int i = 0; i < mixture().nPolymer(); ++i) {
+               lnQ = mixture().polymer(i).lnQ();
+               phi = mixture().polymer(i).phi();
+               if (!std::isfinite(lnQ) || !std::isfinite(phi)) {
+                  Log::file() << "Polymer " << i << ": ln q = " << lnQ
+                              << ", phi = " << phi << std::endl;
+                  isFinite = false;
+               }
+            }
+            for (int i = 0; i < mixture().nSolvent(); ++i) {
+               lnQ = mixture().solvent(i).lnQ();
+               phi = mixture().solvent(i).phi();
+               if (!std::isfinite(lnQ) || !std::isfinite(phi)) {
+                  Log::file() << "Solvent " << i << ": ln q = " << lnQ
+                              << ", phi = " << phi << std::endl;
+                  isFinite = false;
+               }
+            }
+            if (!isFinite) {
+               UTIL_THROW("ln q or phi of a species is not finite");
+            }
          } else
          if (command == "ITERATE") {
             // Attempt to iteratively solve a single SCFT problem
