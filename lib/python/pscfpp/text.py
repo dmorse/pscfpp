@@ -472,7 +472,8 @@ class FileEditor:
       # Edit all blocks before the file is opened for writing, so that
       # an error leaves the file unchanged
       found = False
-      for i in range(n + 1 - self.blockSize):
+      i = 0
+      while i + self.blockSize <= len(lines):
          block = ''.join(lines[i:i + self.blockSize])
          if (self.filter.search(block)):
             if (not found):
@@ -481,12 +482,23 @@ class FileEditor:
             print(block)
             block = re.sub(self.old, self.new, block)
             print(block)
-            if (block[-1] == '\n'):
-               block = block[0:-1]
-            list  = block.split('\n')
-            for j in range(len(list)):
-               list[j] = list[j] + '\n'
+            # An empty replacement deletes the block
+            list = []
+            if (block != ''):
+               if (block[-1] == '\n'):
+                  block = block[0:-1]
+               list  = block.split('\n')
+               for j in range(len(list)):
+                  list[j] = list[j] + '\n'
             lines[i:i+self.blockSize] = list
+            # The next block ends with the first line after the new
+            # lines, which may be fewer or more than blockSize, or
+            # starts at the first new line (after a deletion: at the
+            # line that follows) if there are fewer than blockSize - 1
+            # of them
+            i += max(len(list) - self.blockSize + 1, 0)
+         else:
+            i += 1
       if (not self.isTest):
          newfile = open (filename, 'w')
          newfile.writelines(lines)
