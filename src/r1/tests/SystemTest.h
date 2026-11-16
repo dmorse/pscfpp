@@ -354,6 +354,52 @@ public:
    }
 
    /*
+   * REMESH_W and EXTEND_W with invalid numbers of grid points.
+   */
+   void testRemeshExtendInvalid()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestRemeshExtendInvalid.log");
+
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr2.prm", in);
+      sys.readParam(in);
+      in.close();
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      std::string filename = "out/SystemTestRemeshExtendInvalid.w";
+      std::istringstream in1("READ_W in/planar.w\nREMESH_W 51 "
+                             + filename + "\nFINISH\n");
+      sys.readCommands(in1);
+      std::ifstream file;
+      openInputFile(filename, file);
+      std::ostringstream before;
+      before << file.rdbuf();
+      file.close();
+
+      // Each command must throw, and leave the existing file unchanged
+      std::string commands[3] = {"REMESH_W 1 ", "REMESH_W 0 ",
+                                 "EXTEND_W -1 "};
+      for (int k = 0; k < 3; ++k) {
+         std::istringstream in2(commands[k] + filename + "\nFINISH\n");
+         bool thrown = false;
+         try {
+            sys.readCommands(in2);
+         } catch (Exception& e) {
+            thrown = true;
+         }
+         TEST_ASSERT(thrown);
+         openInputFile(filename, file);
+         std::ostringstream after;
+         after << file.rdbuf();
+         file.close();
+         TEST_ASSERT(after.str() == before.str());
+      }
+   }
+
+   /*
    * Test NR iterator on input field generated within function.
    */
    void testIteratorPlanarNr1()
@@ -680,6 +726,7 @@ TEST_ADD(SystemTest, testIteratorPlanarBrDiagonalChi)
 TEST_ADD(SystemTest, testIteratorPlanarBrLambda)
 TEST_ADD(SystemTest, testReadFieldsIncomplete)
 TEST_ADD(SystemTest, testWriteCAfterReadW)
+TEST_ADD(SystemTest, testRemeshExtendInvalid)
 TEST_ADD(SystemTest, testIteratorPlanarNr1)
 TEST_ADD(SystemTest, testIteratorPlanarNr2)
 TEST_ADD(SystemTest, testIteratorPlanarNr3)
