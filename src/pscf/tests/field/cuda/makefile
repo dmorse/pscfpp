@@ -1,7 +1,7 @@
 include ../../../../config.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/pscf/tests/field/cuda/sources.mk
+include $(SRC_DIR)/pscf/patterns.mk
 
 TEST=$(BLD_DIR)/pscf/tests/field/cuda/Test
 
