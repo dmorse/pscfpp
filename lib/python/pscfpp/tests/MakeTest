@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+
+from pscfpp.make import *
+import os, tempfile
+
+# Dependency files of source files whose names contain a dot before the
+# extension, with commands that write a dependency rule in place of the
+# compilers (the first writes to the file given before the source file,
+# the second to standard output)
+d = tempfile.TemporaryDirectory()
+srcdir = os.path.join(d.name, 'src')
+blddir = os.path.join(d.name, 'bld')
+os.mkdir(srcdir)
+os.mkdir(blddir)
+cpp = os.path.join(srcdir, 'Part.one.cpp')
+cu = os.path.join(srcdir, 'Part.one.cu')
+createDependencyFileCpp("sh -c 'echo \"Part.one.o: $1\" > $0'", '', cpp,
+                        srcdir, blddir)
+createDependencyFileCuda("echo 'Part.one.o: '", '', cu, srcdir, blddir)
+assert sorted(os.listdir(blddir)) == ['Part.one.d', 'Part.one.du']
+assert sorted(os.listdir(srcdir)) == []
+d.cleanup()
