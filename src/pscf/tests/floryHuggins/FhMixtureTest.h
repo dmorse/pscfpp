@@ -173,6 +173,55 @@ public:
       }
    }
 
+   /*
+   * A/B blend of molecules of size 1 at chi = 2, its critical point.
+   * At the guess phi = (0.5, 0.5), the Jacobian of the Newton steps of
+   * computePhi is singular, and the GSL solver aborted the program.
+   * computePhi must throw an Exception. From the guess (0.7, 0.3), it
+   * must converge.
+   */
+   void testComputePhiSingular() {
+      printMethod(TEST_FUNC);
+
+      FhMixture mixture;
+      std::ifstream in;
+      openInputFile("in/FhMixtureBlend", in);
+      mixture.readParam(in);
+      in.close();
+
+      FhInteraction interaction;
+      interaction.setNMonomer(2);
+      interaction.setChi(0, 1, 2.0);
+
+      DArray<double> mu, phi;
+      mu.allocate(2);
+      phi.allocate(2);
+      mu[0] = 0.1;
+      mu[1] = 0.0;
+      phi[0] = 0.5;
+      phi[1] = 0.5;
+      double xi = 0.0;
+      bool thrown = false;
+      try {
+         mixture.computePhi(interaction, mu, phi, xi);
+      } catch (Exception&) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+
+      phi[0] = 0.7;
+      phi[1] = 0.3;
+      xi = 0.0;
+      mixture.computePhi(interaction, mu, phi, xi);
+      TEST_ASSERT(eq(mixture.mu(0), mu[0]));
+      TEST_ASSERT(eq(mixture.mu(1), mu[1]));
+      double phiA = mixture.phi(0);
+      double phiB = mixture.phi(1);
+      TEST_ASSERT(phiA > 0.5);
+      TEST_ASSERT(std::abs(log(phiA/phiB) + 2.0*(phiB - phiA) - 0.1)
+                  < 1.0E-9);
+   }
+
 };
 
 TEST_BEGIN(FhMixtureTest)
@@ -181,6 +230,7 @@ TEST_ADD(FhMixtureTest, testReadWrite)
 TEST_ADD(FhMixtureTest, testSetComposition)
 TEST_ADD(FhMixtureTest, testComputeMu)
 TEST_ADD(FhMixtureTest, testComputePhi)
+TEST_ADD(FhMixtureTest, testComputePhiSingular)
 TEST_END(FhMixtureTest)
 
 #endif
