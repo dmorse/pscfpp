@@ -275,6 +275,53 @@ public:
    }
 
    /*
+   * BinaryRelaxIterator parameters after a solve that reduced them.
+   */
+   void testIteratorPlanarBrLambda()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorPlanarBrLambda.log");
+
+      // Diblock with chi 20, lambdaPlus = lambdaMinus = 6. An early
+      // update (the third) increases the error, so that the iterator
+      // reduces them.
+      System sys;
+      std::istringstream in(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 1"
+         " nSolvent 0 Polymer{ type linear nBlock 2"
+         " blocks 0 0.5 1 0.5 phi 1.0 } ds 0.01 }"
+         " Interaction{ chi( 0 1 20.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 1.7 nx 101 }"
+         " BinaryRelaxIterator{ epsilon 1.0e-8 maxIter 40000"
+         " lambdaPlus 6.0 lambdaMinus 6.0 } }\n");
+      sys.readParam(in);
+
+      FieldIo fieldIo;
+      fieldIo.associate(sys.domain(), sys.fileMaster());
+      std::ifstream wIn;
+      openInputFile("in/planar.w", wIn);
+      fieldIo.readFields(sys.wFields(), wIn);
+      wIn.close();
+
+      TEST_ASSERT(sys.iterator().solve() == 0);
+
+      // The parameters written after the solve are those read
+      std::ostringstream out;
+      sys.iterator().writeParam(out);
+      Log::file() << out.str();
+      std::string labels[2] = {"lambdaPlus", "lambdaMinus"};
+      for (int i = 0; i < 2; ++i) {
+         std::string const & text = out.str();
+         std::size_t pos = text.find(labels[i]);
+         TEST_ASSERT(pos != std::string::npos);
+         std::istringstream value(text.substr(pos + labels[i].size()));
+         double lambda = 0.0;
+         value >> lambda;
+         TEST_ASSERT(eq(lambda, 6.0));
+      }
+   }
+
+   /*
    * Test NR iterator controlled by a command file.
    */
    void testIteratorPlanarNr3()
@@ -740,6 +787,7 @@ TEST_ADD(SystemTest, testSolveMdePlanar)
 TEST_ADD(SystemTest, testSolveMdeSpherical)
 TEST_ADD(SystemTest, testIteratorPlanarNr1)
 TEST_ADD(SystemTest, testIteratorPlanarNr2)
+TEST_ADD(SystemTest, testIteratorPlanarBrLambda)
 TEST_ADD(SystemTest, testIteratorPlanarNr3)
 TEST_ADD(SystemTest, testIteratorSphericalNr1)
 TEST_ADD(SystemTest, testIteratorSphericalNr3)
