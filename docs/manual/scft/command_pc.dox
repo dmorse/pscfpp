@@ -756,6 +756,38 @@ accessible slice may be identified by a integer contour step index
 originates, and increases with increasing distance \f$ s \f$ from that
 vertex.
 
+The MDE for each block is solved in the field \f$ w_{i} \f$ of its
+monomer type \f$ i \f$ minus a constant shift
+\f[
+   \hat{w}_{i} = -\frac{1}{N} \ln \langle e^{-N w_{i}} \rangle \; ,
+\f]
+in which \f$ \langle \cdots \rangle \f$ denotes a spatial average
+over the unit cell and \f$ N \f$ is the total length (thread model)
+or the total number of beads (bead model) of the polymer. This is the
+free energy per monomer of a molecule of length (or number of beads)
+\f$ N \f$ made only of monomers of type \f$ i \f$, held with all its
+monomers at a single point, and lies between the minimum and the
+spatial average of \f$ w_{i} \f$. The shift multiplies each propagator
+by a known factor, which is removed analytically from the logarithm of
+the molecular partition function, so that concentrations, free
+energies and chemical potentials are those of the unshifted fields,
+while the propagators of long chains remain within the range of
+floating point numbers. If the partition function of the shifted
+propagators is nevertheless smaller than about \f$ 10^{-294} \f$ (as
+for a long chain in a field that varies strongly over distances that
+the chain cannot follow), the shifts of the blocks of that polymer are
+raised so that this partition function is one.
+
+The propagators written by the commands described below are those of
+the shifted fields. Within a block of monomer type \f$ i \f$, the
+propagator of the unshifted field is the written one multiplied by
+\f$ \exp(-s \hat{w}_{i}) \f$, where \f$ s \f$ is the contour distance
+(or the number of beads) from the start of the block, and by the
+corresponding factors of all blocks that precede it along the
+propagation direction. Here \f$ \hat{w}_{i} \f$ is the shift actually
+applied. A raised shift is not written to any output file; the written
+propagators then have a partition function of one.
+
 The pscf_rp program accepts several commands that output propagators
 and propagator slices to one or more files. The names for these commands
 start with a string "WRITE_Q", followed by a suffix that describes what

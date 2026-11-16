@@ -390,6 +390,40 @@ accessible slice may be identified by a integer contour step index
 originates, and increases with increasing distance \f$ s \f$ from that
 vertex.
 
+The MDE for each block is solved in the field \f$ w_{i} \f$ of its
+monomer type \f$ i \f$ minus a constant shift
+\f[
+   \hat{w}_{i} = -\frac{1}{N} \ln \langle e^{-N w_{i}} \rangle \; ,
+\f]
+in which \f$ \langle \cdots \rangle \f$ denotes a spatial (volume)
+average over the domain and \f$ N \f$ is the total length of the
+polymer. This is the free energy per monomer of a molecule of length
+\f$ N \f$ made only of monomers of type \f$ i \f$, held with all its
+monomers at a single point, and lies between the minimum and the
+spatial average of \f$ w_{i} \f$. The shift
+multiplies each propagator by a known factor, which is removed
+analytically from the logarithm of the molecular partition function,
+so that concentrations, free energies and chemical potentials are
+those of the unshifted fields, while the propagators of long chains
+remain within the range of floating point numbers. Because the shift
+follows any constant added to all fields, the results do not depend on
+that constant, although the Crank-Nicolson contour step is not exact
+for a constant field. If the partition function of the shifted
+propagators is nevertheless smaller than about \f$ 10^{-294} \f$ (as
+for a long chain in a field that varies strongly over distances that
+the chain cannot follow), the shifts of the blocks of that polymer are
+raised so that this partition function is one.
+
+The propagators written by the commands described below are those of
+the shifted fields. Within a block of monomer type \f$ i \f$, the
+propagator of the unshifted field is the written one multiplied by
+\f$ \exp(-s \hat{w}_{i}) \f$, where \f$ s \f$ is the contour distance
+from the start of the block, and by the corresponding factors of all
+blocks that precede it along the propagation direction. Here
+\f$ \hat{w}_{i} \f$ is the shift actually applied. A raised shift is
+not written to any output file; the written propagators then have a
+partition function of one.
+
 The pscf_1d programs accept several commands that output propagators
 and propagator slices to one or more files. The names for these commands
 start with a string "WRITE_Q", followed by a suffix that describes what
@@ -421,12 +455,12 @@ single column without a grid point index. For example, for a grid with
 101 nodes, the file has the form
 \code
 nx     101
-   8.46351797850e+03
-   8.44965813412e+03
+   1.06348090977e+00
+   1.06172499763e+00
           .
           .
           .
-   8.46351779611e+03
+   1.06348094915e+00
 \endcode
 
 \anchor scft_command_1d_writeqtail_sub
@@ -463,18 +497,22 @@ linear polymer), and the last column contains their product.
 For example, for the junction (vertex 1) of a diblock copolymer on a
 grid with 101 nodes, the file has the form
 \code
-    0  8.46351798e+03  1.04196558e+02  8.81869440e+05
-    1  8.44965813e+03  1.05721201e+02  8.93308004e+05
+    0  1.06348091e+00  1.30440399e-02  1.38720874e-02
+    1  1.06172500e+00  1.32345976e-02  1.40515031e-02
           .               .               .
           .               .               .
           .               .               .
-  100  8.46351780e+03  1.04196560e+02  8.81869441e+05
+  100  1.06348095e+00  1.30440390e-02  1.38720870e-02
 \endcode
 The product in the last column is proportional to the probability
 density for the location of the specified vertex. The spatial average
 of this product should have the same value for any vertex, within
 numerical error, and is equal to the molecular partitition function
-\f$ Q \f$ for a molecule of type \f$ ip \f$.
+\f$ Q \f$ for a molecule of type \f$ ip \f$ multiplied by
+\f$ \exp(\sum_{b} L_{b} \hat{w}_{b}) \f$, because the propagators
+are those of the shifted fields described above. Here the sum is taken
+over all blocks of the molecule, \f$ L_{b} \f$ is the length of block
+\f$ b \f$ and \f$ \hat{w}_{b} \f$ is the field shift of that block.
 
 \anchor scft_command_1d_writeq_sub
 <b> WRITE_Q </b>:
