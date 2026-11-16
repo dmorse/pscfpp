@@ -91,6 +91,10 @@ assert readText(str(p)).Interaction.chi[1][0] == 17.0
 p = readText('System{\n  Polymer{\n    blocks  0  0.3333333\n  }\n}\n')
 assert readText(str(p)).Polymer.blocks == [0, 0.3333333]
 
+# An integer with an explicit sign
+p = readText('System{\n  AmIterator{\n    maxItr  +200\n  }\n}\n')
+assert p.AmIterator.maxItr == 200 and isinstance(p.AmIterator.maxItr, int)
+
 p = Composite('in/param')
 
 print(p)

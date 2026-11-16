@@ -69,6 +69,10 @@ assert readText(str(f)).data == f.data
 f = readText(header + ''.join(f'{i} 0.5 0.0 0.5 0.0\n' for i in range(3)))
 assert f.type == 'kgrid'
 
+# A k-grid index with an explicit sign
+f = readText(header + ''.join(f'+{i} 0.5 0.0 0.5 0.0\n' for i in range(3)))
+assert f.data[0][0] == 0 and isinstance(f.data[0][0], int)
+
 # A second read replaces the contents of the first
 f = Field('in/w.bf')
 with open('in/w.bf') as file:
