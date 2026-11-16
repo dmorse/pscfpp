@@ -8,6 +8,7 @@
 #include "CompressorTest.h"
 #include "McSimulatorTest.h"
 #include "BdSimulatorTest.h"
+#include "AnalyzeNoSampleTest.h"
 #include "AnalyzerTest.h"
 #include "IntraTest.h"
 #include "PerturbationTest.h"
@@ -19,6 +20,7 @@ TEST_COMPOSITE_ADD_UNIT(CompressorTest)
 TEST_COMPOSITE_ADD_UNIT(AnalyzerTest)
 TEST_COMPOSITE_ADD_UNIT(McSimulatorTest)
 TEST_COMPOSITE_ADD_UNIT(BdSimulatorTest)
+TEST_COMPOSITE_ADD_UNIT(AnalyzeNoSampleTest)
 TEST_COMPOSITE_ADD_UNIT(PerturbationTest)
 TEST_COMPOSITE_END
 
