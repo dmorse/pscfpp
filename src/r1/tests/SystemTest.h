@@ -651,6 +651,49 @@ public:
       TEST_ASSERT(std::abs(sys.pressure() - pExact) < 5.0E-11);
    }
 
+   /*
+   * Commands that write c fields after READ_W, without a solution.
+   */
+   void testWriteCAfterReadW()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestWriteCAfterReadW.log");
+
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr2.prm", in);
+      sys.readParam(in);
+      in.close();
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      std::istringstream in1("READ_W in/planar.w\nCOMPUTE\n"
+                             "WRITE_C out/SystemTestWriteCAfterReadW.c\n"
+                             "FINISH\n");
+      sys.readCommands(in1);
+
+      // After READ_W, WRITE_C and WRITE_THERMO must fail
+      std::string commands[2] = {
+         "WRITE_C out/SystemTestWriteCAfterReadW.c\n",
+         "WRITE_THERMO out/SystemTestWriteCAfterReadW.thermo\n"};
+      for (int k = 0; k < 2; ++k) {
+         std::istringstream in2("READ_W in/planar.w\n" + commands[k]
+                                + "FINISH\n");
+         bool thrown = false;
+         try {
+            sys.readCommands(in2);
+         } catch (Exception& e) {
+            thrown = true;
+         }
+         TEST_ASSERT(thrown);
+      }
+
+      // After COMPUTE, they succeed
+      std::istringstream in3("COMPUTE\n" + commands[0] + commands[1]
+                             + "FINISH\n");
+      sys.readCommands(in3);
+   }
+
    void testSweepParameterIdRange()
    {
       printMethod(TEST_FUNC);
@@ -747,6 +790,7 @@ TEST_ADD(SystemTest, testIteratorPlanarAm1)
 TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
 TEST_ADD(SystemTest, testThermoSmallPhi)
+TEST_ADD(SystemTest, testWriteCAfterReadW)
 TEST_ADD(SystemTest, testReadCommandsInput)
 TEST_ADD(SystemTest, testComputeThermo)
 TEST_ADD(SystemTest, testReadCommandsStatus)
