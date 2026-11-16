@@ -85,18 +85,27 @@ namespace Pscf
       // Diagonal elements
       DArray<double> d_;
 
-      // Upper off-diagonal elements (unmodified by computeLU)
+      // Upper off-diagonal elements (modified by row swaps)
       DArray<double> u_;
+
+      // Second upper off-diagonal elements (from row swaps)
+      DArray<double> u2_;
 
       // Lower off-diagonal elements (replaced by multipliers)
       DArray<double> l_;
+
+      // Were rows i and i+1 swapped in Gauss elimination?
+      DArray<bool> swap_;
+
+      // Were any rows swapped?
+      bool hasSwap_;
 
       // Work space.
       DArray<double> y_;
 
       int n_;
 
-      // Apply Gauss elimination to private arrays d_, u_, l_.
+      // Apply Gauss elimination with partial pivoting.
       void gaussElimination();
 
    };
