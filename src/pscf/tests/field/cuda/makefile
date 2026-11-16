@@ -16,7 +16,7 @@ run: $(TEST)
 	$(TEST) $(SRC_DIR)/pscf/tests/field/cuda/
 
 run-quiet: $(TEST)
-	@$(TEST) $(SRC_DIR)/pscf/tests/ > log
+	@$(TEST) $(SRC_DIR)/pscf/tests/field/cuda/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in pscf/tests/field/cuda/log" > count
 	@cat count

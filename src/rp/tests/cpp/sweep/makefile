@@ -16,10 +16,10 @@ Test: Test.o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o Test Test.o $(LIBS)
 
 run: Test
-	./Test $(SRC_DIR)/rp/tests/cpp/ 
+	./Test $(SRC_DIR)/rp/tests/cpp/sweep/
 
 run-quiet: Test
-	@./Test $(SRC_DIR)/rp/tests/cpp/  > log
+	@./Test $(SRC_DIR)/rp/tests/cpp/sweep/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in rp/tests/cpp/sweep/log" > count
 	@cat count

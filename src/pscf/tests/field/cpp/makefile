@@ -11,12 +11,12 @@ $(TEST): $(TEST).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
 
 run:    $(TEST).o $(TEST)
-	@$(TEST) $(SRC_DIR)/pscf/tests/cpp/ 
+	@$(TEST) $(SRC_DIR)/pscf/tests/field/cpp/
 
 run-quiet: $(TEST).o $(TEST)
-	@$(TEST) $(SRC_DIR)/pscf/tests/cpp/ > log
+	@$(TEST) $(SRC_DIR)/pscf/tests/field/cpp/ > log
 	@echo `grep failed log` ", "\
-              `grep successful log` "in pscf/tests/cpp/log" > count
+              `grep successful log` "in pscf/tests/field/cpp/log" > count
 	@cat count
 
 clean-outputs:
