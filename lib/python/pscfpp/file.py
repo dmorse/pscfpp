@@ -16,10 +16,12 @@ from glob import glob
 #  \return  Path for file2 relative to directory containing path1
 #
 def relative_path(path1,path2):
+    path1 = normpath(path1)
+    path2 = normpath(path2)
     root = commonprefix([path1, path2])
     root = dirname(root)
     if (root == '/'):
-        raise 'Error in relative_path - common directory cannot be / '
+        raise Exception('Error in relative_path - common directory cannot be / ')
     if root :
         path2 = path2[len(root)+1:]   
     path1 = dirname(path1)
