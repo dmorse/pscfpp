@@ -9,6 +9,7 @@
 */
 
 #include "MixtureTmpl.h"
+#include <util/misc/Log.h>
 
 namespace Pscf
 {
@@ -91,6 +92,12 @@ namespace Pscf
          for (int i = 0; i < nPolymer_; ++i) {
             for (int j = 0; j < polymer(i).nBlock(); ++j) {
                monomerId = polymer(i).block(j).monomerId();
+               if (monomerId < 0 || monomerId >= nMonomer_) {
+                  Log::file() << "Polymer " << i << ", block " << j
+                              << ": monomerId = " << monomerId
+                              << ", nMonomer = " << nMonomer_ << "\n";
+                  UTIL_THROW("Block monomerId out of range");
+               }
                kuhn = Composition<WT>::monomer(monomerId).kuhn();
                polymer(i).block(j).setKuhn(kuhn);
             }
@@ -104,6 +111,13 @@ namespace Pscf
          solvents_.allocate(nSolvent_);
          for (int i = 0; i < nSolvent_; ++i) {
             readParamComposite(in, solvent(i));
+            int monomerId = solvent(i).monomerId();
+            if (monomerId < 0 || monomerId >= nMonomer_) {
+               Log::file() << "Solvent " << i << ": monomerId = "
+                           << monomerId << ", nMonomer = " << nMonomer_
+                           << "\n";
+               UTIL_THROW("Solvent monomerId out of range");
+            }
          }
 
       }
