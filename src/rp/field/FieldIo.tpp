@@ -150,7 +150,7 @@ namespace Rp {
       }
 
       // Read field data (components in basis)
-      Pscf::readBasisData(in, fields, unitCell, mesh(), basis(), nBasisIn);
+      Pscf::readBasisData(in, fields, mesh(), basis(), nBasisIn);
    }
 
    /*
@@ -1248,8 +1248,7 @@ namespace Rp {
       UTIL_CHECK(isSymmetric);
 
       // Read c field data into tmpFieldsBasis_
-      Pscf::readBasisData(in, tmpFieldsBasis_,
-                          tmpUnitCell, mesh(), basis(), nBasisIn);
+      Pscf::readBasisData(in, tmpFieldsBasis_, mesh(), basis(), nBasisIn);
       in.close();
 
       // Compute estimated w, stored in tmpFilesBasis_

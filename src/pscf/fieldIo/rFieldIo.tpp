@@ -10,7 +10,6 @@
 
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>
-#include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/crystal/replicateUnitCell.h>
 #include <pscf/fieldIo/fieldHeader.h>
 
@@ -233,7 +232,6 @@ namespace Pscf {
    template <int D>
    void readBasisData(std::istream& in,
                       DArray< DArray<double> >& fields,
-                      UnitCell<D> const& unitCell,
                       Mesh<D> const& mesh,
                       Basis<D> const& basis,
                       int nBasisIn)
@@ -274,7 +272,7 @@ namespace Pscf {
       int waveId, waveId2;
 
       std::complex<double> coeff, phasor;
-      IntVec<D> waveMin, waveDft;
+      IntVec<D> waveDft;
       int nReversedPair = 0;
       bool waveExists, sizeMatches;
 
@@ -294,16 +292,18 @@ namespace Pscf {
          sizeMatches = false;
          waveExists = false;
 
-         // Check if wavevector waveIn is a minimum image
-         waveMin = shiftToMinimum(waveIn, mesh.dimensions(), unitCell);
-         waveExists = (waveIn == waveMin);
+         // Check if waveIn is the minimum image of its wave in this
+         // basis. Basis files list the minimum images chosen by the basis
+         // of the writer, which used the unit cell from which that basis
+         // was constructed, not the cell given in the file header.
+         waveDft = waveIn;
+         mesh.shift(waveDft);
+         waveId = basis.waveId(waveDft);
+         waveExists = (waveIn == basis.wave(waveId).indicesMin);
 
          if (waveExists) {
 
             // Find the star containing waveIn
-            waveDft = waveIn;
-            mesh.shift(waveDft);
-            waveId = basis.waveId(waveDft);
             starId = basis.wave(waveId).starId;
             starPtr = &basis.star(starId);
             UTIL_CHECK(!(starPtr->cancel));
@@ -356,15 +356,13 @@ namespace Pscf {
                UTIL_CHECK(in.good());
                ++i;
 
-               // Check that waveIn2 is also in the 1st BZ
-               waveMin =
-                  shiftToMinimum(waveIn2, mesh.dimensions(), unitCell);
-               UTIL_CHECK(waveIn2 == waveMin);
-
-               // Identify the star containing waveIn2
+               // Check that waveIn2 is also a minimum image
                waveDft = waveIn2;
                mesh.shift(waveDft);
                waveId2 = basis.waveId(waveDft);
+               UTIL_CHECK(waveIn2 == basis.wave(waveId2).indicesMin);
+
+               // Identify the star containing waveIn2
                starId2 = basis.wave(waveId2).starId;
                starPtr2 = &basis.star(starId2);
                UTIL_CHECK(!(starPtr2->cancel));
@@ -401,8 +399,8 @@ namespace Pscf {
                   // Check that waveIn2 is negation of waveIn
                   IntVec<D> nVec;
                   nVec.negate(waveIn);
-                  nVec =
-                       shiftToMinimum(nVec, mesh.dimensions(), unitCell);
+                  mesh.shift(nVec);
+                  nVec = basis.wave(basis.waveId(nVec)).indicesMin;
                   UTIL_CHECK(waveIn2 == nVec);
 
                   /*
@@ -486,7 +484,6 @@ namespace Pscf {
    template <int D>
    void readBasisData(std::istream& in,
                       DArray<double>& field,
-                      UnitCell<D> const& unitCell,
                       Mesh<D> const& mesh,
                       Basis<D> const& basis,
                       int nBasisIn)
@@ -499,7 +496,7 @@ namespace Pscf {
       fields[0].allocate(field.capacity());
 
       // Call overloaded function that takes an array of fields
-      readBasisData(in, fields, unitCell, mesh, basis, nBasisIn);
+      readBasisData(in, fields, mesh, basis, nBasisIn);
 
       // Copy data from local array fields to function parameter field
       field = fields[0];
