@@ -137,7 +137,8 @@ namespace Rp {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(nBasis > 0);
       UTIL_CHECK(!isAllocatedBasis_);
-      UTIL_CHECK(!hasData_);
+      // The fields may already hold data in r-grid form only. Functions
+      // that allocate basis fields on first use then set all values.
 
       nBasis_ = nBasis;
       basis_.allocate(nMonomer_);
