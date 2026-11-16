@@ -34,6 +34,35 @@ assert p.Mixture.nMonomer == 2
 assert p.Mixture.monomers == [2.0, 1.0]
 assert p.Interaction.chi == [[0, 25.0], [25.0, 0]]
 
+# Arrays and a matrix without brackets
+p = readText('''System{
+  Mixture{
+    nMonomer  2
+    monomers  2.0
+              1.0
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks  0   0.25
+              1   0.75
+      phi     1.0
+    }
+    ds   0.01
+  }
+  Interaction{
+    chi  0   0   0.0
+         1   0   25.0
+         1   1   0.0
+  }
+}
+''')
+for q in [p, readText(str(p))]:
+   assert q.Mixture.monomers == [2.0, 1.0]
+   assert q.Mixture.Polymer.blocks == [[0, 0.25], [1, 0.75]]
+   assert q.Mixture.Polymer.phi == 1.0
+   assert q.Interaction.chi == [[0.0, 25.0], [25.0, 0.0]]
+
 p = Composite('in/param')
 
 print(p)
