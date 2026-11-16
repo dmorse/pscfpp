@@ -62,7 +62,25 @@ namespace Rp {
    template <int D, class T>
    void RGridTrajectoryReader<D,T>::open(std::string filename)
    {
-      system().fileMaster().open(filename, inputfile_);
+      // Apply the input prefix, as for other input files. A name that
+      // already includes the prefix is opened as given if no file exists
+      // at the prefixed path. Plain streams are used for both attempts,
+      // since a failed FileMaster open writes an error message to the
+      // log even if the exception is caught.
+      std::string path = system().fileMaster().inputFilePath(filename);
+      inputfile_.open(path.c_str());
+      if (inputfile_.fail() && path != filename) {
+         inputfile_.clear();
+         inputfile_.open(filename.c_str());
+      }
+      if (inputfile_.fail()) {
+         std::string message = "Error opening trajectory file. Filename: ";
+         message += path;
+         if (path != filename) {
+            message += " (or, as given, " + filename + ")";
+         }
+         UTIL_THROW(message.c_str());
+      }
       allocate();
    }
 
