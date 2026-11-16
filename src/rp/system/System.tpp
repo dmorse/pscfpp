@@ -805,8 +805,11 @@ namespace Rp {
             int d;
             in >> d;
             checkCommandInput(in, command);
-            UTIL_CHECK(d > D);
             Log::file() << Str("Expand dimension to: ") << d << "\n";
+            if (d <= D || d > 3) {
+               UTIL_THROW("EXPAND_RGRID_DIMENSION: the new dimension must "
+                          "exceed the current one and be at most 3");
+            }
 
             // Read numbers of grid points along added dimensions
             DArray<int> newGridDimensions;
@@ -821,6 +824,12 @@ namespace Rp {
                Log::file() << newGridDimensions[i] << " ";
             }
             Log::file() << "\n";
+            for (int i = 0; i < d-D; i++) {
+               if (newGridDimensions[i] <= 0) {
+                  UTIL_THROW("EXPAND_RGRID_DIMENSION: the numbers of grid "
+                             "points must be positive");
+               }
+            }
 
             fieldIo.expandRGridDimension(inFileName, outFileName,
                                          d, newGridDimensions);
@@ -841,6 +850,12 @@ namespace Rp {
                            << i << " : ";
                Log::file() << replicas[i] << " times ";
                Log::file() << "\n";
+            }
+            for (int i = 0; i < D; i++) {
+               if (replicas[i] <= 0) {
+                  UTIL_THROW("REPLICATE_UNIT_CELL: the numbers of replicas "
+                             "must be positive");
+               }
             }
             fieldIo.replicateUnitCell(inFileName, outFileName, replicas);
 
