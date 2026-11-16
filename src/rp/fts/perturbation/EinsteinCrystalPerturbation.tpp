@@ -90,28 +90,19 @@ namespace Rp {
       }
       UTIL_CHECK(dw_.capacity() == meshSize);
 
-      /*
-      * If the user did not input epsilon_ values, set values to -1.0
-      * times the nontrivial eigenvalues of the projected chi matrix.
-      */
-      if (!hasEpsilon_){
-         for (int i = 0; i < nMonomer - 1 ; ++i) {
-            epsilon_[i] = -1.0 * simulator().chiEval(i);
-         }
-      }
-
-      // Check that all epsilon values are positive
-      for (int i = 0; i < nMonomer - 1 ; ++i) {
-         UTIL_CHECK(epsilon_[i] > 0.0);
-      }
-
       // Read in reference field from a file
       UnitCell<D> tempUnitCell;
       FieldIo<D,T> const & fieldIo = system().domain().fieldIo();
       fieldIo.readFieldsRGrid(fieldFileName_, w0_, tempUnitCell);
 
-      // Compute eigenvector components of the reference field
-      computeWcReference();
+      // Set default epsilon values and compute eigenvector components
+      // of the reference field
+      updateReference();
+
+      // Check that all epsilon values are positive
+      for (int i = 0; i < nMonomer - 1 ; ++i) {
+         UTIL_CHECK(epsilon_[i] > 0.0);
+      }
    }
 
    /*
@@ -124,6 +115,9 @@ namespace Rp {
    {
       // Set unperturbedHamiltonian_ member variable
       unperturbedHamiltonian_ = unperturbedHamiltonian;
+
+      // Update the reference for the current chi (e.g., under a ramp)
+      updateReference();
 
       // Constants
       const int nMonomer = system().mixture().nMonomer();
@@ -157,6 +151,9 @@ namespace Rp {
       const int nMonomer = system().mixture().nMonomer();
       const double vMonomer = system().mixture().vMonomer();
       double prefactor;
+
+      // Update the reference for the current chi (e.g., under a ramp)
+      updateReference();
 
       // Loop over composition eigenvectors (exclude the last)
       for (int i = 0; i < nMonomer - 1; ++i) {
@@ -232,6 +229,27 @@ namespace Rp {
    {
       ecHamiltonian_ = stateEcHamiltonian_;
       unperturbedHamiltonian_ = stateUnperturbedHamiltonian_;
+   }
+
+   /*
+   * Set default epsilon values, and the eigenvector components of the
+   * reference field, for the current chi matrix.
+   */
+   template <int D, class T>
+   void EinsteinCrystalPerturbation<D,T>::updateReference()
+   {
+      // If the user did not input epsilon_ values, set values to -1.0
+      // times the nontrivial eigenvalues of the projected chi matrix.
+      if (!hasEpsilon_) {
+         const int nMonomer = system().mixture().nMonomer();
+         for (int i = 0; i < nMonomer - 1 ; ++i) {
+            epsilon_[i] = -1.0 * simulator().chiEval(i);
+         }
+      }
+
+      // The eigenvectors of the projected chi matrix, which define the
+      // field components wc, depend on chi
+      computeWcReference();
    }
 
    /*
