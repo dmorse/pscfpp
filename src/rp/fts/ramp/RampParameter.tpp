@@ -223,7 +223,7 @@ namespace Rp {
       } else if (type_ == Lambda_Pert) {
          return "lambda_pert";
       } else if (type_ == Vmonomer) {
-         return "vMonomer";
+         return "v_monomer";
       } else {
          UTIL_THROW("This should never happen.");
       }
