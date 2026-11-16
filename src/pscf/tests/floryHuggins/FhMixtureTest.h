@@ -222,6 +222,56 @@ public:
                   < 1.0E-9);
    }
 
+   /*
+   * A/B blend of molecules of size 1 at chi = 2 with a dilute species A
+   * (species 0): mu_A - mu_B = -45 gives phi_A = 3.7e-21, and -800
+   * gives phi_A = exp(-802), which underflows to 0. Newton steps in phi
+   * did not reach phi_A from the guess 1e-4 ("Volume fractions remain
+   * out of range"), and gave an infinite Jacobian where phi underflows.
+   * computePhi must converge from guesses above and below phi_A.
+   */
+   void testComputePhiDilute() {
+      printMethod(TEST_FUNC);
+
+      FhMixture mixture;
+      std::ifstream in;
+      openInputFile("in/FhMixtureBlend", in);
+      mixture.readParam(in);
+      in.close();
+
+      FhInteraction interaction;
+      interaction.setNMonomer(2);
+      interaction.setChi(0, 1, 2.0);
+
+      DArray<double> mu, phi;
+      mu.allocate(2);
+      phi.allocate(2);
+      double dMu[2] = {-45.0, -800.0};
+      double guess[3] = {1.0E-4, 1.0E-30, 1.0E-300};
+      double phiA, xi;
+      for (int i = 0; i < 2; ++i) {
+         for (int j = 0; j < 3; ++j) {
+            mu[0] = dMu[i];
+            mu[1] = 0.0;
+            phi[0] = guess[j];
+            phi[1] = 1.0 - guess[j];
+            xi = 0.0;
+            mixture.computePhi(interaction, mu, phi, xi);
+            TEST_ASSERT(eq(mixture.mu(0), mu[0]));
+            TEST_ASSERT(eq(mixture.mu(1), mu[1]));
+
+            // phi_A = exp(mu_A - mu_B - chi), to relative order phi_A
+            phiA = std::exp(dMu[i] - 2.0);
+            TEST_ASSERT(std::abs(mixture.phi(0) - phiA) <= 1.0E-12*phiA);
+
+            // f and pressure of pure B, to order phi_A ln(phi_A)
+            mixture.computeFreeEnergy(interaction);
+            TEST_ASSERT(eq(mixture.fHelmholtz(), -1.0));
+            TEST_ASSERT(eq(mixture.pressure(), 1.0));
+         }
+      }
+   }
+
 };
 
 TEST_BEGIN(FhMixtureTest)
@@ -231,6 +281,7 @@ TEST_ADD(FhMixtureTest, testSetComposition)
 TEST_ADD(FhMixtureTest, testComputeMu)
 TEST_ADD(FhMixtureTest, testComputePhi)
 TEST_ADD(FhMixtureTest, testComputePhiSingular)
+TEST_ADD(FhMixtureTest, testComputePhiDilute)
 TEST_END(FhMixtureTest)
 
 #endif
