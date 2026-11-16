@@ -161,7 +161,7 @@ namespace Rp {
 
       // Restrict access to inherited functions
       using PolymerTmplT::solve;
-      using SpeciesT::setQ;
+      using SpeciesT::setLnQ;
 
    };
 

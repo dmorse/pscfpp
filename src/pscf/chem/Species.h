@@ -24,9 +24,14 @@ namespace Pscf {
    * must be provided as a parameter in the parameter file, thereby also
    * determining the choice of ensemble.  A subclass of Species that 
    * actually solves the single single-molecule statistical mechanics 
-   * problem must use the protected function setQ(WT) to set the value 
-   * of the molecular partition function q and to compute a new value 
-   * for either mu or phi, depending on the ensemble. 
+   * problem must use the protected function setLnQ(WT) to set the
+   * logarithm of the molecular partition function q and to compute a
+   * new value for either mu or phi, depending on the ensemble.
+   *
+   * The logarithm ln q, rather than q, is the primary quantity: q
+   * itself underflows or overflows a double for long chains or large
+   * solvent molecules (for |ln q| above about 700), while ln q, mu and
+   * phi remain finite.
    *
    * \ingroup Pscf_Chem_Module
    */
@@ -69,8 +74,17 @@ namespace Pscf {
 
       /**
       * Get the molecular partition function for this species.
+      *
+      * This is exp(lnQ()), which underflows to zero or overflows for
+      * very long chains or large solvent molecules. Use lnQ() in any
+      * calculation that must remain valid in that regime.
       */
       WT q() const;
+
+      /**
+      * Get the logarithm of the molecular partition function.
+      */
+      WT lnQ() const;
 
       /**
       * Get the statistical ensemble for this species (open or closed).
@@ -108,17 +122,19 @@ namespace Pscf {
    protected:
 
       /**
-      * Set q and compute phi or mu (depending on the ensemble).
+      * Set ln q and compute phi or mu (depending on the ensemble).
       *
-      * This function alllows a subclass to set the value of the 
+      * This function alllows a subclass to set the logarithm of the
       * molecular partition function q, and use this value to compute a
       * corresponding value for either mu (for a closed ensemble) or phi 
       * (for an open ensemble). Upon return these variables are related
-      * by the equation: \f$ \phi = \exp(\mu) q \f$. 
+      * by the equation: \f$ \ln \phi = \mu + \ln q \f$, which is
+      * evaluated in this form so that it remains valid when q itself
+      * is not representable as a double.
       *
-      * \param q  new value of molecular partition function q
+      * \param lnQ  new value of the logarithm of q
       */ 
-      void setQ(WT q);
+      void setLnQ(WT lnQ);
 
    private:
 
@@ -133,9 +149,14 @@ namespace Pscf {
       WT mu_;
 
       /**
-      * Molecular partition function.
+      * Molecular partition function, exp(lnQ_).
       */
       WT q_;
+
+      /**
+      * Logarithm of the molecular partition function.
+      */
+      WT lnQ_;
 
       /**
       * Input value of phi (closed ensemble) or mu (open).
@@ -172,6 +193,13 @@ namespace Pscf {
    template <typename WT>
    inline WT Species<WT>::q() const
    {  return q_; }
+
+   /*
+   * Get the logarithm of the species partition function q.
+   */
+   template <typename WT>
+   inline WT Species<WT>::lnQ() const
+   {  return lnQ_; }
 
    /*
    * Get statistical ensemble for this species (open or closed).

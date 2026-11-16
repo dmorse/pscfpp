@@ -24,6 +24,7 @@ namespace Pscf {
       assign(phi_, 0.0); 
       assign(mu_, 0.0); 
       assign(q_, 0.0); 
+      assign(lnQ_, 0.0);
       setClassName("Species"); 
    }
 
@@ -70,23 +71,24 @@ namespace Pscf {
    }
 
    /*
-   * Set q and compute mu or phi (depending on ensemble).
+   * Set ln q and compute mu or phi (depending on ensemble).
    */
    template <typename WT>
-   void Species<WT>::setQ(WT q)
+   void Species<WT>::setLnQ(WT lnQ)
    {
-      assign(q_, q);
+      assign(lnQ_, lnQ);
+      assignExp(q_, lnQ_);
       if (ensemble() == Ensemble::Closed) {
-         WT ratio;
-         div(ratio, phi_, q_);
-         assignLog(mu_, ratio);
-         //mu_ = std::log(phi_/q_);
+         WT lnPhi;
+         assignLog(lnPhi, phi_);
+         Pscf::sub(mu_, lnPhi, lnQ_);
+         //mu_ = std::log(phi_) - lnQ_;
       } else
       if (ensemble() == Ensemble::Open) {
-         WT lambda;
-         assignExp(lambda, mu_);
-         mul(phi_, lambda, q_);
-         //phi_ = std::exp(mu_)*q_;
+         WT lnPhi;
+         Pscf::add(lnPhi, mu_, lnQ_);
+         assignExp(phi_, lnPhi);
+         //phi_ = std::exp(mu_ + lnQ_);
       }
    }
 
