@@ -30,6 +30,13 @@ cellParams:
 t = readThermo(thermo + thermo.replace('2.546', '1.234'))
 assert t.fHelmholtz == 2.54644869605
 
+# A thermo block without fIdeal, as written when fIdeal is None
+t = readThermo(thermo)
+t.fIdeal = None
+u = readThermo(str(t))
+assert u.fIdeal == None and u.fInter == t.fInter
+assert u.polymers[0].mu == t.polymers[0].mu
+
 s = State('in/state')
 
 print(s)
