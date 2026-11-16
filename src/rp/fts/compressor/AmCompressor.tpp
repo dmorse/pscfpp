@@ -67,7 +67,6 @@ namespace Rp {
    template <int D, class T>
    void AmCompressor<D,T>::setup(bool isContinuation)
    {
-      Log::file() << "\n Entering setup";
       // Allocate memory required by AM algorithm if not done earlier.
       AmTmplT::setup(isContinuation);
 
@@ -89,7 +88,6 @@ namespace Rp {
       for (int i = 0; i < nMonomer; ++i) {
          VecOp::eqV(w0_[i], system().w().rgrid(i));
       }
-      Log::file() << "\n Exiting setup";
    }
 
    /*
@@ -97,12 +95,7 @@ namespace Rp {
    */
    template <int D, class T>
    int AmCompressor<D,T>::compress()
-   {
-      Log::file() << "\n Entering compress";
-      int solve = AmTmplT::solve();
-      Log::file() << "\n Exiting compress";
-      return solve;
-   }
+   {  return AmTmplT::solve(); }
 
    /*
    * Output timer information, if requested.
