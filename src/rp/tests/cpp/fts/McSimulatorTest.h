@@ -17,9 +17,13 @@
 
 #include <util/misc/FileMaster.h>
 #include <util/containers/FSArray.h>
+#include <util/param/Label.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -98,6 +102,39 @@ public:
       allocateRGridFields(system, fields);
       Rp::FieldIo<D,CPT> const & fieldIo = system.domain().fieldIo();
       fieldIo.readFieldsRGrid(filename, fields, unitCell);
+   }
+
+   /*
+   * Read a 1D diblock melt (16 grid points) with the given McSimulator
+   * block, and set w fields with a cosine exchange component of the
+   * given amplitude.
+   */
+   void initSystem1D(Rp::System<1,CPT>& system,
+                     std::string const & simulatorBlock,
+                     double amplitude = 1.0)
+   {
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } "
+         + simulatorBlock + " }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.5);
+      system.setUnitCell(parameters);
+      DArray< RField<1,CPT> > w;
+      allocateRGridFields(system, w);
+      for (int i = 0; i < 2; ++i) {
+         for (int k = 0; k < 16; ++k) {
+            w[i][k] = (i == 0) ? amplitude*std::cos(2.0*M_PI*k/16.0) : 0.0;
+         }
+      }
+      system.w().setRGrid(w);
    }
 
    void testMcSimulateDiblocks()
@@ -231,6 +268,46 @@ public:
    }
 
    /*
+   * Does reading an McSimulator with two RealMoves of the given
+   * probabilities throw an Exception?
+   */
+   bool probabilityReadThrows(std::string const & p0,
+                              std::string const & p1)
+   {
+      Rp::System<1,CPT> system;
+      initSystem1D(system, "");
+      Rp::McSimulator<1,CPT> simulator(system);
+      std::istringstream in(
+         "McSimulator{ seed 1234 McMoveManager{\n"
+         " RealMove{ probability " + p0 + " sigma 0.1 }\n"
+         " RealMove{ probability " + p1 + " sigma 0.2 }\n"
+         " }\n"
+         " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 } }\n");
+      bool thrown = false;
+      try {
+         simulator.readParam(in);
+      } catch (Exception& e) {
+         Label::clear();
+         thrown = true;
+      }
+      return thrown;
+   }
+
+   /*
+   * A negative move probability must be rejected, also if the sum of
+   * the probabilities is 1.
+   */
+   void testNegativeProbability()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testNegativeProbability.log");
+
+      TEST_ASSERT(probabilityReadThrows("1.5", "-0.5"));
+      TEST_ASSERT(probabilityReadThrows("-0.5", "1.5"));
+      TEST_ASSERT(!probabilityReadThrows("0.25", "0.75"));
+   }
+
+   /*
    * A BdMove whose compressor fails in every BD step (maxItr = 1), so
    * also in the last one (issue #274). The McSimulator is that of the
    * System, as in pscf_rpc. The move must complete and leave the c
@@ -269,6 +346,7 @@ public:
 };
 
 TEST_BEGIN(McSimulatorTest)
+TEST_ADD(McSimulatorTest, testNegativeProbability)
 TEST_ADD(McSimulatorTest, testMcSimulateDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateTriblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateBdMoveDiblocks)
