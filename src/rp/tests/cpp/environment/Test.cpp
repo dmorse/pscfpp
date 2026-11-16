@@ -11,14 +11,12 @@ int main(int argc, char* argv[])
 {
    EnvironmentTestComposite runner;
 
-   #if 0
    if (argc > 2) {
       UTIL_THROW("Too many arguments");
    }
    if (argc == 2) {
       runner.addFilePrefix(argv[1]);
    }
-   #endif
 
    runner.run();
 }

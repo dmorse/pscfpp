@@ -18,7 +18,7 @@ $(TEST): $(TEST).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
 
 run: $(TEST).o $(TEST)
-	./$(TEST) $(SRC_DIR)/rp/tests/cpp/solvers 
+	./$(TEST) $(SRC_DIR)/rp/tests/cpp/solvers/
 
 run-quiet: $(TEST)
 	@./$(TEST) $(SRC_DIR)/rp/tests/cpp/solvers/ > log

@@ -14,10 +14,10 @@ $(TEST): $(TEST).ou $(PSCF_LIBS)
 	@rm $(TEST).o
 
 run: $(TEST).ou $(TEST)
-	$(TEST) $(SRC_DIR)/rp/tests/cuda/environment
+	$(TEST) $(SRC_DIR)/rp/tests/cuda/environment/
 
 run-quiet: $(TEST).ou $(TEST)
-	$(TEST) $(SRC_DIR)/rp/tests/cuda/environment > log
+	$(TEST) $(SRC_DIR)/rp/tests/cuda/environment/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in rp/tests/cuda/environment/log" > count
 	@cat count
