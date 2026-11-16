@@ -97,6 +97,13 @@ namespace Rp {
       bool hasSymmetry;
       fieldIo.readFieldHeader(inputfile_, nMonomer, tmpUnitCell,
                               hasSymmetry);
+      // readFieldHeader sets nMonomer to the value given in the file
+      if (nMonomer != system().mixture().nMonomer()) {
+         Log::file() << "N_monomer in trajectory file = " << nMonomer
+                     << ", in the system = "
+                     << system().mixture().nMonomer() << "\n";
+         UTIL_THROW("Trajectory file has another number of monomer types");
+      }
       system().setUnitCell(tmpUnitCell);
       headerParameters_ = tmpUnitCell.parameters();
       hasFrameCell_ = false;
@@ -166,9 +173,19 @@ namespace Rp {
          UTIL_THROW("Bad frame in r-grid trajectory file");
       }
 
-      // Read empty line
+      // Read the mesh dimensions of the frame, which must be those of
+      // the system (the grid points of a frame of another mesh with the
+      // same number of points would otherwise be read in a wrong order)
       notEnd = getNextLine(inputfile_, line);
       UTIL_CHECK(notEnd);
+      IntVec<D> frameDimensions;
+      line >> frameDimensions;
+      if (line.fail() || frameDimensions != meshDimensions_) {
+         Log::file() << "Mesh dimensions of frame  : " << line.str()
+                     << "\nMesh dimensions of system : " << meshDimensions_
+                     << "\n";
+         UTIL_THROW("Trajectory frame has other mesh dimensions");
+      }
 
       // Read a w-field configuration in r-grid format
       int nMonomer = system().mixture().nMonomer();
