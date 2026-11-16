@@ -11,6 +11,7 @@
 #include <rp/solvers/Propagator.h>
 
 #include <pscf/backend/cuda/HostSendArray.h>
+#include <pscf/backend/cuda/HostRecvArray.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 
 #include <pscf/field/cuda/RField.h>
@@ -26,6 +27,8 @@
 
 
 #include <fstream>
+#include <sstream>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -40,6 +43,34 @@ public:
 
    void tearDown()
    {  PolymerModel::setModel(PolymerModel::Thread); }
+
+   /*
+   * Read a 1D mixture, unit cell and mesh, set up and allocate the
+   * mixture, and allocate arrays of w and c fields.
+   */
+   void setupMixture1D(std::istream& in, Rp::Mixture<1,CUT>& mixture,
+                       UnitCell<1>& unitCell, Mesh<1>& mesh,
+                       FFT<1,CUT>& fft, WaveList<1,CUT>& waveList,
+                       DArray< RField<1,CUT> >& wFields,
+                       DArray< RField<1,CUT> >& cFields)
+   {
+      mixture.readParam(in);
+      in >> unitCell;
+      IntVec<1> d;
+      in >> d;
+      mesh.setDimensions(d);
+      fft.setup(d);
+      waveList.allocate(mesh, unitCell);
+      mixture.associate(mesh, fft, unitCell, waveList);
+      mixture.allocate();
+      int nMonomer = mixture.nMonomer();
+      wFields.allocate(nMonomer);
+      cFields.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         wFields[i].allocate(d);
+         cFields[i].allocate(d);
+      }
+   }
 
    void testConstructor1D()
    {
@@ -472,6 +503,70 @@ public:
 
    }
 
+   /*
+   * Solvents of size 1800 in a uniform field 0.45, whose partition
+   * function q = exp(-810) is below the range of a double: an open
+   * solvent of monomer type 0 with mu = 809.5, for which exp(mu) is
+   * above that range, and a closed solvent of monomer type 1 with
+   * phi = 0.4. Then the closed solvent in a field alternating between
+   * -0.05 and 0.95, which changes its Boltzmann weight by exp(1800).
+   */
+   void testSolverLargeSolvent()
+   {
+      printMethod(TEST_FUNC);
+      Rp::Mixture<1,CUT> mixture;
+      UnitCell<1> unitCell;
+      Mesh<1> mesh;
+      FFT<1,CUT> fft;
+      WaveList<1,CUT> waveList;
+      DArray< RField<1,CUT> > wFields;
+      DArray< RField<1,CUT> > cFields;
+      std::istringstream in(
+         "Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 1 nSolvent 2 "
+         "Polymer{ type linear nBlock 1 blocks[ 0 1.0 ] phi 0.1 } "
+         "Solvent{ monomerId 0 size 1800.0 mu 809.5 } "
+         "Solvent{ monomerId 1 size 1800.0 phi 0.4 } ds 0.01 } "
+         "lamellar 1.0 8");
+      setupMixture1D(in, mixture, unitCell, mesh, fft, waveList,
+                     wFields, cFields);
+      int nx = mesh.size();
+      HostSendArray<cudaReal,CUT> w_h(nx);
+      HostRecvArray<cudaReal,CUT> c_h(nx);
+
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = 0.45;
+      }
+      wFields[0] = w_h;
+      wFields[1] = w_h;
+      mixture.compute(wFields, cFields);
+      Rp::Solvent<1,CUT> const & open = mixture.solvent(0);
+      Rp::Solvent<1,CUT> const & closed = mixture.solvent(1);
+      TEST_ASSERT(std::abs(open.phi() - std::exp(-0.5)) < 1.0E-10);
+      TEST_ASSERT(std::abs(closed.mu() - std::log(0.4) - 810.0) < 1.0E-10);
+      c_h = cFields[0];
+      for (int i = 0; i < nx; ++i) {
+         TEST_ASSERT(std::abs(c_h[i] - 0.1 - std::exp(-0.5)) < 1.0E-10);
+      }
+      c_h = cFields[1];
+      for (int i = 0; i < nx; ++i) {
+         TEST_ASSERT(std::abs(c_h[i] - 0.4) < 1.0E-10);
+      }
+
+      // Half of the grid points have the field -0.05, so q = exp(90)/2
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = (i % 2 == 0) ? -0.05 : 0.95;
+      }
+      wFields[1] = w_h;
+      mixture.compute(wFields, cFields);
+      TEST_ASSERT(std::abs(closed.mu() - std::log(0.4) + 90.0
+                           - std::log(2.0)) < 1.0E-10);
+      c_h = cFields[1];
+      for (int i = 0; i < nx; ++i) {
+         double c = (i % 2 == 0) ? 0.8 : 0.0;
+         TEST_ASSERT(std::abs(c_h[i] - c) < 1.0E-10);
+      }
+   }
+
 };
 
 TEST_BEGIN(MixtureTest)
@@ -483,6 +578,7 @@ TEST_ADD(MixtureTest, testSolver1D_bead)
 TEST_ADD(MixtureTest, testSolver2D)
 TEST_ADD(MixtureTest, testSolver2D_hex)
 TEST_ADD(MixtureTest, testSolver3D)
+TEST_ADD(MixtureTest, testSolverLargeSolvent)
 TEST_END(MixtureTest)
 
 #endif
