@@ -180,6 +180,25 @@ namespace Rp {
    {  return unperturbedHamiltonian_ - ecHamiltonian_; }
 
    /*
+   * Derivative of the perturbation term with respect to chi.
+   */
+   template <int D, class T>
+   double
+   EinsteinCrystalPerturbation<D,T>::chiDerivative(double dH0dChi) const
+   {
+      UTIL_CHECK(system().mixture().nMonomer() == 2);
+
+      // H_EC is proportional to 1/epsilon. The default epsilon is
+      // -chiEval(0) = chi, so that d(epsilon)/d(chi) = 1.
+      double dHecdChi = 0.0;
+      if (!hasEpsilon_) {
+         dHecdChi = -ecHamiltonian_/epsilon_[0];
+      }
+
+      return (1.0 - lambda_)*(dHecdChi - dH0dChi);
+   }
+
+   /*
    * Save any required internal state variables.
    */
    template <int D, class T>
