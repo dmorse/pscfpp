@@ -4,6 +4,9 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
+#include <sstream>
+#include <string>
+
 #include <pscf/field/cuda/WaveList.h>
 #include <pscf/backend/cuda/cudaTypes.h>
 #include <pscf/crystal/shiftToMinimum.h>
@@ -490,6 +493,32 @@ public:
       }
    }
 
+   /*
+   * Cubic cells on an 8 x 8 x 8 mesh: the 32 distinct values of the
+   * sum of the squared indices of the minimum images must give 32
+   * bunches, also in small cells, in which the rounding errors of the
+   * squared wavenumbers exceed 1.0E-8.
+   */
+   void testSortWavesSmallCell()
+   {
+      printMethod(TEST_FUNC);
+
+      IntVec<3> dimensions(8);
+      Mesh<3> mesh(dimensions);
+      std::string cells[3] = {"cubic 1.0", "cubic 1.0E-3", "cubic 1.0E-6"};
+      for (int i = 0; i < 3; ++i) {
+         UnitCell<3> cell;
+         std::istringstream in(cells[i]);
+         in >> cell;
+         WaveList<3,CUT> wavelist;
+         wavelist.allocate(mesh, cell);
+         wavelist.computeMinimumImages();
+         wavelist.computeKSq();
+         wavelist.sortWaves();
+         TEST_ASSERT(wavelist.nBunch() == 32);
+      }
+   }
+
    void testComplex()
    {
       printMethod(TEST_FUNC);
@@ -555,6 +584,7 @@ TEST_ADD(CudaWaveListTest, testComputedKSq1D)
 TEST_ADD(CudaWaveListTest, testComputedKSq2D)
 TEST_ADD(CudaWaveListTest, testComputedKSq3D)
 TEST_ADD(CudaWaveListTest, testSortWaves3D)
+TEST_ADD(CudaWaveListTest, testSortWavesSmallCell)
 TEST_ADD(CudaWaveListTest, testComplex)
 TEST_END(CudaWaveListTest)
 
