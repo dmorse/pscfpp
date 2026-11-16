@@ -27,6 +27,8 @@ namespace R1
       epsilon_(0.0),
       lambdaPlus_(0.0),
       lambdaMinus_(0.0),
+      lambdaPlusWork_(0.0),
+      lambdaMinusWork_(0.0),
       maxItr_(200),
       isAllocated_(false),
       isCanonical_(true)
@@ -93,8 +95,8 @@ namespace R1
          dWm = 0.5*( c0 - c1 - wm/chi);
          dWpNorm += dWp*dWp;
          dWmNorm += dWm*dWm;
-         dWp *= lambdaPlus_;
-         dWm *= lambdaMinus_;
+         dWp *= lambdaPlusWork_;
+         dWm *= lambdaMinusWork_;
          dW[0][i] = dWp -  dWm;
          dW[1][i] = dWp + dWm;
       }
@@ -144,6 +146,11 @@ namespace R1
       int np = mixture().nPolymer();  // number of polymer species
       int ns = mixture().nSolvent();  // number of solvent species
       int nx = domain().nx();         // number of grid points
+
+      // Start with the mixing parameters of the parameter file. Only
+      // these copies are reduced below, for the rest of this solve.
+      lambdaPlusWork_ = lambdaPlus_;
+      lambdaMinusWork_ = lambdaMinus_;
 
       // Determine if isCanonical (iff all species ensembles are closed)
       isCanonical_ = true;
@@ -222,13 +229,13 @@ namespace R1
          while (dWNormNew_ > dWNorm_ && j < 3) {
             Log::file() << "      error = "
                         << dWNormNew_ << ", decreasing increment" << std::endl;
-            lambdaPlus_ *= 0.5;
-            lambdaMinus_ *= 0.5;
-            //Print lambdaPlus_ and lambdaMinus_
+            lambdaPlusWork_ *= 0.5;
+            lambdaMinusWork_ *= 0.5;
+            //Print reduced values of lambdaPlus and lambdaMinus
             Log::file() << "      lambdaPlus = "
-                        << lambdaPlus_ << std::endl;
+                        << lambdaPlusWork_ << std::endl;
             Log::file() << "      lambdaMinus = "
-                        << lambdaMinus_<< std::endl;
+                        << lambdaMinusWork_<< std::endl;
             computeDW(system().wFields(), system().cFields(),
                       dWNew_, dWNormNew_);
             updateWFields(system().wFields(), dWNew_, wFieldsNew_);
