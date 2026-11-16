@@ -309,6 +309,10 @@ namespace R1 {
    {
       serializeEnum(ar, type_, version);
       ar & nId_;
+      if (Archive::is_loading()) {
+         if (id_.isAllocated()) id_.deallocate();
+         if (nId_ > 0) id_.allocate(nId_);
+      }
       for (int i = 0; i < nId_; ++i) {
          ar & id_[i];
       }
