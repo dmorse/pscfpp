@@ -18,6 +18,7 @@
 
 #include <pscf/field/cpp/RField.h>
 #include <pscf/field/cpp/RFieldComparison.h>
+#include <pscf/interaction/Interaction.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/containers/FSArray.h>
@@ -356,6 +357,29 @@ public:
       }
    }
 
+   /*
+   * A chi ramp (10 to 12) in a run in which every BD step fails (the
+   * compressor has maxItr = 1, the run starts from homogeneous fields).
+   * The ramp must still end at the final value after the last step.
+   */
+   void testRampFailedSteps()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testRampFailedSteps.log");
+
+      Rp::System<1,CPT> system;
+      initSystem1D(system,
+          "BdSimulator{ seed 1234 LMBdStep{ mobility 0.05 }"
+          " LrAmCompressor{ epsilon 1.0e-8 maxItr 1 maxHist 20 }"
+          " LinearRamp{ nParameter 1 parameters[ chi 0 1 2.0 ] } }",
+          0.0);
+      system.simulate(3);
+      TEST_ASSERT(system.simulator().iTotalStep() == 3);
+      TEST_ASSERT(system.simulator().iStep() == 0);
+      double chi = system.interaction().chi(0,1);
+      TEST_ASSERT(std::abs(chi - 12.0) < 1.0E-12);
+   }
+
 };
 
 TEST_BEGIN(BdSimulatorTest)
@@ -367,6 +391,7 @@ TEST_ADD(BdSimulatorTest, testPredCorrBdStepDiblocks)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepTriblocks)
 TEST_ADD(BdSimulatorTest, testVMonomerRampLrCompressor)
 TEST_ADD(BdSimulatorTest, testRampState)
+TEST_ADD(BdSimulatorTest, testRampFailedSteps)
 TEST_END(BdSimulatorTest)
 
 #endif
