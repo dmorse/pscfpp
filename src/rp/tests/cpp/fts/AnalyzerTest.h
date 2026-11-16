@@ -259,6 +259,48 @@ public:
       }
    }
 
+   /*
+   * Return the number of nonempty lines in a file.
+   */
+   int countLines(std::string filename)
+   {
+      std::ifstream file;
+      openInputFile(filename, file);
+      std::string line;
+      int n = 0;
+      while (std::getline(file, line)) {
+         if (line.find_first_not_of(" \t\r") != std::string::npos) ++n;
+      }
+      return n;
+   }
+
+   /*
+   * ANALYZE 0 3 of a trajectory with frames 0 to 3, with baseInterval
+   * 2 and an analyzer of interval 2: frames 0 and 2 must be sampled.
+   */
+   void testAnalyzeBaseInterval()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testAnalyzeBaseInterval.log");
+
+      writeTrajectory("out/trajectory1D.rf", 3);
+      std::string simulators[2] = {"BdSimulator", "McSimulator"};
+      for (int i = 0; i < 2; ++i) {
+         Rp::System<1,CPT> system;
+         initSystem1D(system, simulators[i]
+            + "{ AnalyzerManager{\n"
+            " baseInterval 2\n"
+            " HamiltonianAnalyzer{\n"
+            " interval 2"
+            " outputFileName out/analyzeBase }\n"
+            " }\n"
+            " }");
+         TEST_ASSERT(analyze(system, 0, 3, "out/trajectory1D.rf"));
+         TEST_ASSERT(countLines("out/analyzeBase.dat") == 2);
+      }
+      Rp::Analyzer<1,CPT>::initStatic();
+   }
+
    bool checkValue(std::string label, 
                    double value, double ref, 
                    double epsilon = 1.0E-4)
@@ -435,6 +477,7 @@ public:
 TEST_BEGIN(AnalyzerTest)
 TEST_ADD(AnalyzerTest, testAnalyzeLastFrame)
 TEST_ADD(AnalyzerTest, testAnalyzeFirstFrame)
+TEST_ADD(AnalyzerTest, testAnalyzeBaseInterval)
 TEST_ADD(AnalyzerTest, testAnalyzeTrajectory)
 TEST_END(AnalyzerTest)
 
