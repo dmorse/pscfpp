@@ -205,36 +205,57 @@ namespace Pscf {
          solverPtr_->allocate(nMolecule_);
       }
 
-      // Compute initial state
-      setComposition(phi);
-      computeMu(interaction, xi);
-      adjustXi(mu, xi);
+      // Initial composition: the guess (except for the dependent
+      // species, see below)
+      validate();
+      int m1, m2; // molecule type indices
+      for (m1 = 0; m1 < nMolecule_; ++m1) {
+         UTIL_CHECK(phi[m1] > 0.0);
+         UTIL_CHECK(phi[m1] <= 1.0);
+         phi_[m1] = phi[m1];
+         lnPhi_[m1] = log(phi[m1]);
+      }
+      hasComposition_ = true;
 
-      // Compute initial residual
       double error;
       double epsilon = 1.0E-10;
-      computeResidual(mu, error);
-
-      #if 0
-      std::cout << "mu[0] =" << mu[0] << std::endl;
-      std::cout << "mu[1] =" << mu[1] << std::endl;
-      std::cout << "mu_[0] =" << mu_[0] << std::endl;
-      std::cout << "mu_[1] =" << mu_[1] << std::endl;
-      std::cout << "residual[0] =" << residual_[0] << std::endl;
-      std::cout << "residual[1] =" << residual_[1] << std::endl;
-      std::cout << "error     ="  << error << std::endl;
-      #endif
-
-      if (error < epsilon) return;
-
       double s1;  // clump size
       double v1;  // molecule size
       double f1;  // clump fraction
-      int m1, m2; // molecule type indices
       int c1;     // clump index
       int t1, t2; // monomer type indices
+      int mDep = -1; // index of the dependent species
+      double sum;
 
       for (int it = 0; it < 50; ++it) {
+
+         // The dependent species is the species with the largest phi:
+         // its phi is 1 minus the sum of the others, and xi replaces it
+         // as a Newton variable. Any other choice loses the relative
+         // precision of the phi of the dependent species when it is
+         // dilute, so that the residual cannot reach the tolerance. It
+         // is chosen again in each iteration, since the largest species
+         // can change. The residual is computed for the initial state
+         // and after a change of the dependent species.
+         int mMax = 0;
+         for (m1 = 1; m1 < nMolecule_; ++m1) {
+            if (phi_[m1] > phi_[mMax]) mMax = m1;
+         }
+         if (mMax != mDep) {
+            mDep = mMax;
+            sum = 0.0;
+            for (m1 = 0; m1 < nMolecule_; ++m1) {
+               if (m1 != mDep) sum += phi_[m1];
+            }
+            UTIL_CHECK(sum < 1.0);
+            phi_[mDep] = 1.0 - sum;
+            lnPhi_[mDep] = std::log1p(-sum);
+            computeC();
+            computeMu(interaction, xi);
+            adjustXi(mu, xi);
+            computeResidual(mu, error);
+            if (error < epsilon) return;
+         }
 
          // Compute matrix of derivative dWdC (C = monomer fraction)
          interaction.computeDwDc(c_, dWdC_);
@@ -276,30 +297,32 @@ namespace Pscf {
          }
 
          // Impose incompressibility
-         int mLast = nMolecule_ - 1;
          for (m1 = 0; m1 < nMolecule_; ++m1) {
-            for (m2 = 0; m2 < nMolecule_ - 1; ++m2) {
-               jacobian_(m1, m2) -= jacobian_(m1, mLast);
+            for (m2 = 0; m2 < nMolecule_; ++m2) {
+               if (m2 != mDep) {
+                  jacobian_(m1, m2) -= jacobian_(m1, mDep);
+               }
             }
             // Derivative of mu_[m1] with respect to xi
-            jacobian_(m1, mLast) = molecule(m1).size();
+            jacobian_(m1, mDep) = molecule(m1).size();
          }
 
          // The Newton variables are xi and ln(phi) of every species
-         // other than the dependent one, mLast, whose phi is 1 minus
+         // other than the dependent one, mDep, whose phi is 1 minus
          // the sum of the others. Steps in ln(phi) reach a dilute
          // species, whose mu depends on ln(phi), in a few steps, and
          // ln(phi) remains finite where phi underflows to zero. The
          // columns of these variables are d(mu)/d(ln phi) =
          // phi*d(mu)/d(phi), plus the ideal part:
          // d(ln phi[m2])/d(ln phi[m2]) = 1, and
-         // d(ln phi[mLast])/d(ln phi[m2]) = -phi[m2]/phi[mLast].
-         for (m2 = 0; m2 < mLast; ++m2) {
+         // d(ln phi[mDep])/d(ln phi[m2]) = -phi[m2]/phi[mDep].
+         for (m2 = 0; m2 < nMolecule_; ++m2) {
+            if (m2 == mDep) continue;
             for (m1 = 0; m1 < nMolecule_; ++m1) {
                jacobian_(m1, m2) *= phi_[m2];
             }
             jacobian_(m2, m2) += 1.0;
-            jacobian_(mLast, m2) -= phi_[m2]/phi_[mLast];
+            jacobian_(mDep, m2) -= phi_[m2]/phi_[mDep];
          }
 
          // Newton Raphson update of phi and xi fields. The Jacobian is
@@ -318,21 +341,22 @@ namespace Pscf {
 
          // Apply update
          bool inRange = false;
-         double sum;
          for (int j = 0; j < 30; ++j) {
 
             // Update volume fractions
             sum = 0.0;
-            for (m1 = 0; m1 < mLast; ++m1) {
+            for (m1 = 0; m1 < nMolecule_; ++m1) {
+               if (m1 == mDep) continue;
                lnPhi_[m1] = lnPhiOld_[m1] - dX_[m1];
                phi_[m1] = std::exp(lnPhi_[m1]);
                sum += phi_[m1];
             }
-            phi_[mLast] = 1.0 - sum;
+            phi_[mDep] = 1.0 - sum;
 
             // Check if all volume fractions are in (0,1]
-            inRange = (phi_[mLast] > 0.0);
-            for (m1 = 0; m1 < mLast; ++m1) {
+            inRange = (phi_[mDep] > 0.0);
+            for (m1 = 0; m1 < nMolecule_; ++m1) {
+               if (m1 == mDep) continue;
                if (!(lnPhi_[m1] <= 0.0)) inRange = false;
             }
 
@@ -347,8 +371,8 @@ namespace Pscf {
 
          }
          if (inRange) {
-            lnPhi_[mLast] = std::log1p(-sum);
-            xi = xi - dX_[mLast];
+            lnPhi_[mDep] = std::log1p(-sum);
+            xi = xi - dX_[mDep];
          } else {
             UTIL_THROW("Volume fractions remain out of range");
          }
