@@ -1,0 +1,30 @@
+System{
+  Mixture{
+     nMonomer  2
+     monomers  1.0
+               1.0
+     nPolymer  1
+     Polymer{
+        type    linear
+        nBlock  2
+        blocks  0   0.125
+                1   0.875
+        phi     1.0
+     }
+     ds   0.005
+  }
+  Interaction{
+     chi(
+         0   1   80.0
+     )
+  }
+  Domain{
+     mode      Spherical
+     xMin         1.0E-9
+     xMax            0.6
+     nx              101
+  }
+  NrIterator{
+     epsilon   0.0000001
+  }
+}
