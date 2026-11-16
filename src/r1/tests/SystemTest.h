@@ -542,6 +542,45 @@ public:
    }
 
    /*
+   * Read field files with a missing or invalid last value.
+   */
+   void testReadFieldsIncomplete()
+   {
+      printMethod(TEST_FUNC);
+
+      Domain domain;
+      domain.setPlanarParameters(0.0, 1.0, 3);
+      FileMaster fileMaster;
+      FieldIo fieldIo;
+      fieldIo.associate(domain, fileMaster);
+      DArray< DArray<double> > fields;
+      fields.allocate(2);
+      fields[0].allocate(3);
+      fields[1].allocate(3);
+
+      // Complete files, with and without a final newline, and files
+      // with a missing or invalid last value
+      std::string begin = "nx 3\nnm 2\n0 1.0 2.0\n1 3.0 4.0\n2 5.0 ";
+      std::string ends[4] = {"6.0\n", "6.0", "\n", "x\n"};
+      for (int k = 0; k < 4; ++k) {
+         std::istringstream in(begin + ends[k]);
+         bool thrown = false;
+         try {
+            fieldIo.readFields(fields, in);
+         } catch (Exception& e) {
+            thrown = true;
+         }
+         if (k < 2) {
+            TEST_ASSERT(!thrown);
+            TEST_ASSERT(eq(fields[0][2], 5.0));
+            TEST_ASSERT(eq(fields[1][2], 6.0));
+         } else {
+            TEST_ASSERT(thrown);
+         }
+      }
+   }
+
+   /*
    * Free energy and pressure after the COMPUTE command.
    */
    void testComputeThermo()
@@ -748,6 +787,7 @@ TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
 TEST_ADD(SystemTest, testThermoSmallPhi)
 TEST_ADD(SystemTest, testReadCommandsInput)
+TEST_ADD(SystemTest, testReadFieldsIncomplete)
 TEST_ADD(SystemTest, testComputeThermo)
 TEST_ADD(SystemTest, testReadCommandsStatus)
 TEST_ADD(SystemTest, testSweepParameterIdRange)
