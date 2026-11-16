@@ -13,6 +13,8 @@
 #include <pscf/backend/cuda/HostSendArray.h>
 #include <pscf/backend/cuda/HostRecvArray.h>
 #include <pscf/backend/cuda/cudaTypes.h>
+#include <pscf/backend/Reduce.h>
+#include <pscf/backend/VecOp.h>
 
 #include <pscf/field/cuda/RField.h>
 #include <pscf/field/cuda/FFT.h>
@@ -28,6 +30,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <string>
 #include <cmath>
 
 using namespace Util;
@@ -70,6 +73,49 @@ public:
          wFields[i].allocate(d);
          cFields[i].allocate(d);
       }
+   }
+
+   /*
+   * Logarithm of the partition function q of a linear polymer (thread
+   * model, or bead model with blocks of equal kuhn lengths), evaluated
+   * without field shifts: the blocks are set up without a shift, and
+   * their steps are applied in order to a uniform head, with the result
+   * rescaled after every step.
+   */
+   double lnQSteps(Rp::Polymer<1,CUT>& polymer,
+                   DArray< RField<1,CUT> > const & wFields)
+   {
+      RField<1,CUT> q, qNew;
+      q.allocate(wFields[0].meshDimensions());
+      qNew.allocate(wFields[0].meshDimensions());
+      VecOp::eqS(q, 1.0);
+      double lnQ = 0.0;
+      for (int j = 0; j < polymer.nBlock(); ++j) {
+         Rp::Block<1,CUT>& block = polymer.block(j);
+         block.setupSolver(wFields[block.monomerId()]);
+         if (PolymerModel::isThread()) {
+            for (int k = 1; k < block.ns(); ++k) {
+               block.stepThread(q, qNew);
+               double scale = Reduce::max(qNew);
+               VecOp::mulVS(q, qNew, 1.0/scale);
+               lnQ += std::log(scale);
+            }
+         } else {
+            // One bond before each bead, except the first of the chain
+            for (int k = 0; k < block.nBead(); ++k) {
+               if (j == 0 && k == 0) {
+                  VecOp::eqV(qNew, q);
+                  block.stepFieldBead(qNew);
+               } else {
+                  block.stepBead(q, qNew);
+               }
+               double scale = Reduce::max(qNew);
+               VecOp::mulVS(q, qNew, 1.0/scale);
+               lnQ += std::log(scale);
+            }
+         }
+      }
+      return lnQ + std::log(Reduce::sum(q)/double(q.capacity()));
    }
 
    void testConstructor1D()
@@ -567,6 +613,154 @@ public:
       }
    }
 
+   /*
+   * Homopolymers in a uniform field 0.45, whose partition functions
+   * are below the range of a double: thread chains of lengths 1800
+   * (closed, phi = 0.1, q = exp(-810)) and 1790 (open, mu = 805.0),
+   * and bead chains of 1700 beads (closed, q = exp(-765)) and 1690
+   * beads (open, mu = 760.0). Each open species has phi = exp(-0.5).
+   */
+   void testSolverLongChain()
+   {
+      printMethod(TEST_FUNC);
+      std::string texts[2] = {
+         "Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 2 nSolvent 1 "
+         "Polymer{ type linear nBlock 1 blocks[ 0 1800.0 ] phi 0.1 } "
+         "Polymer{ type linear nBlock 1 blocks[ 0 1790.0 ] mu 805.0 } "
+         "Solvent{ monomerId 1 size 1.0 phi 0.9 } ds 1.0 } lamellar 1.0 8",
+         "Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 2 nSolvent 1 "
+         "Polymer{ type linear nBlock 1 blocks[ 0 1700 ] phi 0.1 } "
+         "Polymer{ type linear nBlock 1 blocks[ 0 1690 ] mu 760.0 } "
+         "Solvent{ monomerId 1 size 1.0 phi 0.9 } } lamellar 1.0 8"};
+      double lnQ0[2] = {-810.0, -765.0};
+      double lnQ1[2] = {-805.5, -760.5};
+      for (int k = 0; k < 2; ++k) {
+         if (k == 0) {
+            PolymerModel::setModel(PolymerModel::Thread);
+         } else {
+            PolymerModel::setModel(PolymerModel::Bead);
+         }
+         Rp::Mixture<1,CUT> mixture;
+         UnitCell<1> unitCell;
+         Mesh<1> mesh;
+         FFT<1,CUT> fft;
+         WaveList<1,CUT> waveList;
+         DArray< RField<1,CUT> > wFields;
+         DArray< RField<1,CUT> > cFields;
+         std::istringstream in(texts[k]);
+         setupMixture1D(in, mixture, unitCell, mesh, fft, waveList,
+                        wFields, cFields);
+         int nx = mesh.size();
+         HostRecvArray<cudaReal,CUT> c_h(nx);
+
+         VecOp::eqS(wFields[0], 0.45);
+         VecOp::eqS(wFields[1], 0.0);
+         mixture.compute(wFields, cFields);
+         Rp::Polymer<1,CUT> const & closed = mixture.polymer(0);
+         Rp::Polymer<1,CUT> const & open = mixture.polymer(1);
+         TEST_ASSERT(std::abs(closed.lnQ() - lnQ0[k]) < 1.0E-9);
+         TEST_ASSERT(std::abs(closed.mu() - std::log(0.1) + lnQ0[k])
+                     < 1.0E-9);
+         TEST_ASSERT(std::abs(open.lnQ() - lnQ1[k]) < 1.0E-9);
+         TEST_ASSERT(std::abs(open.phi() - std::exp(-0.5)) < 1.0E-9);
+         c_h = cFields[0];
+         for (int i = 0; i < nx; ++i) {
+            TEST_ASSERT(std::abs(c_h[i] - 0.1 - std::exp(-0.5)) < 1.0E-9);
+         }
+         c_h = cFields[1];
+         for (int i = 0; i < nx; ++i) {
+            TEST_ASSERT(std::abs(c_h[i] - 0.9) < 1.0E-12);
+         }
+      }
+   }
+
+   /*
+   * Thread chains in fields that alternate between neighbouring grid
+   * points, which the chains cannot follow, so that the shifted
+   * partition functions are below the range of a double and the shifts
+   * must be raised: polymer 0 is a homopolymer of length 1000 in a field
+   * alternating between 0 and 2 (monomer type 2), and polymer 1 is a
+   * diblock 1000 + 1000 with w_A = 0 (type 0) and w_B alternating
+   * between 0 and 6 (type 1). The values of ln q must agree with an
+   * evaluation without shifts, and the concentration of each block must
+   * add up to its share of phi (with the shift of the B block applied to
+   * the A block, the A propagators would overflow). Then the same for a
+   * homopolymer of 2000 beads in a field alternating between 0 and 1,
+   * whose propagator ends at a chain end.
+   */
+   void testSolverRaisedShift()
+   {
+      printMethod(TEST_FUNC);
+      Rp::Mixture<1,CUT> mixture;
+      UnitCell<1> unitCell;
+      Mesh<1> mesh;
+      FFT<1,CUT> fft;
+      WaveList<1,CUT> waveList;
+      DArray< RField<1,CUT> > wFields;
+      DArray< RField<1,CUT> > cFields;
+      std::istringstream in(
+         "Mixture{ nMonomer 3 monomers[ 1.0 1.0 1.0 ] nPolymer 2 "
+         "Polymer{ type linear nBlock 1 blocks[ 2 1000.0 ] phi 0.5 } "
+         "Polymer{ type linear nBlock 2 blocks[ 0 1000.0 1 1000.0 ] "
+         "phi 0.5 } ds 1.0 } lamellar 2.0 8");
+      setupMixture1D(in, mixture, unitCell, mesh, fft, waveList,
+                     wFields, cFields);
+      int nx = mesh.size();
+      HostSendArray<cudaReal,CUT> w_h(nx);
+
+      VecOp::eqS(wFields[0], 0.0);
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = (i % 2 == 0) ? 0.0 : 6.0;
+      }
+      wFields[1] = w_h;
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = (i % 2 == 0) ? 0.0 : 2.0;
+      }
+      wFields[2] = w_h;
+      mixture.compute(wFields, cFields);
+
+      double lnQ[2];
+      for (int ip = 0; ip < 2; ++ip) {
+         Rp::Polymer<1,CUT> const & polymer = mixture.polymer(ip);
+         lnQ[ip] = polymer.lnQ();
+         for (int j = 0; j < polymer.nBlock(); ++j) {
+            Rp::Block<1,CUT> const & block = polymer.block(j);
+            double phi = 0.5*block.length()/polymer.length();
+            double sum = Reduce::sum(block.cField())/double(nx);
+            TEST_ASSERT(std::abs(sum - phi) < 1.0E-10);
+         }
+      }
+      for (int ip = 0; ip < 2; ++ip) {
+         double lnQRef = lnQSteps(mixture.polymer(ip), wFields);
+         TEST_ASSERT(std::abs(lnQ[ip] - lnQRef) < 1.0E-10*std::abs(lnQRef));
+      }
+
+      // Bead model
+      PolymerModel::setModel(PolymerModel::Bead);
+      Rp::Mixture<1,CUT> beadMixture;
+      UnitCell<1> beadCell;
+      Mesh<1> beadMesh;
+      FFT<1,CUT> beadFft;
+      WaveList<1,CUT> beadWaveList;
+      DArray< RField<1,CUT> > beadW;
+      DArray< RField<1,CUT> > beadC;
+      std::istringstream beadIn(
+         "Mixture{ nMonomer 1 monomers[ 1.0 ] nPolymer 1 "
+         "Polymer{ type linear nBlock 1 blocks[ 0 2000 ] phi 1.0 } } "
+         "lamellar 2.0 8");
+      setupMixture1D(beadIn, beadMixture, beadCell, beadMesh, beadFft,
+                     beadWaveList, beadW, beadC);
+      for (int i = 0; i < nx; ++i) {
+         w_h[i] = (i % 2 == 0) ? 0.0 : 1.0;
+      }
+      beadW[0] = w_h;
+      beadMixture.compute(beadW, beadC);
+      double lnQBead = beadMixture.polymer(0).lnQ();
+      TEST_ASSERT(std::abs(Reduce::sum(beadC[0])/double(nx) - 1.0) < 1.0E-10);
+      double lnQRef = lnQSteps(beadMixture.polymer(0), beadW);
+      TEST_ASSERT(std::abs(lnQBead - lnQRef) < 1.0E-10*std::abs(lnQRef));
+   }
+
 };
 
 TEST_BEGIN(MixtureTest)
@@ -579,6 +773,8 @@ TEST_ADD(MixtureTest, testSolver2D)
 TEST_ADD(MixtureTest, testSolver2D_hex)
 TEST_ADD(MixtureTest, testSolver3D)
 TEST_ADD(MixtureTest, testSolverLargeSolvent)
+TEST_ADD(MixtureTest, testSolverLongChain)
+TEST_ADD(MixtureTest, testSolverRaisedShift)
 TEST_END(MixtureTest)
 
 #endif
