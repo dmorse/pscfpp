@@ -208,7 +208,11 @@ namespace Pscf {
       * parameter i, multiplied by a prefactor. The prefactor is 2.0 for
       * waves that have an implicit inverse and 1.0 otherwise. The choice
       * of prefactor is designed to simplify use of the array to compute
-      * stress.
+      * stress. In a cell with a variable angle, the minimum image of a
+      * wavevector can be tied with other images, with |k|^2 equal within
+      * a fraction 1.0E-9, whose |k|^2 has other derivatives (e.g., in a
+      * rhombic cell at 120 degrees). The derivative is then averaged
+      * over these images, as in the CPU WaveList.
       *
       * Each element corresponds to one wavevector k in the k-space mesh
       * used for the DFT. If isRealField is true, this k-space mesh is

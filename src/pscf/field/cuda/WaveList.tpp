@@ -349,6 +349,131 @@ namespace Pscf {
          } // nParams
       }
 
+      /*
+      * Average dKSq over tied minimum images on the GPU.
+      *
+      * For each wavevector, finds the images tied with the minimum image
+      * in waveBz as tiedMinimumImages in the CPU WaveList does: the
+      * images reached by steps of the vectors in shifts through images
+      * with kSq equal to that of the minimum image within a fraction
+      * epsilon. If there are several, dKSq is set as by tiedImageDKSq
+      * to the average of their derivatives, unless these all agree
+      * within this fraction, and multiplied by 2 if the wave has an
+      * implicit inverse (if isRealField is true). If a wave has more
+      * than 2^D tied images, *overflow is set to 1.
+      *
+      * When launched, this kernel requires dynamic memory allocation of
+      * sizeof(cudaReal) * nParams * D * D.
+      */
+      template <int D> __global__
+      void _averageTiedDKSq(cudaReal* dKSq,
+                            int const * waveBz,
+                            cudaReal const * dkkBasis,
+                            cudaReal const * kBasis,
+                            ImageShifts const shifts,
+                            bool const * implicitInverse,
+                            int const nParams,
+                            int const kSize,
+                            bool isRealField,
+                            int* overflow)
+      {
+         int nThreads = blockDim.x * gridDim.x;
+         int startID = blockIdx.x * blockDim.x + threadIdx.x;
+
+         // Load dkkBasis into shared memory for fast access
+         extern __shared__ cudaReal dkkBasis_[];
+         if (threadIdx.x < nParams * D * D) {
+            dkkBasis_[threadIdx.x] = dkkBasis[threadIdx.x];
+         }
+         __syncthreads(); // wait for all threads to finish
+
+         // Relative tolerance, as in the CPU WaveList
+         #ifdef SINGLE_PRECISION
+         cudaReal epsilon = 1.0E-4;
+         #else
+         cudaReal epsilon = 1.0E-9;
+         #endif
+
+         // Tied images, image t with components tied[D*t], ... (a
+         // minimum image is tied with at most 2^D images)
+         const int maxTied = 1 << D;
+         int tied[maxTied * D];
+         int u[D];
+
+         for (int i = startID; i < kSize; i += nThreads) {
+
+            // Find the images tied with the minimum image
+            for (int j = 0; j < D; ++j) {
+               tied[j] = waveBz[i + (j * kSize)];
+            }
+            int nTied = 1;
+            cudaReal g0 = _kSqImage<D>(tied, kBasis);
+            for (int t = 0; t < nTied; ++t) {
+               for (int s = 0; s < shifts.n; ++s) {
+                  for (int j = 0; j < D; ++j) {
+                     u[j] = tied[D*t + j] + shifts.v[D*s + j];
+                  }
+                  cudaReal g = _kSqImage<D>(u, kBasis);
+                  if (fabs(g - g0) > epsilon*(g > g0 ? g : g0)) continue;
+                  bool found = false;
+                  for (int m = 0; m < nTied; ++m) {
+                     bool same = true;
+                     for (int j = 0; j < D; ++j) {
+                        if (tied[D*m + j] != u[j]) same = false;
+                     }
+                     if (same) found = true;
+                  }
+                  if (found) continue;
+                  if (nTied == maxTied) {
+                     *overflow = 1;
+                     continue;
+                  }
+                  for (int j = 0; j < D; ++j) {
+                     tied[D*nTied + j] = u[j];
+                  }
+                  ++nTied;
+               }
+            }
+            if (nTied == 1) continue;
+
+            // Average the derivatives over the tied images, unless they
+            // all agree (then use that of the first, as _computedKSq)
+            for (int param = 0; param < nParams; ++param) {
+               cudaReal value0 = 0.0;
+               cudaReal sum = 0.0;
+               cudaReal maxDiff = 0.0;
+               cudaReal scale = 0.0;
+               for (int t = 0; t < nTied; ++t) {
+                  cudaReal value = 0.0;
+                  for (int j = 0; j < D; ++j) {
+                     for (int k = 0; k < D; ++k) {
+                        value += cudaReal(tied[D*t + j])
+                                 * cudaReal(tied[D*t + k])
+                                 * dkkBasis_[k + (j * D) + (param * D * D)];
+                     }
+                  }
+                  if (t == 0) value0 = value;
+                  sum += value;
+                  if (fabs(value - value0) > maxDiff) {
+                     maxDiff = fabs(value - value0);
+                  }
+                  if (fabs(value) > scale) scale = fabs(value);
+               }
+               cudaReal dKSqVal = value0;
+               if (maxDiff > epsilon*scale) {
+                  dKSqVal = sum/cudaReal(nTied);
+               }
+               if (isRealField) {
+                  if (implicitInverse[i]) {
+                     dKSqVal *= 2;
+                  }
+               }
+               dKSq[(param * kSize) + i] = dKSqVal;
+            }
+
+         } // kSize
+      }
+
    } // anonymous namespace Pscf::Prdc::(unnamed)
 
    // Member function definitions
@@ -667,6 +792,43 @@ namespace Pscf {
          (dKSq_.cArray(), minImages_.cArray(), dkkBasis.cArray(),
           implicitInversePtr, unitCell().nParameter(), kSize_,
           isRealField_);
+
+      // Minimum images tied with images whose |k|^2 has other derivatives
+      // (cells with a variable angle only, e.g. rhombic at 120 degrees):
+      // use the average over the tied images, as the CPU WaveList does
+      if (hasVariableAngle<D>(unitCell().lattice())) {
+         HostSendArray<cudaReal,CUT> kBasis_h(D*D);
+         BackendArray<cudaReal,CUT> kBasis(D*D);
+         for (int j = 0; j < D; ++j) {
+            for (int k = 0; k < D; ++k) {
+               kBasis_h[D*j + k] = unitCell().kBasis(j)[k];
+            }
+         }
+         kBasis = kBasis_h;
+         FSArray<IntVec<D>, 14> neighbors;
+         imageShiftNeighbors<D>(mesh().dimensions(), unitCell(), neighbors);
+         ImageShifts shifts;
+         shifts.n = neighbors.size();
+         for (int j = 0; j < neighbors.size(); ++j) {
+            for (int k = 0; k < D; ++k) {
+               shifts.v[D*j + k] = neighbors[j][k];
+            }
+         }
+         HostSendArray<int,CUT> overflow_h(1);
+         overflow_h[0] = 0;
+         BackendArray<int,CUT> overflow(1);
+         overflow = overflow_h;
+         _averageTiedDKSq<D><<<nBlocks, nThreads, sz>>>
+            (dKSq_.cArray(), minImages_.cArray(), dkkBasis.cArray(),
+             kBasis.cArray(), shifts, implicitInversePtr,
+             unitCell().nParameter(), kSize_, isRealField_,
+             overflow.cArray());
+         HostRecvArray<int,CUT> overflowOut;
+         overflowOut = overflow;
+         if (overflowOut[0]) {
+            UTIL_THROW("More than 2^D tied minimum images");
+         }
+      }
 
       hasdKSq_ = true;
    }
