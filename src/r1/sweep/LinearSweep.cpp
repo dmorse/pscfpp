@@ -73,9 +73,6 @@ namespace R1 {
       }
    }
 
-   void LinearSweep::outputSummary(std::ostream& out)
-   {}
-
 }
 }
 
