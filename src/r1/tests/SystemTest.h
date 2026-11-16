@@ -441,6 +441,33 @@ public:
    }
 
    /*
+   * Sweep parameter of type cell_param, which pscf_1d does not have.
+   */
+   void testSweepCellParam()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestSweepCellParam.log");
+
+      System sys;
+      std::istringstream in(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 1"
+         " nSolvent 0 Polymer{ type linear nBlock 2"
+         " blocks 0 0.5 1 0.5 phi 1.0 } ds 0.01 }"
+         " Interaction{ chi( 0 1 30.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 0.8 nx 101 }"
+         " NrIterator{ epsilon 1.0e-7 }"
+         " LinearSweep{ ns 2 baseFileName out/SystemTestSweepCellParam_"
+         " nParameter 1 parameters[ cell_param 0 0.1 ] } }\n");
+      std::string message;
+      try {
+         sys.readParam(in);
+      } catch (Exception& e) {
+         message = e.message();
+      }
+      TEST_ASSERT(message.find("cell_param") != std::string::npos);
+   }
+
+   /*
    * Test NR iterator on input field generated within function.
    */
    void testIteratorPlanarNr1()
@@ -769,6 +796,7 @@ TEST_ADD(SystemTest, testReadFieldsIncomplete)
 TEST_ADD(SystemTest, testWriteCAfterReadW)
 TEST_ADD(SystemTest, testRemeshExtendInvalid)
 TEST_ADD(SystemTest, testSweepSummary)
+TEST_ADD(SystemTest, testSweepCellParam)
 TEST_ADD(SystemTest, testIteratorPlanarNr1)
 TEST_ADD(SystemTest, testIteratorPlanarNr2)
 TEST_ADD(SystemTest, testIteratorPlanarNr3)
