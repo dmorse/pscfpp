@@ -343,8 +343,9 @@ namespace Rp {
             setup(0, false);
          }
 
-         // Sample property values only for iStep >= min
-         if (iStep_ >= min) {
+         // Sample property values only for iStep >= min, at multiples
+         // of the analyzer base interval (as in a simulation)
+         if (iStep_ >= min && iStep_ % Analyzer<D,T>::baseInterval == 0) {
             analyzerManager().sample(iStep_);
          }
 
