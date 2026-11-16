@@ -54,9 +54,10 @@ namespace Rp {
       * Open trajectory file and read header, if any.
       *
       * By convention, this function treats the trajectory filename
-      * as the name of an input file, and opens the file using the
-      * FileMaster:openInutFile function. This function prepends the
-      * input prefix (if any) to the file path.
+      * as the name of an input file, and prepends the input prefix (if
+      * any) to the file path, as FileMaster::openInputFile does. If no
+      * file exists at that path, the name is used as given, so that a
+      * name that already includes the prefix is also accepted.
       *
       * \param filename  trajectory input file name
       */

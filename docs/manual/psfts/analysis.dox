@@ -90,8 +90,12 @@ data analysis operations are only applied to frames with a frame
 index between min and max, inclusive.
 
 The "fileName" parameter gives the name of the trajectory file that
-should be read and processed. This file name is given as a path that,
-is defined relative to the directory from which pscf_rp was invoked.
+should be read and processed. As for other input files, the input
+prefix given by the -i command line option (if any) is prepended to
+this name. If no file exists at the resulting path, the name is used
+as given, i.e., relative to the directory from which pscf_rp was
+invoked, so that a name that already includes the input prefix is
+also accepted.
 
 The readerName parameter is a string that gives the name of a class that
 will be used to read the parameter file. In the current version of PSCF,
