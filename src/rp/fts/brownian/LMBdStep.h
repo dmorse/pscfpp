@@ -69,6 +69,9 @@ namespace Rp {
 
       /**
       * Setup before simulation loop.
+      *
+      * Starts the noise chain at the first call, and continues it at
+      * later calls (e.g., a second SIMULATE command), as one run would.
       */
       void setup() override;
 
@@ -115,6 +118,9 @@ namespace Rp {
 
       // Prefactor of -dc_ in deterministic drift term
       double mobility_;
+
+      // Has a previous setup() started the noise chain?
+      bool hasChain_;
 
       // Private member functions
 

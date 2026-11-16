@@ -82,6 +82,9 @@ indices \f$ i = 0, \ldots, L - 1\f$ are chosen independently for each
 index value \f$ i \f$, each grid position \f$ {\bf r} \f$ and each time 
 step \f$ n \f$ from a Gaussian distribution of zero mean and variance 
 \f$ \overline{[g^{(n)}_{i}({\bf r})]^{2}} = \gamma \Delta V \f$.
+The noise \f$ g^{(n-1)} \f$ of the last step is kept from one SIMULATE
+command to the next, so that a simulation split into several SIMULATE
+commands gives the same trajectory as one SIMULATE command.
 
 \section rp_LMBdStep_parameter_sec Parameter file
 
