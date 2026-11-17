@@ -12,7 +12,7 @@ grid = list(map(int,lines[14].split()))
 params = list(map(float,lines[8].split()))
 
 paramfile = Composite("../param")
-ifg = paramfile.AmIteratorBasis.ImposedFieldsGenerator
+ifg = paramfile.FilmEnvironment
 normalVecId = ifg.normalVecId
 t = ifg.interfaceThickness
 T = ifg.excludedThickness

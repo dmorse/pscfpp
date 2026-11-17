@@ -65,18 +65,18 @@ or out-of-source compilation, respectively.
 The CUDA feature enables conditional compilation of CUDA code on machines
 that have an appropriate nVidia GPU and a CUDA development kit. Compilation
 of CUDA code is disabled by default.  Compilation of CUDA code can be
-enabled or disabled by invoking a setopts script with the "-c" option,
+enabled or disabled by invoking a setopts script with the "-u" option,
 with an option parameter "1" to enable CUDA compilation or "0" to disable
 CUDA compilation. One could thus enter
 \code
-./setopts -c1
+./setopts -u1
 \endcode
 to enable CUDA compilation, or 
 \code
-./setopts -c0
+./setopts -u0
 \endcode
 to disable it.
-Executing the setopts script with the -c option from the PSCF root
+Executing the setopts script with the -u option from the PSCF root
 directory enables or disables CUDA compilation for both in-source and
 out-of-source compilation, while entering the same commands from within
 the src or bld directory enables or disables CUDA compilation only for
@@ -100,9 +100,9 @@ version numbers for the CUDA "compute capability" of the relevant GPU.
 This command sets the value of the makefile variable NVARCH, which is
 defined in the file src/config.mk or bld/config.mk. The value of this
 variable is passed to the NVIDIA nvcc CUDA compiler as the parameter
-of the "-arch" compiler option. By default, NVARCH is set to "sm_70",
-corresponding to compute capability 7.0, which is the appropriate level
-for a V100 GPU.
+of the "-arch" compiler option. By default, NVARCH is set to "sm_80",
+corresponding to compute capability 8.0, which is the appropriate level
+for an A100 GPU.
 
 \subsection install_setopts_query_sub The "query" (-q) option
 
@@ -116,15 +116,20 @@ PSCF bld directory and then enter
 If debugging and CUDA compilation were both disabled (the default
 configuration), this would result in the output
 \code
--d  OFF - debugging
--c  OFF - CUDA compilation
+-d OFF    - debugging
+-c ON     - C++ CPU backend
+-u OFF    - CUDA GPU backend
 \endcode
-If debugging were disabled but CUDA compilation had been enabled,
-the output might instead look something like this:
+The line for the -c option shows whether code that uses the C++ CPU
+backend is compiled (enabled by default), which may be changed by
+invoking setopts with the -c option. If debugging were disabled but
+CUDA compilation had been enabled, the output might instead look
+something like this:
 \code
--d  OFF - debugging
--c  ON  - CUDA compilation
-sm_70   - CUDA architecture id
+-d OFF    - debugging
+-c ON     - C++ CPU backend
+-u ON     - CUDA GPU backend
+sm_80     - CUDA architecture identifier
 \endcode
 The value of the CUDA architecture id (the string set by the -a
 option) is printed only if CUDA compilation is enabled.

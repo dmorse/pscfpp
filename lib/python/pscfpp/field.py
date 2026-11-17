@@ -7,8 +7,8 @@
 #  A field file contains both a header section and a data section. 
 #  This class can read and parse all of the field file formats used by
 #  PSCF programs including the basis, rgrid, and kgrid formats used by
-#  the pscf_pc and pscf_pg programs to represent periodic fields, and 
-#  the simpler file format used by pscf_fd for one-dimensional fields.
+#  the pscf_rpc and pscf_rpg programs to represent periodic fields, and 
+#  the simpler file format used by pscf_1d for one-dimensional fields.
 #  For detail on these file formats see the section of the web manual
 #  on \ref user_field_page "field files". Users can access and modify
 #  stored values of the parameters in the header and values in the data 

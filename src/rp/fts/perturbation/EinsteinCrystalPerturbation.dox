@@ -73,9 +73,9 @@ matrix. This generalized definition, and default values for parameters,
 includes the description of a standard AB system that is given above 
 as a special case, with \f$ \epsilon = \epsilon_{0} \f$.
 
-The reference field configuration must be read from a file during
-setup of a simulation, and so the name of that file must be 
-provided as parameter in the parameter file. 
+The reference field configuration is read from a file in r-grid
+format during setup of a simulation, and so the name of that file must
+be provided as the parameter fieldFileName in the parameter file.
 
 \section rp_EinsteinCrystalPerturbation_parameter_sec Parameter file
 
@@ -83,8 +83,8 @@ The parameter file format for this class is shown below:
 \code
 EinsteinCrystalPerturbation{
   lambda               real
-  epsilon*             Array[ real ] 
-  referenceFieldFile   string
+  epsilon*             Array[ real ] (nMonomer - 1 elements)
+  fieldFileName        string
 }
 \endcode
 Note that the epsilon parameter array is optional. If this array is 
@@ -102,12 +102,13 @@ Meanings of these parameters are described briefly below:
   </tr>
   <tr>
     <td> epsilon </td>
-    <td> array of values for coefficients used in harmonic penalty 
-    (optional) </td>
+    <td> array of nMonomer - 1 positive values for coefficients used in
+    the harmonic penalty (optional) </td>
   </tr>
   <tr>
-    <td> referenceFieldName  </td>
-    <td> name of file containing reference field configuration </td>
+    <td> fieldFileName  </td>
+    <td> name of the file containing the reference field configuration,
+         in r-grid format </td>
   </tr>
 </table>
 
