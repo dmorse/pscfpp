@@ -157,6 +157,17 @@ density times the monomer reference volume) in units in which
 \f$ kT = 1 \f$, while \f$S\f$ is an arbitrary prefactor whose value is 
 given by the parameter scaleStress, which is set to 10.0 by default.
 
+\section rp_AmIteratorGrid_relNorm_sec Error type relNorm
+
+If errorType is relNorm (the default), the scalar error is the ratio
+\f$ |{\bf R}|/|{\bf Q}| \f$ of the L2 norms of the residual vector and
+of a reference vector \f$ {\bf Q} \f$, whose field elements are the
+values of the interaction field
+\f$ Q_{i}({\bf r}) = \sum_{j} \chi_{ij}\phi_{j}({\bf r}) \f$ at the
+grid points. If the unit cell is flexible, \f$ {\bf Q} \f$ also
+contains the scaled flexible unit cell parameters, as the state vector
+does.
+
 */
 
 }

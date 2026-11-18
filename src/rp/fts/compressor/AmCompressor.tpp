@@ -205,6 +205,14 @@ namespace Rp {
    void AmCompressor<D,T>::outputToLog()
    {}
 
+   /*
+   * Norm of the reference vector of the relNorm error: norm of the
+   * target total concentration, equal to 1 at every grid point.
+   */
+   template <int D, class T>
+   double AmCompressor<D,T>::relNormReference(VectorT const &)
+   {  return std::sqrt(double(system().domain().mesh().size())); }
+
 }
 }
 #endif

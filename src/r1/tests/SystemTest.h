@@ -447,6 +447,90 @@ public:
    }
 
    /*
+   * AM iterator with the default history length (maxHist 50), from the
+   * initial fields of testIteratorPlanarAm1 rounded to 6, 10, 14 or 16
+   * significant digits. Each of these solves must converge. (With an
+   * ill-conditioned Anderson mixing matrix, they failed to converge
+   * within 200 iterations.)
+   */
+   void testIteratorPlanarAmRounded()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorPlanarAmRounded.log");
+
+      int digits[4] = {6, 10, 14, 16};
+      for (int k = 0; k < 4; ++k) {
+         System sys;
+         std::istringstream in(
+            "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 1"
+            " nSolvent 0 Polymer{ type linear nBlock 2"
+            " blocks 0 0.5 1 0.5 phi 1.0 } ds 0.01 }"
+            " Interaction{ chi( 0 1 30.0 ) }"
+            " Domain{ mode Planar xMin 0.0 xMax 0.8 nx 101 }"
+            " AmIterator{ epsilon 1.0e-7 maxHist 50 } }\n");
+         sys.readParam(in);
+
+         // Initial fields of testIteratorPlanarAm1, rounded
+         int nx = sys.domain().nx();
+         double chi = 20.0;
+         double cs, shift;
+         cs = cos(Constants::Pi);
+         shift = chi*(0.5*cs + 0.25*cs*cs);
+         for (int i = 0; i < nx; ++i) {
+            cs = cos(Constants::Pi*double(i)/double(nx-1));
+            for (int j = 0; j < 2; ++j) {
+               double w = chi*((j == 0 ? -0.5 : 0.5)*cs + 0.25*cs*cs);
+               std::ostringstream text;
+               text.precision(digits[k] - 1);
+               text << std::scientific << w - shift;
+               sys.wField(j)[i] = std::stod(text.str());
+            }
+         }
+
+         TEST_ASSERT(sys.iterator().solve() == 0);
+      }
+   }
+
+   /*
+   * AM iterator error for w fields with a large pressure field.
+   */
+   void testIteratorPlanarAmPressureField()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorPlanarAmPressureField.log");
+
+      // System of in/planar_am2.prm, with a single iteration
+      System sys;
+      std::istringstream in(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 1"
+         " nSolvent 0 Polymer{ type linear nBlock 2"
+         " blocks 0 0.5 1 0.5 phi 1.0 } ds 0.01 }"
+         " Interaction{ chi( 0 1 30.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 0.8 nx 101 }"
+         " AmIterator{ epsilon 1.0e-7 maxItr 1 } }\n");
+      sys.readParam(in);
+      FieldIo fieldIo;
+      fieldIo.associate(sys.domain(), sys.fileMaster());
+      std::ifstream wIn;
+      openInputFile("in/planar.w", wIn);
+      fieldIo.readFields(sys.wFields(), wIn);
+      wIn.close();
+
+      // Add xi = A cos(pi x/L), with A = 1.0E10, to both w fields. The
+      // volume fractions stay bounded, so this state is far from a
+      // solution. With maxItr 1, solve() returns 0 only if the error of
+      // the given state is below epsilon.
+      int nx = sys.domain().nx();
+      double xi;
+      for (int i = 0; i < nx; ++i) {
+         xi = 1.0E10*cos(Constants::Pi*double(i)/double(nx-1));
+         sys.wField(0)[i] += xi;
+         sys.wField(1)[i] += xi;
+      }
+      TEST_ASSERT(sys.iterator().solve() != 0);
+   }
+
+   /*
    * Test AM iterator controlled by a command file.
    */
    void testIteratorPlanarAm3()
@@ -744,6 +828,8 @@ TEST_ADD(SystemTest, testIteratorPlanarNr3)
 TEST_ADD(SystemTest, testIteratorSphericalNr1)
 TEST_ADD(SystemTest, testIteratorSphericalNr3)
 TEST_ADD(SystemTest, testIteratorPlanarAm1)
+TEST_ADD(SystemTest, testIteratorPlanarAmRounded)
+TEST_ADD(SystemTest, testIteratorPlanarAmPressureField)
 TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
 TEST_ADD(SystemTest, testThermoSmallPhi)

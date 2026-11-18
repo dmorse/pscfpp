@@ -68,8 +68,10 @@ Meanings of all parameters are described briefly below:
     <td> 
       Identifer for the choice of a definition for the scalar error. 
       Meaning of the allowed values are "norm", "rms" "max", and 
-      "relNorm", are discussed \ref pscf_AmIteratorTmpl_page "here"
-      ("rms" by default).
+      "relNorm", are discussed \ref pscf_AmIteratorTmpl_page "here".
+      For this compressor, "relNorm" divides the norm of the residual by
+      the norm of the target total concentration (1 at every grid point),
+      and is thus equal to "rms". ("rms" by default).
     </td>
   </tr>
 </table>

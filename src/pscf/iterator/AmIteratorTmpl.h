@@ -201,6 +201,21 @@ namespace Pscf {
       double computeError(int verbose);
 
       /**
+      * Return the norm of the reference vector of the relNorm error.
+      *
+      * If errorType is relNorm, the scalar error is the L2 norm of the
+      * residual divided by the value returned by this function. The
+      * default implementation returns the L2 norm of the state vector.
+      * A subclass must override this function if its state vector can
+      * vanish at a state that must be accepted (e.g., a change relative
+      * to the initial state), or can contain large parts on which the
+      * residual does not depend.
+      *
+      * \param state  current state vector
+      */
+      virtual double relNormReference(T const & state);
+
+      /**
       * Compute ramped prefactor of mixing parameter lambda.
       *
       * \return prefactor 1 - r^{nBasis} multiplying lambda.
