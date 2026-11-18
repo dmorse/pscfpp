@@ -11,6 +11,7 @@
 #include <util/containers/Pair.h>
 
 #include <fstream>
+#include <string>
 
 using namespace Pscf;
 
@@ -239,6 +240,53 @@ public:
       TEST_ASSERT(nEdge == 3);
    }
 
+
+   /*
+   * Read a polymer from a file. Return true if this throws an Exception,
+   * and copy its message to *message if message is not null.
+   */
+   bool readParamThrows(PolymerStub& p, std::string fileName,
+                        std::string* message = 0)
+   {
+      std::ifstream in;
+      openInputFile(fileName, in);
+      bool thrown = false;
+      try {
+         p.readParam(in);
+      } catch (Util::Exception& e) {
+         thrown = true;
+         if (message) *message = e.message();
+      }
+      in.close();
+      return thrown;
+   }
+
+   /*
+   * Blocks that form a cycle (here a two-block ring, issue #283) must
+   * be rejected. Without the check, makePlan never returned.
+   */
+   void testReadParamRing()
+   {
+      printMethod(TEST_FUNC);
+      PolymerStub p;
+      TEST_ASSERT(readParamThrows(p, "in/PolymerRing"));
+   }
+
+   /*
+   * A vertex id >= nVertex = nBlock + 1 must be rejected. Without the
+   * check, Vertex::addEdge was called on memory beyond the end of the
+   * vertex array, which may also throw by chance, so the message is
+   * checked too.
+   */
+   void testReadParamVertexRange()
+   {
+      printMethod(TEST_FUNC);
+      PolymerStub p;
+      std::string message;
+      TEST_ASSERT(readParamThrows(p, "in/PolymerVertexRange", &message));
+      TEST_ASSERT(message.find("out of range") != std::string::npos);
+   }
+
 };
 
 TEST_BEGIN(PolymerStubTest)
@@ -247,6 +295,8 @@ TEST_ADD(PolymerStubTest, testReadParamDiblock)
 TEST_ADD(PolymerStubTest, testReadParamTriblock)
 TEST_ADD(PolymerStubTest, testReadParamStar)
 TEST_ADD(PolymerStubTest, testReadParamH)
+TEST_ADD(PolymerStubTest, testReadParamRing)
+TEST_ADD(PolymerStubTest, testReadParamVertexRange)
 TEST_END(PolymerStubTest)
 
 #endif

@@ -129,6 +129,61 @@ public:
       TEST_ASSERT(eq(0.4, xi));
    }
 
+
+   /*
+   * A singular chi (one zero chi parameter in a 3-monomer system, as
+   * in issue #282) is valid input, but setChi aborted in the GSL error
+   * handler. Functions of chi must work, and functions of its inverse
+   * must throw an Exception.
+   */
+   void testSingularChi()
+   {
+      printMethod(TEST_FUNC);
+
+      FhInteraction v;
+      v.setNMonomer(3);
+      DMatrix<double> chi;
+      chi.allocate(3, 3);
+      for (int i = 0; i < 3; ++i) {
+         for (int j = 0; j < 3; ++j) {
+            chi(i, j) = 0.0;
+         }
+      }
+      chi(0, 1) = chi(1, 0) = 4.0;
+      chi(1, 2) = chi(2, 1) = 6.0;
+      v.setChi(chi);
+
+      DArray<double> c, w;
+      c.allocate(3);
+      w.allocate(3);
+      c[0] = 0.25;
+      c[1] = 0.5;
+      c[2] = 0.25;
+      v.computeW(c, w);
+      TEST_ASSERT(eq(w[1], 2.5));
+      TEST_ASSERT(eq(v.fHelmholtz(c), 1.25));
+
+      bool thrown = false;
+      try {
+         v.chiInverse(0, 0);
+      } catch (Exception&) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+
+      // An inverse computed for an earlier, invertible chi is not reused
+      v.setChi(0, 2, 1.0);
+      v.setChi(0, 2, 0.0);
+      double xi;
+      thrown = false;
+      try {
+         v.computeC(w, c, xi);
+      } catch (Exception&) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+   }
+
 };
 
 TEST_BEGIN(FhInteractionTest)
@@ -137,6 +192,7 @@ TEST_ADD(FhInteractionTest, testReadWrite1)
 TEST_ADD(FhInteractionTest, testReadWrite2)
 TEST_ADD(FhInteractionTest, testReadWrite3)
 TEST_ADD(FhInteractionTest, testComputeW)
+TEST_ADD(FhInteractionTest, testSingularChi)
 TEST_END(FhInteractionTest)
 
 #endif

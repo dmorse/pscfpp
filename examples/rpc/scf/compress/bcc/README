@@ -1,3 +1,13 @@
 Enter:
 
-pscf_pc -d 3 -e -p param_lram -c command
+pscf_rpc -d 3 -e -p param_lram -c command
+
+to apply the COMPRESS command to the fields in in/w.rf with an
+LrAmCompressor (script run). The parameter files param_am and param_lr
+use an AmCompressor and an LrCompressor instead (scripts run_am and
+run_lr). Then enter
+
+python3 Incompress_check.py
+
+to print the sum over all grid points of the deviation of the total
+concentration in out/c_rf from 1.

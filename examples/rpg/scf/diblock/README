@@ -1,12 +1,12 @@
 Each subdirectory of this directory contains an example 
-of a periodic phase that can be run on a GPU using the pscf_pg3 
+of a periodic phase that can be run on a GPU using the pscf_rpg
 program. To run these examples, you must be logged onto a 
 computer or node with an NVIDIA GPU and a CUDA run time 
 environment. 
 
 Each of these example directories contains an executable
 script named "run" that contains the appropriate form 
-of the above command, including the correct values for
-nblock and nthread. To run an example, you can thus just
+of the command, including the dimension of space given
+after the -d option. To run an example, you can thus just
 invoke "./run" from the directory containing the executable.
 

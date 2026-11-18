@@ -192,8 +192,9 @@ namespace Rp {
          // Make sure unitCellParameters_ is up to date with system
          // (if we are sweeping in a lattice parameter, then the system
          // parameters will be up-to-date but unitCellParameters_ wont be)
-         FSArray<double, 6> oldParameters = unitCellParameters_;
-         unitCellParameters_ = system().domain().unitCell().parameters();
+         FSArray<double, 6> systemParameters
+                               = system().domain().unitCell().parameters();
+         unitCellParameters_ = systemParameters;
 
          // If isFlexible, extrapolate the flexible unit cell parameters
          if (isFlexible) {
@@ -226,11 +227,12 @@ namespace Rp {
          // Reset trial_.unitCell() object
          trial_.unitCell().setParameters(unitCellParameters_);
 
-         // Check if any unit cell parameters have changed
-         bool newCellParams(true);
-         for (int i = 0; i < oldParameters.size(); i++) {
-            if (fabs(oldParameters[i] - unitCellParameters_[i]) < 1e-10) {
-               newCellParams = false;
+         // Check if any trial unit cell parameter differs from the
+         // corresponding parameter of the system
+         bool newCellParams(false);
+         for (int i = 0; i < systemParameters.size(); i++) {
+            if (fabs(systemParameters[i] - unitCellParameters_[i]) >= 1e-10) {
+               newCellParams = true;
                break;
             }
          }

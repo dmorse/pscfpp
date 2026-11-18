@@ -17,9 +17,10 @@ namespace Rp {
    *
    * \param argc  number of command line parameters
    * \param argv  array of command line parameter strings
+   * \return 0 if no command failed, 1 otherwise (exit status)
    */
    template <int D, class T>
-   void run(int argc, char **argv) {
+   int run(int argc, char **argv) {
 
       // Construct System object for specific dimension D.
       System<D,T> system;
@@ -30,8 +31,9 @@ namespace Rp {
       // Read parameters from default parameter file
       system.readParam();
 
-      // Read command script to run system
-      system.readCommands();
+      // Read command script to run system. Return 1 if a command
+      // failed (e.g., an ITERATE command that did not converge).
+      return system.readCommands();
 
    }
 

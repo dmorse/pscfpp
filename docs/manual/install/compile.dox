@@ -57,12 +57,12 @@ already completed the preliminary steps described above.
      To enable compilation of CUDA code for GPU-enabled programs on a
      machine that is set up to allow this, enter
      \code
-     ./setopts -c1
+     ./setopts -u1
      \endcode
      from the PSCF root directory. If you later want to disable
      compilation of CUDA code, instead enter
      \code
-     ./setopts -c0
+     ./setopts -u0
      \endcode
      Commands issued by the setops script set variables that
      affect subsequent behavior of the build system and compiler.
@@ -108,8 +108,7 @@ already completed the preliminary steps described above.
      from the PSCF root directory, using "sm_80" as the architecture id.
 
      By default, the target architecture is set to compute capability
-     7.0 , or sm_70, which is the appropriate level for a slightly older
-     V100 GPU.
+     8.0, or sm_80, which is the appropriate level for an A100 GPU.
 
    - **Compile all programs (including pscf_rpg):**
      After enabling CUDA compilation and setting the appropriate

@@ -186,17 +186,24 @@ namespace Rp {
       /**
       * Read and process commands from an input stream.
       *
+      * Execution stops at FINISH, at the end of the script, or after a
+      * command that failed: an ITERATE or COMPRESS command that did not
+      * converge or an unknown command.
+      *
       * \param in command script input stream
+      * \return 0 if no command failed, 1 otherwise
       */
-      void readCommands(std::istream& in);
+      int readCommands(std::istream& in);
 
       /**
       * Read and process commands from the default command file.
       *
       * This function reads the parameter file set by the -c command
       * line option.
+      *
+      * \return 0 if no command failed, 1 otherwise
       */
-      void readCommands();
+      int readCommands();
 
       ///@}
       /// \name Field Theory Computations

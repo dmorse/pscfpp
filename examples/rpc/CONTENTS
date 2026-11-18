@@ -1,5 +1,5 @@
-Director examples/pc contains examples of calculations on periodic systems
-performed with the pscf_pc CPU program. 
+Directory examples/rpc contains examples of calculations on periodic systems
+performed with the pscf_rpc CPU program. 
  
 Subdirectories:
 

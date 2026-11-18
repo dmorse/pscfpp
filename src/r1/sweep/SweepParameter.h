@@ -159,8 +159,20 @@ namespace R1 {
 
       /**
       * Store the pre-sweep value of the corresponding parameter.
+      *
+      * Checks the indices of this parameter (see checkIds) before
+      * getting its current value.
       */
       void getInitial();
+
+      /**
+      * Check that the indices of this parameter are in range.
+      *
+      * Throws an Exception if a polymer, block, solvent or monomer
+      * index is not in the range of valid indices of the parent
+      * system. Indices of specialized parameters are not checked here.
+      */
+      void checkIds() const;
 
       /**
       * Update the corresponding parameter value in the system.
@@ -252,6 +264,15 @@ namespace R1 {
 
       /// Index of parameter type within parameterTypes_ array if found
       int parameterTypeId_;
+
+      /**
+      * Throw an Exception if index id(i) is not in the range [0, n).
+      *
+      * \param i  index of the identifier (0 or 1)
+      * \param n  number of objects of this kind in the parent system
+      * \param name  name of the kind of object (e.g., "polymer")
+      */
+      void checkId(int i, int n, std::string const & name) const;
 
       /**
       * Read type of parameter being swept, and set number of identifiers.

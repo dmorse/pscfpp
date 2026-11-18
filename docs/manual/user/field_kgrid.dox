@@ -4,7 +4,7 @@
  \ref scft_page              (Next)
 <BR>
 
-The pscf_rpc and pscf_gp programs for periodic systems can also read
+The pscf_rpc and pscf_rpg programs for periodic systems can also read
 and write files in format that gives the unsymmetrized discrete
 Fourier transform of the field associated with each monomer type.
 The required file format is very similar to that used for the

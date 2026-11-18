@@ -419,7 +419,7 @@ default, and is defined if and only if the user has explicitly enabled
 compilation of CUDA code. The "all" target thus compiles code in the rpg
 directory and creates the pscf_rpg executable only if CUDA compilation
 has been enabled.  Compilation of CUDA code can be enabled either by
-using the setopts script, using the -c option with argument 1, or by
+using the setopts script, using the -u option with argument 1, or by
 manually uncommenting the definition of the variable PSCF_CUDA in the
 relevant config.mk configuration file.
 

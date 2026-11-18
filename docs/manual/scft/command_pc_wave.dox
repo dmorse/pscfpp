@@ -42,9 +42,9 @@ src/pscf/crystal/Basis.tpp.
 
 \section scft_command_pc_wave_format_sec File Format
 
-The file created by the MAKE_WAVES command contains a header section
+The file created by the WRITE_WAVES command contains a header section
 similar to that used for field files followed by a long data section.
-The last line of the data section contains the value for N_wave, which
+The last line of the header section contains the value for N_wave, which
 is the total number of wavevectors listed in the data section.
 
 The data section contains one row for each reciprocal lattice wavevector
@@ -73,7 +73,7 @@ in which:
 
    - waveId is a unique integer index for each wavevector that is
      assigned to waves that belong to both cancelled and uncancelled
-     stars.  Because the output created by MAKE_WAVES only includes
+     stars.  Because the output created by WRITE_WAVES only includes
      wavevectors that belong to uncancelled stars, the lsting of
      values of this index has gaps that correspond to sets of waves
      that belong to cancelled stars.
@@ -149,8 +149,6 @@ cell_param
       3.5985168166e+00
 group_name
           I_a_-3_d
-N_monomer
-          2
 N_wave
              13616
        0       0    0    0    0     0    1.0000000e+00    0.0000000e+00

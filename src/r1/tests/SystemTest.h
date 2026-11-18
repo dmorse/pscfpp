@@ -10,8 +10,15 @@
 #include <r1/solvers/Polymer.h>
 #include <r1/iterator/Iterator.h>
 #include <r1/field/FieldIo.h>
+#include <r1/sweep/LinearSweep.h>
+#include <r1/sweep/SweepParameter.h>
+
+#include <util/misc/Exception.h>
 
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -489,6 +496,241 @@ public:
       in.close();
    }
 
+   /*
+   * Command scripts that end without a newline, or with an argument
+   * that cannot be read.
+   */
+   void testReadCommandsInput()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestReadCommandsInput.log");
+
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr2.prm", in);
+      sys.readParam(in);
+      in.close();
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      // A last command without a newline must be executed
+      std::istringstream in1("READ_W in/planar.w\nITERATE");
+      sys.readCommands(in1);
+      TEST_ASSERT(sys.fHelmholtz() != 0.0);
+
+      // A missing argument at the end of the script must be reported
+      std::istringstream in2("WRITE_W out/SystemTestReadCommandsInput.w\n"
+                             "REMESH_W 51");
+      bool thrown = false;
+      try {
+         sys.readCommands(in2);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+
+      // So must an argument that cannot be read
+      std::istringstream in3("REMESH_W x out/SystemTestReadCommandsInput.w"
+                             "\nFINISH\n");
+      thrown = false;
+      try {
+         sys.readCommands(in3);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+   }
+
+   /*
+   * Free energy and pressure after the COMPUTE command.
+   */
+   void testComputeThermo()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestComputeThermo.log");
+
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr2.prm", in);
+      sys.readParam(in);
+      in.close();
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      std::istringstream in1("READ_W in/planar.w\nITERATE\nFINISH\n");
+      sys.readCommands(in1);
+      double f0 = sys.fHelmholtz();
+
+      // Perturb the converged w fields, and solve without iteration
+      int nx = sys.domain().nx();
+      for (int i = 0; i < nx; ++i) {
+         sys.wField(0)[i] += 0.5*cos(Constants::Pi*double(i)/double(nx-1));
+      }
+      std::istringstream in2("COMPUTE\nFINISH\n");
+      sys.readCommands(in2);
+      double f1 = sys.fHelmholtz();
+      double p1 = sys.pressure();
+
+      // The values must be those of the perturbed fields
+      sys.computeFreeEnergy();
+      TEST_ASSERT(std::abs(f1 - f0) > 1.0E-4);
+      TEST_ASSERT(std::abs(f1 - sys.fHelmholtz()) < 1.0E-12);
+      TEST_ASSERT(std::abs(p1 - sys.pressure()) < 1.0E-12);
+   }
+
+   /*
+   * Status returned by readCommands: 0 if no command failed, 1 after
+   * an unknown command or an ITERATE command that did not converge.
+   */
+   void testReadCommandsStatus()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestReadCommandsStatus.log");
+
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr2.prm", in);
+      sys.readParam(in);
+      in.close();
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      std::istringstream in1("READ_W in/planar.w\nCOMPUTE\nFINISH\n");
+      TEST_ASSERT(sys.readCommands(in1) == 0);
+      std::istringstream in2("COMPUTE\n");
+      TEST_ASSERT(sys.readCommands(in2) == 0);
+      std::istringstream in3("COMPUTEE\nFINISH\n");
+      TEST_ASSERT(sys.readCommands(in3) == 1);
+
+      // An NrIterator with maxItr 1 cannot converge
+      System sys2;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks 0 0.5 1 0.5 phi 1.0 }"
+         " ds 0.01 }"
+         " Interaction{ chi( 0 1 30.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 0.8 nx 101 }"
+         " NrIterator{ epsilon 1.0e-12 maxItr 1 } }\n");
+      sys2.readParam(param);
+      sys2.fileMaster().setInputPrefix(filePrefix());
+      sys2.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream in4("READ_W in/planar.w\nITERATE\nFINISH\n");
+      TEST_ASSERT(sys2.readCommands(in4) == 1);
+   }
+
+   /*
+   * Free energy and pressure of a homogeneous blend of two homopolymers
+   * of length 1 with volume fractions 1 - 5.0E-9 and 5.0E-9, in a field
+   * w = 0, which include the terms of the dilute species.
+   */
+   void testThermoSmallPhi()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestThermoSmallPhi.log");
+
+      System sys;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0 nPolymer 2"
+         " Polymer{ type linear nBlock 1 blocks 0 1.0 phi 0.999999995 }"
+         " Polymer{ type linear nBlock 1 blocks 1 1.0 phi 5.0e-9 }"
+         " ds 0.05 } Interaction{ chi( 0 1 10.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 1.0 nx 5 }"
+         " NrIterator{ epsilon 0.00001 } }\n");
+      sys.readParam(param);
+      for (int m = 0; m < 5; ++m) {
+         sys.wFields()[0][m] = 0.0;
+         sys.wFields()[1][m] = 0.0;
+      }
+      sys.compute();
+      sys.computeFreeEnergy();
+      double phi = 5.0E-9;
+      double fExact = (1.0 - phi)*(std::log(1.0 - phi) - 1.0)
+                    + phi*(std::log(phi) - 1.0) + 10.0*phi*(1.0 - phi);
+      double pExact = 1.0 - 10.0*phi*(1.0 - phi);
+      TEST_ASSERT(std::abs(sys.fHelmholtz() - fExact) < 5.0E-11);
+      TEST_ASSERT(std::abs(sys.pressure() - pExact) < 5.0E-11);
+   }
+
+   void testSweepParameterIdRange()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestSweepParameterIdRange.log");
+
+      // Diblock melt. Parameters with an index out of range must be
+      // rejected by getInitial, with a message that says so.
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr1.prm", in);
+      sys.readParam(in);
+      in.close();
+      std::string bad[] = {"phi_polymer 1 0.1", "block 0 2 0.1"};
+      for (int i = 0; i < 2; ++i) {
+         SweepParameter parameter(sys);
+         std::istringstream in(bad[i]);
+         in >> parameter;
+         std::string message;
+         try {
+            parameter.getInitial();
+         } catch (Exception& e) {
+            message = e.message();
+         }
+         TEST_ASSERT(message.find("out of range") != std::string::npos);
+      }
+   }
+
+   void testLinearSweepPhiMixed()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestLinearSweepPhiMixed.log");
+
+      // Diblock (closed) in an open solvent: a sweep of the volume
+      // fraction of the diblock alone must be accepted
+      System sys;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers 1.0 1.0"
+         " nPolymer 1 nSolvent 1"
+         " Polymer{ type linear nBlock 2 blocks 0 2.0 1 3.0 phi 0.8 }"
+         " Solvent{ monomerId 1 size 0.05 mu 1.0 }"
+         " vMonomer 0.05 ds 0.01 }"
+         " Interaction{ chi( 0 1 4.0 ) }"
+         " Domain{ mode Planar xMin 0.0 xMax 4.0 nx 33 }"
+         " NrIterator{ epsilon 0.00001 } }\n");
+      sys.readParam(param);
+      LinearSweep sweep(sys);
+      std::istringstream in("ns 2 nParameter 1"
+                            " parameters phi_polymer 0 -0.1\n");
+      bool thrown = false;
+      try {
+         sweep.readParameters(in);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+   }
+
+   void testLinearSweepPhiSum()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestLinearSweepPhiSum.log");
+
+      // Closed diblock melt: a change of phi of 5.0E-7 must be rejected
+      System sys;
+      std::ifstream in;
+      openInputFile("in/planar_nr1.prm", in);
+      sys.readParam(in);
+      in.close();
+      LinearSweep sweep(sys);
+      std::istringstream sweepIn("ns 4 nParameter 1"
+                                 " parameters phi_polymer 0 5.0e-7\n");
+      std::string message;
+      try {
+         sweep.readParameters(sweepIn);
+      } catch (Exception& e) {
+         message = e.message();
+      }
+      TEST_ASSERT(message.find("add up to zero") != std::string::npos);
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -504,6 +746,13 @@ TEST_ADD(SystemTest, testIteratorSphericalNr3)
 TEST_ADD(SystemTest, testIteratorPlanarAm1)
 TEST_ADD(SystemTest, testIteratorPlanarAm3)
 TEST_ADD(SystemTest, testSweepSpherical)
+TEST_ADD(SystemTest, testThermoSmallPhi)
+TEST_ADD(SystemTest, testReadCommandsInput)
+TEST_ADD(SystemTest, testComputeThermo)
+TEST_ADD(SystemTest, testReadCommandsStatus)
+TEST_ADD(SystemTest, testSweepParameterIdRange)
+TEST_ADD(SystemTest, testLinearSweepPhiMixed)
+TEST_ADD(SystemTest, testLinearSweepPhiSum)
 TEST_END(SystemTest)
 
 #endif

@@ -19,6 +19,7 @@
 #include <rp/field/Mask.h>
 #include <rp/field/FieldIo.h>
 #include <pscf/field/cpp/RFieldComparison.h>
+#include <pscf/interaction/Interaction.h>
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/BFieldComparison.h>
 #include <util/misc/FileMaster.h>
@@ -1182,6 +1183,58 @@ public:
       TEST_ASSERT(diff < 1.0E-5);
    }
 
+
+   /*
+   * Solves that follow a solve that failed with a NaN (issue #268).
+   *
+   * A large jump in chi drives the AM iteration to a NaN, which ends
+   * the solve with failure. As in a sweep that backtracks, the state
+   * before the jump is then restored, and a smaller step is solved
+   * with isContinuation = true. This solve must be able to start (the
+   * AM timers must have been stopped after the NaN), and must not
+   * reuse the basis vectors of the failed solve (which would repeat
+   * the step that led to the NaN in its first iteration). At the
+   * smaller chi it converges to the disordered state, as a solve from
+   * the initial fields does.
+   */
+   void testIterate1D_lam_nan()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_nan.log");
+
+      // Converged solution at chi = 12
+      Rp::System<1,CPT> system;
+      setupSystem(system, "in/diblock/lam_nan/param");
+      system.w().readBasis("in/diblock/lam_nan/w.bf");
+      int error = system.iterate();
+      TEST_ASSERT(!error);
+
+      // Jump to chi = 412: the solve ends with a NaN
+      system.interaction().setChi(0, 1, 412.0);
+      bool thrown = false;
+      error = 0;
+      try {
+         error = system.iterate(true);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+      TEST_ASSERT(error);
+
+      // Restore the solution at chi = 12, and solve for chi = 112
+      system.w().readBasis("in/diblock/lam_nan/w.bf");
+      system.interaction().setChi(0, 1, 112.0);
+      thrown = false;
+      error = 1;
+      try {
+         error = system.iterate(true);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+      TEST_ASSERT(!error);
+   }
+
 };
 
 TEST_BEGIN(AmIteratorBasisTest)
@@ -1205,6 +1258,7 @@ TEST_ADD(AmIteratorBasisTest, testIterate3D_bcc_stress)
 TEST_ADD(AmIteratorBasisTest, testIterate3D_altGyr_flex)
 TEST_ADD(AmIteratorBasisTest, testIterate3D_c15_1_flex)
 TEST_ADD(AmIteratorBasisTest, testIterateWithMaskAndH)
+TEST_ADD(AmIteratorBasisTest, testIterate1D_lam_nan)
 TEST_END(AmIteratorBasisTest)
 
 #endif

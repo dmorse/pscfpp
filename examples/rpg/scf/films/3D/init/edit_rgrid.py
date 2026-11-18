@@ -12,7 +12,7 @@ params = [float(lines[8].strip())]
 
 # Get data from param file
 paramfile = Composite("../param")
-ifg = paramfile.AmIteratorBasis.ImposedFieldsGenerator
+ifg = paramfile.FilmEnvironment
 normalVecId = ifg.normalVecId
 t = ifg.interfaceThickness
 T = ifg.excludedThickness

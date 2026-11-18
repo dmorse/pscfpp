@@ -195,6 +195,9 @@ namespace Pscf {
       /// Number of monomers
       int nMonomer_;
 
+      /// Is chiInverse_ valid (false if chi is singular)?
+      bool hasChiInverse_ = false;
+
       /**
       * Compute the inverse of the chi matrix.
       * Must be called after making any changes to the chi matrix.
@@ -217,7 +220,10 @@ namespace Pscf {
    {  return chi_(i, j); }
 
    inline double FhInteraction::chiInverse(int i, int j) const
-   {  return chiInverse_(i, j); }
+   {
+      UTIL_CHECK(hasChiInverse_);
+      return chiInverse_(i, j);
+   }
 
 } // namespace Pscf
 #endif

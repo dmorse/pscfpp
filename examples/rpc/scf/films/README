@@ -17,7 +17,10 @@ typing
 
 Then, to run pscf, type:
 
-    pscf_pc -p param -c command -e
+    pscf_rpc -d D -p param -c command -e
+
+in which D is the dimension of space of the example (the
+value given after -d in its run script, e.g., 1 in 1D/).
 
 Alternatively, you can just type "./generate_guess" to 
 call the pre-written executable that will run 

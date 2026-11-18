@@ -90,8 +90,13 @@ namespace Rp {
       }
       McMoveT::attemptMoveTimer_.stop();
 
-      // Compute required properties in final state
+      // Compute required properties in final state. If the compressor
+      // failed in the last BD step, restoreState() restored only what
+      // the stored state holds, and the c fields are not valid.
       simulator().computeWc();
+      if (!system().c().hasData()) {
+         system().compute();
+      }
       if (simulator().needsCc() || simulator().needsDc()) {
          if (!simulator().hasCc()) {
             simulator().computeCc();
