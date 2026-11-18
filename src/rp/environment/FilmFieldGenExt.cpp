@@ -172,7 +172,11 @@ namespace Rp {
       UTIL_CHECK(normalVecId() >= 0);
       UTIL_CHECK(system().domain().unitCell().isInitialized());
       UTIL_CHECK(system().mask().hasData());
-      if (system().iterator().isSymmetric()) {
+      // Store symmetric fields if the Iterator is symmetric (a system
+      // may have no Iterator)
+      bool isSymmetric = system().hasIterator()
+                         && system().iterator().isSymmetric();
+      if (isSymmetric) {
          UTIL_CHECK(system().domain().basis().isInitialized());
       }
 
@@ -227,7 +231,7 @@ namespace Rp {
       } 
 
       // Pass h into the System
-      system().h().setRGrid(hRGrid, system().iterator().isSymmetric());
+      system().h().setRGrid(hRGrid, isSymmetric);
    }
 
    /*

@@ -19,12 +19,17 @@
 #include <pscf/field/cpp/RFieldComparison.h>
 
 #include <pscf/mesh/Mesh.h>
+#include <pscf/crystal/UnitCell.h>
 
 #include <util/misc/FileMaster.h> 
 #include <util/random/Random.h> 
+#include <util/math/Constants.h>
+#include <util/containers/FSArray.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
+#include <sstream>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -222,6 +227,47 @@ public:
                      "in/param_LrAmCompressor",
                      "out/testLrAmCompressor.log");
    }
+
+   /*
+   * Commands after a COMPRESS command that failed must not be executed.
+   */
+   void testCompressCommandFailure()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testCompressCommandFailure.log");
+
+      // Diblock melt, with an AmCompressor that cannot converge
+      Rp::System<1,CPT> system1;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 12.0 ) }"
+         " Domain{ mesh 16 lattice lamellar }"
+         " BdSimulator{ seed 1234 LMBdStep{ mobility 0.01 }"
+         " AmCompressor{ epsilon 1.0e-12 maxItr 1 maxHist 10 } } }\n");
+      system1.readParam(param);
+      TEST_ASSERT(system1.hasSimulator());
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      system1.setUnitCell(parameters);
+      DArray< RField<1,CPT> > w;
+      w.allocate(2);
+      for (int i = 0; i < 2; ++i) {
+         w[i].allocate(system1.domain().mesh().dimensions());
+         for (int k = 0; k < 16; ++k) {
+            w[i][k] = (i == 0) ? cos(2.0*Constants::Pi*k/16.0) : 0.0;
+         }
+      }
+      system1.w().setRGrid(w);
+
+      std::istringstream in("COMPRESS\nSET_UNIT_CELL lamellar 1.5\n"
+                            "FINISH\n");
+      TEST_ASSERT(system1.readCommands(in) == 1);
+      TEST_ASSERT(std::abs(system1.domain().unitCell().parameter(0) - 1.0)
+                  < 1.0E-12);
+   }
    
 };
 
@@ -230,6 +276,7 @@ TEST_ADD(CompressorTest, testAmCompressor)
 TEST_ADD(CompressorTest, testLrCompressor)
 //TEST_ADD(CompressorTest, testLrAmPreCompressor)
 TEST_ADD(CompressorTest, testLrAmCompressor)
+TEST_ADD(CompressorTest, testCompressCommandFailure)
 TEST_END(CompressorTest)
 
 #endif

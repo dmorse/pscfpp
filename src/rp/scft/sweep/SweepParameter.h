@@ -173,10 +173,21 @@ namespace Rp {
       /**
       * Get initial value of this parameter.
       *
-      * This function is called before a sweep begins, and simply gets
-      * current values of this parameter.
+      * This function is called before a sweep begins. It checks the
+      * indices of this parameter (see checkIds) and gets the current
+      * value of this parameter.
       */
       void getInitial();
+
+      /**
+      * Check that the indices of this parameter are in range.
+      *
+      * Throws an Exception if a polymer, block, solvent, monomer or
+      * lattice parameter index is not in the range of valid indices
+      * of the parent system. Indices of specialized parameters are
+      * not checked here.
+      */
+      void checkIds() const;
 
       /**
       * Update the corresponding parameter value in the system.
@@ -287,6 +298,15 @@ namespace Rp {
       * \param in  input stream from param file.
       */
       void readParamType(std::istream& in);
+
+      /**
+      * Throw an Exception if index id(i) is not in the range [0, n).
+      *
+      * \param i  index of the identifier (0 or 1)
+      * \param n  number of objects of this kind in the parent system
+      * \param name  name of the kind of object (e.g., "polymer")
+      */
+      void checkId(int i, int n, std::string const & name) const;
 
       /**
       * Get the current system parameter value.

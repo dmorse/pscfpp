@@ -27,8 +27,7 @@ int main(int argc, char **argv)
    // Read parameters from default parameter file
    system.readParam();
 
-   // Read command script to run system
-   system.readCommands();
-
-   return 0;
+   // Read command script to run system. Exit status 1 if a command
+   // failed (e.g., an ITERATE command that did not converge).
+   return system.readCommands();
 }

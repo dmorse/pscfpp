@@ -55,7 +55,7 @@ namespace R1 {
    *      Pscf::R1::System system;
    *      system.setOptions(argc, argv);
    *      system.readParam();
-   *      system.readCommands();
+   *      return system.readCommands();
    *   }
    * \endcode
    * The actual main program is given in the file pscf_1d.cpp.
@@ -120,15 +120,22 @@ namespace R1 {
 
       /**
       * Read command script.
+      *
+      * Execution stops at FINISH, at the end of the script, or after a
+      * command that failed: an ITERATE command that did not converge or
+      * an unknown command.
       * 
       * \param in command script file.
+      * \return 0 if no command failed, 1 otherwise
       */
-      void readCommands(std::istream& in);
+      int readCommands(std::istream& in);
 
       /**
       * Read commands from default command file.
+      *
+      * \return 0 if no command failed, 1 otherwise
       */
-      void readCommands();
+      int readCommands();
 
       ///@}
       /// \name Primary SCFT Computations 
@@ -145,8 +152,8 @@ namespace R1 {
       * computation of molecular partition functions for all species, 
       * computation of concentration fields for blocks and solvents, and 
       * computation of overall concentrations for all monomer types. 
-      * This function does not compute the canonical (Helmholtz) free 
-      * energy or grand-canonical free energy (i.e., pressure). 
+      * It then computes the Helmholtz free energy and the pressure of
+      * these fields (see computeFreeEnergy).
       * Upon return, the flag hasCFields is set true.
       */
       void compute();

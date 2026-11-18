@@ -187,6 +187,11 @@ The two indices for a Flory-Huggins chi parameter refer to indices in
 the chi matrix maintained by Interaction. Changes to element chi(i, j)
 automatically also update chi(j, i) for \f$ i \neq j \f$, thus 
 preserving the symmetry of the chi matrix.
+If every species is closed (i.e., has a given volume fraction), the
+changes of the ramped volume fractions (phi_polymer and phi_solvent)
+must add up to zero. If some species are open (i.e., have a given
+chemical potential), the volume fractions of closed species may be
+changed independently.
 The parameter types v_monomer and lambda_pert are global values that
 are not associated with any indices. All other parameter types are
 identified by at least one associated index.
