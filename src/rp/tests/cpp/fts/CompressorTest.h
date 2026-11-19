@@ -268,6 +268,206 @@ public:
       TEST_ASSERT(std::abs(system1.domain().unitCell().parameter(0) - 1.0)
                   < 1.0E-12);
    }
+
+   /*
+   * Set the w fields of a 1D system to w_0 = a + b*cos(2 pi n x/L) and
+   * w_i = a for i > 0.
+   */
+   void setW1D(Rp::System<1,CPT>& system, double a, double b, int n)
+   {
+      int nMonomer = system.mixture().nMonomer();
+      int meshSize = system.domain().mesh().size();
+      DArray< RField<1,CPT> > w;
+      w.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         w[i].allocate(system.domain().mesh().dimensions());
+         for (int k = 0; k < meshSize; ++k) {
+            w[i][k] = a;
+            if (i == 0) w[i][k] += b*std::cos(2.0*M_PI*n*k/meshSize);
+         }
+      }
+      system.w().setRGrid(w);
+   }
+
+   /*
+   * Root-mean-square deviation of the total concentration from 1.
+   */
+   double rmsResidual(Rp::System<1,CPT>& system)
+   {
+      int nMonomer = system.mixture().nMonomer();
+      int meshSize = system.domain().mesh().size();
+      double sumSq = 0.0;
+      for (int k = 0; k < meshSize; ++k) {
+         double error = -1.0;
+         for (int i = 0; i < nMonomer; ++i) {
+            error += system.c().rgrid(i)[k];
+         }
+         sumSq += error*error;
+      }
+      return std::sqrt(sumSq/double(meshSize));
+   }
+
+   /*
+   * COMPRESS with an LrCompressor after the unit cell has changed.
+   */
+   void testLrCompressorCellChange()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLrCompressorCellChange.log");
+
+      // Diblock melt, with an LrCompressor
+      Rp::System<1,CPT> system;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } vMonomer 0.01 ds 0.01 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar }"
+         " BdSimulator{ seed 1234 LMBdStep{ mobility 0.01 }"
+         " LrCompressor{ epsilon 1.0e-9 maxItr 100 } } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      system.setUnitCell(parameters);
+      setW1D(system, 0.0, 1.0, 1);
+
+      // Compress, triple the cell length, and compress again
+      std::istringstream in("COMPRESS\nSET_UNIT_CELL lamellar 3.0\n"
+                            "COMPRESS\nFINISH\n");
+      system.readCommands(in);
+      TEST_ASSERT(system.c().hasData());
+      TEST_ASSERT(rmsResidual(system) < 1.0E-8);
+   }
+
+   /*
+   * Blend of two open homopolymers A and B, in fields w_A = a + 0.2*cos
+   * and w_B = a, so that the total volume fraction is about exp(-a).
+   */
+   void initOpenBlend(Rp::System<1,CPT>& system, double a)
+   {
+      // The volume fraction of each species is 0.5*exp(-w) in a
+      // homogeneous field w
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 2"
+         " Polymer{ type linear nBlock 1 blocks[ 0 1.0 ] mu -0.6931 }"
+         " Polymer{ type linear nBlock 1 blocks[ 1 1.0 ] mu -0.6931 }"
+         " vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 2.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      system.setUnitCell(parameters);
+      setW1D(system, a, 0.2, 1);
+   }
+
+   /*
+   * LR compressors in a blend of open species.
+   */
+   void testLrCompressorOpen()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLrCompressorOpen.log");
+
+      // LrCompressor, from a total volume fraction exp(-1): the
+      // correlation must follow the volume fractions at each step
+      Rp::System<1,CPT> system1;
+      initOpenBlend(system1, 1.0);
+      Rp::LrCompressor<1,CPT> lrCompressor(system1);
+      std::istringstream in1("LrCompressor{ epsilon 1.0e-9 maxItr 100 }\n");
+      lrCompressor.readParam(in1);
+      TEST_ASSERT(lrCompressor.compress() == 0);
+      TEST_ASSERT(rmsResidual(system1) < 1.0E-8);
+
+      // LrAmCompressor, from total volume fractions exp(-0.3) and
+      // exp(-1)
+      double a[2] = {0.3, 1.0};
+      for (int i = 0; i < 2; ++i) {
+         Rp::System<1,CPT> system2;
+         initOpenBlend(system2, a[i]);
+         Rp::LrAmCompressor<1,CPT> lrAmCompressor(system2);
+         std::istringstream in2("LrAmCompressor{ epsilon 1.0e-9"
+                                " maxItr 100 maxHist 10 }\n");
+         lrAmCompressor.readParam(in2);
+         TEST_ASSERT(lrAmCompressor.compress() == 0);
+         TEST_ASSERT(rmsResidual(system2) < 1.0E-8);
+         if (i == 1) {
+            // Second compression by the same compressor, from exp(1)
+            setW1D(system2, -1.0, 0.2, 1);
+            TEST_ASSERT(lrAmCompressor.compress() == 0);
+            TEST_ASSERT(rmsResidual(system2) < 1.0E-8);
+         }
+      }
+   }
+
+   /*
+   * LrCompressor for a closed diblock and an open homopolymer.
+   */
+   void testLrCompressorMixed()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLrCompressorMixed.log");
+
+      // The homopolymer has a volume fraction 0.2*exp(-w) in a
+      // homogeneous field w
+      Rp::System<1,CPT> system;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ]"
+         " nPolymer 2"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ] phi 0.8 }"
+         " Polymer{ type linear nBlock 1 blocks[ 1 1.0 ] mu -1.6094 }"
+         " vMonomer 0.01 ds 0.02 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      system.setUnitCell(parameters);
+      setW1D(system, 0.5, 0.3, 1);
+
+      // The k = 0 residual decreases by a factor of about 0.8 per
+      // iteration with the k = 0 response of all species
+      Rp::LrCompressor<1,CPT> compressor(system);
+      std::istringstream in("LrCompressor{ epsilon 1.0e-9 maxItr 30 }\n");
+      compressor.readParam(in);
+      TEST_ASSERT(compressor.compress() == 0);
+      TEST_ASSERT(rmsResidual(system) < 1.0E-8);
+   }
+
+   /*
+   * LrCompressor on a mesh on which kSq*b*b*ds/6 is much larger than 1
+   * at the largest wavenumber.
+   */
+   void testLrCompressorFineMesh()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLrCompressorFineMesh.log");
+
+      // Diblock with two segment lengths. On 16 grid points over a
+      // length 0.5, kSq*b*b*ds/6 = 16.8 (b = 1) and 37.9 (b = 1.5) at
+      // the largest wavenumber (n = 8).
+      Rp::System<1,CPT> system;
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.5 ]"
+         " nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.25 1 0.75 ] phi 1.0 }"
+         " vMonomer 0.01 ds 0.01 }"
+         " Interaction{ chi( 1 0 10.0 ) }"
+         " Domain{ mesh 16 lattice lamellar } }\n");
+      system.readParam(param);
+      FSArray<double, 6> parameters;
+      parameters.append(0.5);
+      system.setUnitCell(parameters);
+      setW1D(system, 0.0, 0.1, 8);
+
+      Rp::LrCompressor<1,CPT> compressor(system);
+      std::istringstream in("LrCompressor{ epsilon 1.0e-10 maxItr 40 }\n");
+      compressor.readParam(in);
+      TEST_ASSERT(compressor.compress() == 0);
+      TEST_ASSERT(rmsResidual(system) < 1.0E-9);
+   }
    
 };
 
@@ -277,6 +477,10 @@ TEST_ADD(CompressorTest, testLrCompressor)
 //TEST_ADD(CompressorTest, testLrAmPreCompressor)
 TEST_ADD(CompressorTest, testLrAmCompressor)
 TEST_ADD(CompressorTest, testCompressCommandFailure)
+TEST_ADD(CompressorTest, testLrCompressorCellChange)
+TEST_ADD(CompressorTest, testLrCompressorOpen)
+TEST_ADD(CompressorTest, testLrCompressorMixed)
+TEST_ADD(CompressorTest, testLrCompressorFineMesh)
 TEST_END(CompressorTest)
 
 #endif

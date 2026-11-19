@@ -39,8 +39,8 @@ namespace Rp {
    template <int D, class T>
    LrAmCompressor<D,T>::LrAmCompressor(System<D,T>& system)
     : intra_(system),
-      isIntraCalculated_(false),
-      isAllocated_(false)
+      isAllocated_(false),
+      isFirstCorrection_(true)
    {
       Compressor<D,T>::setSystem(system);  
       ParamComposite::setClassName("LrAmCompressor"); 
@@ -89,12 +89,7 @@ namespace Rp {
          }
          isAllocated_ = true;
       }
-
-      // Compute intraCorrelationK_
-      if (!isIntraCalculated_){
-         intra_.computeOmegaTotal(intraCorrelationK_);
-         isIntraCalculated_ = true;
-      }
+      isFirstCorrection_ = true;
 
       // Store initial values of monomer chemical potential fields
       for (int i = 0; i < nMonomer; ++i) {
@@ -133,6 +128,13 @@ namespace Rp {
       AmTmpl::clearTimers();
       Compressor<D,T>::mdeCounter_ = 0;
    }
+
+   /*
+   * Mark the intramolecular correlation for recomputation.
+   */
+   template <int D, class T>
+   void LrAmCompressor<D,T>::clearCache()
+   {  intra_.clearCache(); }
 
    // Private virtual AM algorithm operation functions
 
@@ -205,6 +207,15 @@ namespace Rp {
    LrAmCompressor<D,T>::addCorrection(VectorT& fieldTrial,
                                     VectorT const & resTrial)
    {
+      // Intramolecular correlation, for the volume fractions of open
+      // species given by the last MDE solution. It is updated only at
+      // the first correction of each solve: the AM iteration converges
+      // less reliably if this correction step changes within a solve.
+      if (isFirstCorrection_) {
+         intra_.update(intraCorrelationK_);
+         isFirstCorrection_ = false;
+      }
+
       // Copy resTrial to RField resid_
       // Allows use of FFT functions that take an RField container
       VecOp::eqV(resid_, resTrial);

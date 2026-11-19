@@ -6,7 +6,13 @@ compressor algorithm.  This is a quasi-Newton algorithm in which
 the linear response of an inhomogeneous ideal gas to an infinitesimal 
 change in the pressure-like field \f$ W_{+}({\bf r}) \f$ is approximated 
 by the analytically calculable response of a hypothetical homogeneous 
-state of the same fluid.
+state of the same fluid. For the continuous chain (thread) model, this
+response is computed for the contour discretization used to solve the
+modified diffusion equation (contour steps of length ds, integrated by
+Simpson's rule), rather than for a continuous chain. The two differ at
+wavenumbers k for which k^2 b^2 ds/6 is not small, where b is a
+statistical segment length, and the iteration could otherwise diverge
+on fine meshes.
 
 A general discussion of compressor algorithms for PS-FTS is given
 \ref psfts_algorithm_page "here". The LrCompressor class template 

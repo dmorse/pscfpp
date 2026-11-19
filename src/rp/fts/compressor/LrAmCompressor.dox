@@ -2,7 +2,13 @@
 \page rp_LrAmCompressor_page LrAmCompressor
 
 The LrAmCompressor class template implements a linear-response Anderson 
-mixing (LRAM) compressor algorithm.
+mixing (LRAM) compressor algorithm. Its correction step uses the linear
+response of a hypothetical homogeneous state of the same fluid to the
+pressure-like field, as the \ref rp_LrCompressor_page "LrCompressor"
+does. For the continuous chain (thread) model, this response is
+computed for the contour discretization used to solve the modified
+diffusion equation (contour steps of length ds, integrated by Simpson's
+rule), rather than for a continuous chain.
 
 A general discussion of compressor algorithms for PS-FTS is given 
 \ref psfts_algorithm_page "here".  The LrAm compressor algorithm is 
