@@ -20,10 +20,12 @@
 
 #include <util/containers/DArray.h>
 #include <util/misc/FileMaster.h>
+#include <util/misc/Exception.h>
 #include <util/format/Dbl.h>
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace Util;
 using namespace Pscf;
@@ -204,6 +206,44 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
 
+   /*
+   * Write a mask without symmetry in r-grid format, and read it back.
+   */
+   void testWriteRGrid()
+   {
+      printMethod(TEST_FUNC);
+
+      Rp::Domain<1,CPT> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/mask.rf", domain);
+
+      Rp::Mask<1,CPT> mask;
+      mask.setFieldIo(domain.fieldIo());
+      mask.setReadUnitCell(domain.unitCell());
+      mask.setWriteUnitCell(domain.unitCell());
+      std::ifstream in;
+      openInputFile("in/mask.rf", in);
+      mask.readRGrid(in);
+      TEST_ASSERT(!mask.isSymmetric());
+
+      std::stringstream file;
+      mask.writeRGrid(file);
+      Rp::Mask<1,CPT> mask2;
+      mask2.setFieldIo(domain.fieldIo());
+      mask2.setReadUnitCell(domain.unitCell());
+      bool thrown = false;
+      try {
+         mask2.readRGrid(file);
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(!thrown);
+
+      RFieldComparison<1,CPT> comparison;
+      comparison.compare(mask.rgrid(), mask2.rgrid());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+   }
+
    void testReadBasis()
    {
       printMethod(TEST_FUNC);
@@ -363,6 +403,7 @@ TEST_BEGIN(MaskTest)
 TEST_ADD(MaskTest, testSetBasis)
 TEST_ADD(MaskTest, testSetRGrid_1)
 TEST_ADD(MaskTest, testSetRGrid_2)
+TEST_ADD(MaskTest, testWriteRGrid)
 TEST_ADD(MaskTest, testReadBasis)
 TEST_ADD(MaskTest, testReadRGrid_1)
 TEST_ADD(MaskTest, testReadRGrid_2)
