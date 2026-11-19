@@ -127,7 +127,7 @@ namespace Rp {
    * Initialize just prior to a run.
    */
    template <int D, class T>
-   void McSimulator<D,T>::setup(int nStep)
+   void McSimulator<D,T>::setup(int nStep, bool isSimulation)
    {
       UTIL_CHECK((Simulator<D,T>::system().w().hasData()));
 
@@ -138,7 +138,7 @@ namespace Rp {
          Simulator<D,T>::perturbation().setup();
       }
 
-      if (Simulator<D,T>::hasRamp()) {
+      if (isSimulation && Simulator<D,T>::hasRamp()) {
          Simulator<D,T>::ramp().setup(nStep);
       }
 
@@ -146,8 +146,10 @@ namespace Rp {
       Simulator<D,T>::system().compute();
 
       // Compress the initial state (adjust pressure-like field)
-      if (Simulator<D,T>::hasCompressor()) {
-         Simulator<D,T>::compressor().compress();
+      if (isSimulation && Simulator<D,T>::hasCompressor()) {
+         if (Simulator<D,T>::compressor().compress() != 0) {
+            UTIL_THROW("Initial compression failed");
+         }
          Simulator<D,T>::compressor().clearTimers();
       }
 
@@ -162,7 +164,7 @@ namespace Rp {
       Simulator<D,T>::computeHamiltonian();
 
       // Setup MC moves (if any)
-      if (hasMcMoves()) {
+      if (isSimulation && hasMcMoves()) {
          mcMoveManager().setup();
       }
 
@@ -183,7 +185,7 @@ namespace Rp {
       UTIL_CHECK((Simulator<D,T>::hasCompressor()));
 
       // Initial setup
-      setup(nStep);
+      setup(nStep, true);
       iStep_ = 0;
       if (Simulator<D,T>::hasRamp()) {
          Simulator<D,T>::ramp().setParameters(iStep_);
@@ -329,27 +331,27 @@ namespace Rp {
       trajectoryReaderPtr->open(filename);
       trajectoryReaderPtr->readHeader();
 
-      // Main loop over trajectory frames
+      // Main loop over trajectory frames. A frame is read only if its
+      // index is at most max, so that the system is left with frame max
+      // and any frames after max are never read.
       Timer timer;
       timer.start();
-      bool hasFrame = trajectoryReaderPtr->readFrame();
+      iStep_ = 0;
+      while (iStep_ <= max && trajectoryReaderPtr->readFrame()) {
+         Simulator<D,T>::clearData();
 
-      for (iStep_ = 0; iStep_ <= max && hasFrame; ++iStep_) {
-         if (hasFrame) {
-            Simulator<D,T>::clearData();
-
-            // Initialize analyzers
-            if (iStep_ == min) {
-               setup(iStep_);
-            }
-
-            // Sample property values only for iStep >= min
-            if (iStep_ >= min) {
-               analyzerManager().sample(iStep_);
-            }
+         // Initialize analyzers
+         if (iStep_ == min) {
+            setup(0, false);
          }
 
-         hasFrame = trajectoryReaderPtr->readFrame();
+         // Sample property values only for iStep >= min, at multiples
+         // of the analyzer base interval (as in a simulation)
+         if (iStep_ >= min && iStep_ % Analyzer<D,T>::baseInterval == 0) {
+            analyzerManager().sample(iStep_);
+         }
+
+         ++iStep_;
       }
       timer.stop();
       Log::file() << "end main loop" << std::endl;

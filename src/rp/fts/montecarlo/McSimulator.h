@@ -210,9 +210,14 @@ namespace Rp {
       /**
       * Setup before the main loop of a simulate or analyze command.
       *
+      * The compressor, ramp and MC moves are used and set up only for a
+      * simulation (SIMULATE), not for the analysis of a trajectory
+      * (ANALYZE), which must leave the saved fields unchanged.
+      *
       * \param nStep  number of MC steps to attempt
+      * \param isSimulation  true for a simulation, false for ANALYZE
       */
-      void setup(int nStep);
+      void setup(int nStep, bool isSimulation);
 
    };
 
