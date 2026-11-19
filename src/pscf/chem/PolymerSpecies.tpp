@@ -11,6 +11,7 @@
 #include <util/containers/GArray.h>
 #include <util/containers/FArray.h>
 #include <util/containers/DMatrix.h>
+#include <util/format/Int.h>
 
 #include <cmath>
 
@@ -87,11 +88,16 @@ namespace Pscf
          vertexId0 = edgePtr->vertexId(0);
          vertexId1 = edgePtr->vertexId(1);
          if (vertexId0 < 0 || vertexId0 >= nVertex_ ||
-             vertexId1 < 0 || vertexId1 >= nVertex_) {
+            vertexId1 < 0 || vertexId1 >= nVertex_) {
             UTIL_THROW("Vertex id out of range in polymer block");
          }
          vertices_[vertexId0].addEdge(*edgePtr);
          vertices_[vertexId1].addEdge(*edgePtr);
+      }
+
+      // Check that every vertex has one or more attached edges
+      for (int vertexId = 0; vertexId <= nBlock_; ++vertexId) {
+         UTIL_CHECK(vertices_[vertexId].size() > 0);
       }
 
       // Polymer graph topology is now fully specified.
@@ -118,7 +124,7 @@ namespace Pscf
          UTIL_THROW("nPropagator !=0 on entry");
       }
 
-      // Allocate and initialize isFinished matrix
+      // Allocate and initialize isFinished matrix (all elements false)
       DMatrix<bool> isFinished;
       isFinished.allocate(nBlock_, 2);
       for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
@@ -134,11 +140,15 @@ namespace Pscf
       int nPrevious;
       while (nPropagator_ < nBlock_*2) {
          nPrevious = nPropagator_;
+
+         // Loop over blocks and directions, add new propagators
          for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
             for (int iDirection = 0; iDirection < 2; ++iDirection) {
-               if (isFinished(iBlock, iDirection) == false) {
+               if (!isFinished(iBlock, iDirection)) {
                   inVertexId = edge(iBlock).vertexId(iDirection);
                   inVertexPtr = &vertices_[inVertexId];
+
+                  // Check if unfinished propagator is ready
                   isReady = true;
                   for (int j = 0; j < inVertexPtr->size(); ++j) {
                      propId = inVertexPtr->inPropagatorId(j);
@@ -149,19 +159,24 @@ namespace Pscf
                         }
                      }
                   }
+
+                  // If its ready, add it to propagatorsIds_ array
                   if (isReady) {
                      propagatorIds_[nPropagator_][0] = iBlock;
                      propagatorIds_[nPropagator_][1] = iDirection;
                      isFinished(iBlock, iDirection) = true;
                      ++nPropagator_;
                   }
-               }
-            }
-         }
-         // No propagator became ready in a pass: the blocks form a cycle
+
+               } // if (!isFinished)
+            } // loop over directions
+         } // loop over blocks
+
+         // No propagator became ready in a pass - not a tree
          if (nPropagator_ == nPrevious) {
-            UTIL_THROW("Polymer blocks do not form a tree (cycle)");
+            UTIL_THROW("Polymer blocks do not form a tree");
          }
+
       }
 
    }
@@ -317,18 +332,6 @@ namespace Pscf
             paths_[is][ir][1] = path[2];
          }
       }
-
-      #if 0
-      std::cout << std::endl << "Paths:" ;
-      for (is = 0; is < nVertex_; ++is) {
-         for (ir = 0; ir < nVertex_; ++ir) {
-            pId = paths_[is][ir];
-            std::cout << std::endl;
-            std::cout << is << ir << pId[0] << pId[1];
-         }
-      }
-      std::cout << std::endl;
-      #endif
 
    }
 
