@@ -208,7 +208,7 @@ public:
       DArray< DArray<double> > bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), bf_1);
       domain.fieldIo().convertRGridToBasis(fields.rgrid(), bf_1);
-      comparison.compare(bf, fields.basis());
+      comparison.compare(bf, bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
@@ -321,7 +321,7 @@ public:
       DArray< DArray<double> > bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), bf_1);
       domain.fieldIo().convertRGridToBasis(fields.rgrid(), bf_1);
-      comparison.compare(bf, fields.basis());
+      comparison.compare(bf, bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
