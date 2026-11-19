@@ -210,7 +210,7 @@ namespace Rp {
       /**
       * Setup before the main loop of a simulate or analyze command.
       *
-      * The compressor, ramp and MC moves are used and set up only for a
+      * The compressor and MC moves are used and set up only for a
       * simulation (SIMULATE), not for the analysis of a trajectory
       * (ANALYZE), which must leave the saved fields unchanged.
       *

@@ -138,7 +138,7 @@ namespace Rp {
          Simulator<D,T>::perturbation().setup();
       }
 
-      if (isSimulation && Simulator<D,T>::hasRamp()) {
+      if (Simulator<D,T>::hasRamp()) {
          Simulator<D,T>::ramp().setup(nStep);
       }
 
@@ -147,7 +147,8 @@ namespace Rp {
 
       // Compress the initial state (adjust pressure-like field)
       if (isSimulation && Simulator<D,T>::hasCompressor()) {
-         if (Simulator<D,T>::compressor().compress() != 0) {
+         int status = Simulator<D,T>::compressor().compress();
+         if (status != 0) {
             UTIL_THROW("Initial compression failed");
          }
          Simulator<D,T>::compressor().clearTimers();

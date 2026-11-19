@@ -186,7 +186,7 @@ namespace Rp {
       /**
       * Setup before the main loop.
       *
-      * The compressor, ramp and BD step are used and set up only for a
+      * The compressor and BD step are used and set up only for a
       * simulation (SIMULATE), not for the analysis of a trajectory
       * (ANALYZE), which must leave the saved fields unchanged.
       *
