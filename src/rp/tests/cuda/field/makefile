@@ -19,7 +19,7 @@ run: $(TEST)
 run-quiet: $(TEST)
 	@$(TEST) $(SRC_DIR)/rp/tests/cuda/field/ > log
 	@echo `grep failed log` ", "\
-              `grep successful log` "in rpg/tests/field/log" > count
+              `grep successful log` "in rp/tests/cuda/field/log" > count
 	@cat count
 
 clean-outputs:

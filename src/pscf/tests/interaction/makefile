@@ -7,6 +7,9 @@ TEST=$(BLD_DIR)/pscf/tests/interaction/Test
 
 all: $(TEST)
 
+$(TEST): $(TEST).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
+
 run: $(TEST).o $(TEST)
 	$(TEST) $(SRC_DIR)/pscf/tests/interaction/ 
 

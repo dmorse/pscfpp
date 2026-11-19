@@ -17,7 +17,7 @@ run: $(TEST)
 	$(TEST) $(SRC_DIR)/rp/tests/cpp/environment/
 
 run-quiet: $(TEST)
-	$(TEST) $(SRC_DIR)/rp/tests/cpp/environment > log
+	$(TEST) $(SRC_DIR)/rp/tests/cpp/environment/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in rp/tests/cpp/environment/log" > count
 	@cat count

@@ -13,10 +13,10 @@ $(TEST): $(TEST).ou $(PSCF_LIBS)
 	@rm $(TEST).o
 
 run: $(TEST).ou $(TEST)
-	@$(TEST) $(SRC_DIR)/rp/tests/cuda
+	@$(TEST) $(SRC_DIR)/rp/tests/cuda/sweep/
 
 run-quiet: $(TEST).ou $(TEST)
-	@$(TEST) $(SRC_DIR)/rp/tests/cuda  > log
+	@$(TEST) $(SRC_DIR)/rp/tests/cuda/sweep/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in rp/tests/cuda/sweep/log" > count
 	@cat count

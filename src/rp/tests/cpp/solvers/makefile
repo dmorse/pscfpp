@@ -18,10 +18,10 @@ $(TEST): $(TEST).o $(PSCF_LIBS)
 	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
 
 run: $(TEST).o $(TEST)
-	./$(TEST) $(SRC_DIR)/rp/tests/cpp/solvers 
+	$(TEST) $(SRC_DIR)/rp/tests/cpp/solvers/
 
 run-quiet: $(TEST)
-	@./$(TEST) $(SRC_DIR)/rp/tests/cpp/solvers/ > log
+	@$(TEST) $(SRC_DIR)/rp/tests/cpp/solvers/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in rp/tests/cpp/solvers/log" > count
 	@cat count
