@@ -530,7 +530,7 @@ namespace Rp {
    * Read an array of fields in k-grid format
    */
    template <int D, class T>
-   void FieldIo<D,T>::readFieldsKGrid(
+   bool FieldIo<D,T>::readFieldsKGrid(
                               std::istream &in,
                               DArray< RFieldDft<D,T> >& fields,
                               UnitCell<D>& unitCell) const
@@ -554,21 +554,26 @@ namespace Rp {
       copyArrays(fields, hostFields);
 
       dissociateArrays(hostFields);
+
+      // Return true iff the header contains a space group declaration
+      return isSymmetric;
    }
 
    /*
    * Open-close a file, and read an array of fields in k-grid format
    */
    template <int D, class T>
-   void FieldIo<D,T>::readFieldsKGrid(
+   bool FieldIo<D,T>::readFieldsKGrid(
                               std::string filename,
                               DArray< RFieldDft<D,T> >& fields,
                               UnitCell<D>& unitCell) const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
-      readFieldsKGrid(file, fields, unitCell);
+      bool isSymmetric;
+      isSymmetric = readFieldsKGrid(file, fields, unitCell);
       file.close();
+      return isSymmetric;
    }
 
    /*
@@ -927,12 +932,16 @@ namespace Rp {
       checkAllocateKGrid();
       checkAllocateRGrid();
       UnitCell<D> tmpUnitCell;
-      readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
+      bool isSymmetric;
+      isSymmetric = readFieldsKGrid(inFileName, tmpFieldsKGrid_,
+                                    tmpUnitCell);
       for (int i = 0; i < nMonomer_; ++i) {
          fft().inverseTransformUnsafe(tmpFieldsKGrid_[i],
                                       tmpFieldsRGrid_[i]);
       }
-      writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
+      // Declare the group only if the input file and the system have one
+      writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell,
+                       isSymmetric && hasGroup());
    }
 
    /*
@@ -946,9 +955,13 @@ namespace Rp {
       checkAllocateRGrid();
       checkAllocateKGrid();
       UnitCell<D> tmpUnitCell;
-      readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      bool isSymmetric;
+      isSymmetric = readFieldsRGrid(inFileName, tmpFieldsRGrid_,
+                                    tmpUnitCell);
       convertRGridToKGrid(tmpFieldsRGrid_, tmpFieldsKGrid_);
-      writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell);
+      // Declare the group only if the input file and the system have one
+      writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell,
+                       isSymmetric && hasGroup());
    }
 
    // Field Inspection
@@ -1172,8 +1185,9 @@ namespace Rp {
       isSymmetric = readFieldsRGrid(inFileName, tmpFieldsRGrid_,
                                     tmpUnitCell);
       scaleFieldsRGrid(tmpFieldsRGrid_, factor);
+      // Declare the group only if the input file and the system have one
       writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell,
-                       isSymmetric);
+                       isSymmetric && hasGroup());
    }
 
    // Computation of Estimated W Fields

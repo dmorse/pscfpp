@@ -495,9 +495,10 @@ namespace Rp {
       * \param in  input stream (i.e., input file)
       * \param fields  array of k-space fields (RFieldDft)
       * \param unitCell  associated crystallographic unit cell
+      * \return  true iff header has a space group (isSymmetric flag)
       */
       virtual
-      void readFieldsKGrid(
+      bool readFieldsKGrid(
                      std::istream& in,
                      DArray< RFieldDft<D,T> >& fields,
                      UnitCell<D> & unitCell) const;
@@ -513,8 +514,9 @@ namespace Rp {
       * \param filename  name of input file
       * \param fields  array of k-space (RFieldDft) fields
       * \param unitCell  associated crystallographic unit cell
+      * \return  true iff header has a space group (isSymmetric flag)
       */
-      void readFieldsKGrid(
+      bool readFieldsKGrid(
                      std::string filename,
                      DArray< RFieldDft<D,T> >& fields,
                      UnitCell<D> & unitCell) const;
@@ -783,7 +785,9 @@ namespace Rp {
       * Convert a field file from Fourier (k-grid) to r-grid format.
       *
       * The number of monomers in the input file must equal the number
-      * set by the setNMonomer(int) member function.
+      * set by the setNMonomer(int) member function. The output file
+      * header gives the space group only if the input file header does
+      * and a space group has been declared.
       *
       * \param inFileName name of input file (k-grid format)
       * \param outFileName name of output file (r-grid format)
@@ -796,7 +800,9 @@ namespace Rp {
       * Convert a field file from r-grid to Fourier (k-grid) format.
       *
       * The number of monomers in the input file must equal the number
-      * set by the setNMonomer(int) member function.
+      * set by the setNMonomer(int) member function. The output file
+      * header gives the space group only if the input file header does
+      * and a space group has been declared.
       *
       * \param inFileName name of input file (r-grid format)
       * \param outFileName name of output file (k-grid format)
