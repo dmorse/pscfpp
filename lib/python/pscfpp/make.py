@@ -30,9 +30,7 @@ from pscfpp.text import *
 def createDependencyFileCpp(processor, options, cfile, srcdir, blddir, extraDependencies=''):
 
    # Isolate base source file name 
-   base = os.path.basename(cfile)
-   groups = base.split('.')
-   base = groups[0]
+   base = os.path.splitext(os.path.basename(cfile))[0]
 
    # Calculate source file directory path relative to srcdir
    abspath = os.path.abspath(cfile)
@@ -88,9 +86,7 @@ def createDependencyFileCuda(processor, options, cfile, srcdir, blddir, extraDep
    srcroot = srcdir
 
    # Isolate base source file name 
-   base = os.path.basename(cfile)
-   groups = base.split('.')
-   base = groups[0]
+   base = os.path.splitext(os.path.basename(cfile))[0]
 
    # Calculate source file directory path relative to srcdir
    abspath = os.path.abspath(cfile)
