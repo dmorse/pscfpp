@@ -297,8 +297,9 @@ public:
       sys.fileMaster().setOutputPrefix(filePrefix());
 
       openInputFile("in/planar_nr.cmd", in);
-      sys.readCommands(in);
+      int status = sys.readCommands(in);
       in.close();
+      TEST_ASSERT(status == 0);
    }
 
    /*
@@ -388,8 +389,9 @@ public:
       sys.fileMaster().setOutputPrefix(filePrefix());
 
       openInputFile("in/spherical_nr.cmd", in);
-      sys.readCommands(in);
+      int status = sys.readCommands(in);
       in.close();
+      TEST_ASSERT(status == 0);
    }
 
    void testIteratorPlanarAm1()
@@ -471,8 +473,9 @@ public:
       sys.fileMaster().setOutputPrefix(filePrefix());
 
       openInputFile("in/planar_am.cmd", in);
-      sys.readCommands(in);
+      int status = sys.readCommands(in);
       in.close();
+      TEST_ASSERT(status == 0);
    }
 
    void testSweepSpherical()
@@ -496,8 +499,9 @@ public:
       sys.fileMaster().setOutputPrefix(filePrefix());
 
       openInputFile("in/sphericalSweep.cmd", in);
-      sys.readCommands(in);
+      int status = sys.readCommands(in);
       in.close();
+      TEST_ASSERT(status == 0);
    }
 
    /*
