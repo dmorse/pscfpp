@@ -29,7 +29,8 @@ namespace Rp {
     : ns_(0),
       isAllocated_(false),
       blockPtr_(nullptr),
-      meshPtr_(nullptr)
+      meshPtr_(nullptr),
+      hasComputedHead_(false)
    {}
 
    /*
@@ -89,6 +90,7 @@ namespace Rp {
          }
       }
 
+      hasComputedHead_ = true;
    }
 
    /*
@@ -100,8 +102,16 @@ namespace Rp {
    template <int D, class T>
    void PropagatorBase<D,T>::solve()
    {
+      // Set flags to default unsolved state
+      PropagatorTmplT::setIsSolved(false);
+      hasComputedHead_ = false;
+
       computeHead();
       solveMde();
+
+      // Postconditions
+      UTIL_CHECK(PropagatorTmplT::isSolved());
+      UTIL_CHECK(hasComputedHead_);
    }
 
    /*
@@ -111,12 +121,21 @@ namespace Rp {
    void PropagatorBase<D,T>::solve(RField<D,T> const & head)
    {
       UTIL_CHECK(meshPtr_);
+      UTIL_CHECK(isAllocated_);
       UTIL_CHECK(head.capacity() == mesh().size());
+
+      // Set flags to default unsolved state
+      PropagatorTmplT::setIsSolved(false);
+      hasComputedHead_ = false;
 
       // Initialize initial (head) slice
       VecOp::eqV(qFields_[0], head);
 
       solveMde();
+
+      // Postconditions
+      UTIL_CHECK(PropagatorTmplT::isSolved());
+      UTIL_CHECK(!hasComputedHead_);
    }
 
    /*
@@ -126,7 +145,7 @@ namespace Rp {
    void PropagatorBase<D,T>::solveMde()
    {
       UTIL_CHECK(blockPtr_);
-      UTIL_CHECK(isAllocated());
+      UTIL_CHECK(isAllocated_);
 
       if (PolymerModel::isThread()) {
 
@@ -191,8 +210,15 @@ namespace Rp {
 
       Q = 0.0;
       if (PolymerModel::isBead() && PropagatorTmplT::isHeadEnd()) {
-         // Compute average of q for last bead of partner
-         Q = Reduce::sum(partner().q(ns_-2)); 
+         // Tail of partner (ns_ - 1) is not defined
+         if (hasComputedHead_) {
+            // Computed head for an end is q(r,s) = 1 for all r.
+            // Compute average of q for last bead of partner
+            Q = Reduce::sum(partner().q(ns_-2));
+         } else {
+            // Compute average product for the first / last bead
+            Q = Reduce::innerProduct(qFields_[1], partner().q(ns_-2)); 
+         }
       } else {
          // Compute average product of head slice and partner tail slice
          Q = Reduce::innerProduct(head(), partner().tail()); 

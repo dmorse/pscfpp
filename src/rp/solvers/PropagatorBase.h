@@ -62,6 +62,19 @@ namespace Rp {
    * to solve the MDE repeatedly calls step functions provided by the
    * parent Block.
    *
+   * <b> Contour Discretization </b>:
+   *
+   * A propagator contains ns_ slices, in which slice 0 is the head and
+   * slice ns_ - 1 is the tail. 
+   *
+   * In a bead model, slices 1 through ns_ - 2 represent beads, while the
+   * head and tail represent dangling ends that are connected to terminal
+   * beads by half bonds. In this model, the tail slice is not computed
+   * or defined for chain ends, for which isTailEnd() == true.
+   *
+   * In a thread model, the contour is divided into ns_ - 1 steps, each
+   * of contour length ds = length / (ns_ - 1).
+   *
    * \ingroup Rp_Solver_Module
    */
    template <int D, class T>
@@ -196,14 +209,7 @@ namespace Rp {
 
    protected:
 
-      /// Array of propagator slices at different contour variable values.
-      DArray<RField<D,T> > qFields_;
-
-      /// Number of slices, including head and tail slices.
-      int ns_;
-
-      /// Is this propagator allocated?
-      bool isAllocated_;
+      // Protected member functions
 
       /**
       * Constructor.
@@ -221,7 +227,7 @@ namespace Rp {
       * In either the thread or bead model, the head slice of each
       * propagator is the product of tail slices for incoming propagators
       * from other bonds that terminate at the head vertex, or 1 for a
-      * chain end.
+      * chain end. On return, hasComputeHead_ == true.
       */
       void computeHead();
 
@@ -238,6 +244,17 @@ namespace Rp {
       */
       Block<D,T>& block();
 
+      // Protected member variables
+
+      /// Array of propagator slices at different contour variable values.
+      DArray<RField<D,T> > qFields_;
+
+      /// Number of slices, including head and tail slices.
+      int ns_;
+
+      /// Is this propagator allocated?
+      bool isAllocated_;
+
    private:
 
       /// Pointer to the associated Block.
@@ -245,6 +262,9 @@ namespace Rp {
 
       /// Pointer to the associated Mesh.
       Mesh<D> const * meshPtr_;
+
+      /// Did this solution start from a computed head slice?
+      bool hasComputedHead_;
 
    };
 
@@ -312,7 +332,7 @@ namespace Rp {
    }
 
    /*
-   * Get the number of counter grid points.
+   * Get the number of contour grid points, including ends.
    */
    template <int D, class T> inline
    int PropagatorBase<D,T>::ns() const
