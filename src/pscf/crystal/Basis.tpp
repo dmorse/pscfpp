@@ -428,7 +428,7 @@ namespace Pscf {
 
                // Construct a star from root vector, by applying every
                // symmetry operation in the group to the root wavevector.
-               // The root vector will always be added, with zero phase, 
+               // The root vector will always be added, with zero phase,
                // because a group always includes the identity operation
 
                for (j = 0; j < group.size(); ++j) {
@@ -464,12 +464,12 @@ namespace Pscf {
                   wave.phase *= twoPi;
 
                   // Check for cancellation of star: The star is cancelled
-                  // if application of any symmetry operation in the group 
-                  // to the root vector yields a rotated wavevector that 
+                  // if application of any symmetry operation in the group
+                  // to the root vector yields a rotated wavevector that
                   // is either:
                   // - Equivalent to the root vector, but with a nonzero
                   //   relative phase
-                  // - Equivalent to another wavevector that has already 
+                  // - Equivalent to another wavevector that has already
                   //   been added to the star, with an inequivalent phase
 
                   // Check if the rotated wavevector is equal to the root
@@ -509,7 +509,7 @@ namespace Pscf {
 
                   }
 
-                  // Note: Construction of the star is completed whether 
+                  // Note: Construction of the star is completed whether
                   // or not the star is cancelled
 
                }
