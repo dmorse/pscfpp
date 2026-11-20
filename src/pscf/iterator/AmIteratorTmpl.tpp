@@ -480,14 +480,24 @@ namespace Pscf
       //    1. Solve matrix equation: U coeffs_ = v
       //    2. Flip the sign of the resulting coeffs_ vector
 
+      // If U is exactly singular, the coefficients are not defined: for
+      // one basis vector the division gives inf or NaN, and otherwise
+      // LuSolver::solve calls the GSL error handler, which aborts. This
+      // can happen after an update that increased the residual by many
+      // orders of magnitude, when two residual basis vectors are equal
+      // or cancel exactly in floating point arithmetic.
+      bool isSingular = false;
       if (nBasis_ == 1) {
          // Solve explicitly for coefficient
-         coeffs_[0] = v_[0] / U_(0,0);
-      } else
-      if (nBasis_ < maxHist_) {
+         if (U_(0,0) > 0.0) {
+            coeffs_[0] = v_[0] / U_(0,0);
+         } else {
+            isSingular = true;
+         }
+      } else {
 
-         // Create temporary smaller version of U_, v_, coeffs_ .
-         // This avoids reallocation of U_ with each iteration.
+         // Create temporary versions of U_, v_, coeffs_ with nBasis_
+         // elements. This avoids reallocation of U_ with each iteration.
          DMatrix<double> tempU;
          DArray<double> tempv, tempcoeffs;
          tempU.allocate(nBasis_,nBasis_);
@@ -504,21 +514,43 @@ namespace Pscf
          LuSolver solver;
          solver.allocate(nBasis_);
          solver.computeLU(tempU);
-         solver.solve(tempv, tempcoeffs);
+         if (solver.isSingular()) {
+            isSingular = true;
+         } else {
 
-         // Transfer solution to full-sized member variable
-         for (int i = 0; i < nBasis_; ++i) {
-            coeffs_[i] = tempcoeffs[i];
+            // Multiply the diagonal elements of U by 1 + 1.0E-12, and
+            // decompose again. In a long history, the residual basis
+            // vectors can become nearly linearly dependent, so that the
+            // coefficients are dominated by rounding errors. This small
+            // relative increase (a Tikhonov regularization relative to
+            // the norm of each basis vector) bounds the condition number
+            // of the matrix of normalized inner products of the basis
+            // vectors by about 1.0E+12 times nBasis_.
+            for (int i = 0; i < nBasis_; ++i) {
+               tempU(i,i) *= 1.0 + 1.0E-12;
+            }
+            solver.computeLU(tempU);
+            solver.solve(tempv, tempcoeffs);
+
+            // Transfer solution to full-sized member variable
+            for (int i = 0; i < nBasis_; ++i) {
+               coeffs_[i] = tempcoeffs[i];
+            }
          }
 
-      } else
-      if (nBasis_ == maxHist_) {
+      }
 
-         LuSolver solver;
-         solver.allocate(maxHist_);
-         solver.computeLU(U_);
-         solver.solve(v_, coeffs_);
-
+      // If U is singular, discard the basis vectors, so that this
+      // iteration takes a simple mixing step from the current state, as
+      // the first iteration does. Later iterations build a new basis.
+      if (isSingular) {
+         stateBasis_.clear();
+         residualBasis_.clear();
+         nBasis_ = 0;
+         if (verbose_ > 0) {
+            Log::file() << " Singular AM matrix: basis vectors cleared\n";
+         }
+         return;
       }
 
       // Flip the sign of the coeffs_ vector (see comment above)
