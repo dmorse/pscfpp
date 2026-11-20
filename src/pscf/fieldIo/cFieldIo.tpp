@@ -31,13 +31,13 @@ namespace Pscf {
          for (iter.begin(); !iter.atEnd(); ++iter) {
             rank = iter.rank();
             in >> x;
-            UTIL_ASSERT(in.good());
+            UTIL_CHECK(!in.fail());
             in >> y;
-            UTIL_ASSERT(in.good());
+            UTIL_CHECK(!in.fail());
             assign(fields[j][rank], x, y);
          }
       }
-      UTIL_CHECK(in.good());
+      UTIL_CHECK(!in.fail());
    }
 
    template <int D, class AT>
@@ -51,12 +51,11 @@ namespace Pscf {
       for (iter.begin(); !iter.atEnd(); ++iter) {
          rank = iter.rank();
          in >> x;
-         UTIL_ASSERT(in.good());
+         UTIL_CHECK(!in.fail());
          in >> y;
-         UTIL_ASSERT(in.good());
+         UTIL_CHECK(!in.fail());
          assign(field[rank], x, y);
       }
-      UTIL_CHECK(in.good());
    }
 
    template <int D, class AT, typename CT, typename RT>

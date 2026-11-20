@@ -87,9 +87,6 @@ namespace R1 {
       } else if (buffer == "solvent" || buffer == "solvent_size") {
          type_ = Solvent;
          nId_ = 1; //species identifier.
-      } else if (buffer == "cell_param") {
-         type_ = Cell_Param;
-         nId_ = 1; //lattice parameter identifier.
       } else {
          // Search in parameterTypes array for this sweep parameter
          bool found = false;
