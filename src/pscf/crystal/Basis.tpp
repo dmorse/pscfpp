@@ -41,7 +41,7 @@ namespace Pscf {
       nStar_(0),
       nBasis_(0),
       signalPtr_(nullptr),
-      unitCellPtr_(0),
+      unitCell_(),
       meshPtr_(0),
       isInitialized_(false)
    {
@@ -81,9 +81,10 @@ namespace Pscf {
       // Precondition: Check compatibility of mesh with space group
       group.checkMeshDimensions(mesh.dimensions());
 
-      // Save pointers to mesh and unit cell
+      // Save a pointer to the mesh and a copy of the unit cell (the
+      // unit cell passed by the caller may be a temporary object)
       meshPtr_ = &mesh;
-      unitCellPtr_ = &unitCell;
+      unitCell_ = unitCell;
 
       // Allocate arrays
       nWave_ = mesh.size();
@@ -130,7 +131,7 @@ namespace Pscf {
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          w.indicesStd = itr.position();
-         v = shiftToMinimum(w.indicesStd, meshDimensions, *unitCellPtr_);
+         v = shiftToMinimum(w.indicesStd, meshDimensions, unitCell_);
          w.indicesMin = v;
          w.sqNorm = unitCell().ksq(v);
          twaves.push_back(w);
@@ -442,7 +443,7 @@ namespace Pscf {
                   // Initialize BWave object associated with rotated wave
                   wave.sqNorm = Gsq;
                   wave.indicesMin = shiftToMinimum(vec, meshDimensions,
-                                                   *unitCellPtr_);
+                                                   unitCell_);
                   wave.indicesStd = vec;
                   mesh().shift(wave.indicesStd);
 
@@ -1160,7 +1161,7 @@ namespace Pscf {
          // Check waveMin indices of star
          if (stars_[is].invertFlag == -1) {
             v.negate(stars_[is-1].waveMin);
-            v = shiftToMinimum(v, mesh().dimensions(), *unitCellPtr_);
+            v = shiftToMinimum(v, mesh().dimensions(), unitCell_);
             if (stars_[is].waveMin != v) {
                std::cout << "\n";
                std::cout << "waveMin of star is not inverse of waveMin "

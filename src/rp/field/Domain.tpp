@@ -215,7 +215,12 @@ namespace Rp {
       fileMaster().openOutputFile(filename, file);
       bool isSymmetric = true;
       int nMonomer = 0;
-      fieldIo().writeFieldHeader(file, nMonomer, unitCell_, isSymmetric);
+      // Header gives the system unit cell or, if its parameters are not
+      // set (e.g., in a run that only converts field files), the unit
+      // cell from which the basis was constructed
+      UnitCell<D> const & cell = unitCell_.isInitialized()
+                                 ? unitCell_ : basis().unitCell();
+      fieldIo().writeFieldHeader(file, nMonomer, cell, isSymmetric);
       basis().outputStars(file);
       file.close();
    }
@@ -232,7 +237,12 @@ namespace Rp {
       fileMaster().openOutputFile(filename, file);
       bool isSymmetric = true;
       int nMonomer = 0;
-      fieldIo().writeFieldHeader(file, nMonomer, unitCell_, isSymmetric);
+      // Header gives the system unit cell or, if its parameters are not
+      // set (e.g., in a run that only converts field files), the unit
+      // cell from which the basis was constructed
+      UnitCell<D> const & cell = unitCell_.isInitialized()
+                                 ? unitCell_ : basis().unitCell();
+      fieldIo().writeFieldHeader(file, nMonomer, cell, isSymmetric);
       basis().outputWaves(file);
       file.close();
    }
