@@ -520,8 +520,12 @@ namespace Pscf {
    {
       serializeEnum(ar, cell.lattice_, version);
       ar & cell.nParameter_;
+      UTIL_CHECK(cell.nParameter_ > 0);
       for (int i = 0; i < cell.nParameter_; ++i) {
          ar & cell.parameters_[i];
+      }
+      if (Archive::is_loading()) {
+         cell.setLattice();
       }
    }
 
