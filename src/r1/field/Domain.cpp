@@ -204,11 +204,12 @@ namespace R1
       UTIL_CHECK(nx_ > 1);
       UTIL_CHECK(nx_ == f.capacity());
       UTIL_CHECK(nx_ == g.capacity());
+      if (work_.isAllocated() && work_.capacity() != nx_) {
+         work_.deallocate();
+      }
       if (!work_.isAllocated()) {
          work_.allocate(nx_);
-      } else {
-         UTIL_ASSERT(nx_ == work_.capacity());
-      } 
+      }
 
       // Compute average of f(x)*g(x)
       for (int i = 0; i < nx_; ++i) {
