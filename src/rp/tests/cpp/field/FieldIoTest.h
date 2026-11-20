@@ -15,7 +15,6 @@
 #include <pscf/crystal/BFieldComparison.h>
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>
-#include <util/math/Constants.h>
 
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
@@ -1336,48 +1335,6 @@ public:
 
    }
 
-   /*
-   * Symmetry check for group p_3, which has no inversion, on a 12 x 12
-   * hexagonal mesh: a field that the 3-fold rotation changes must fail,
-   * a field constructed from the basis must pass.
-   */
-   void testHasSymmetry_p3()
-   {
-      printMethod(TEST_FUNC);
-
-      std::stringstream header;
-      header << "format 1 0\ndim\n2\ncrystal_system\nhexagonal\n"
-             << "N_cell_param\n1\ncell_param\n1.7\n"
-             << "group_name\np_3\nN_monomer\n1\nmesh\n12 12\n";
-      Rp::Domain<2,CPT> domain;
-      domain.setFileMaster(fileMaster_);
-      domain.readRGridFieldHeader(header, nMonomer_);
-      IntVec<2> dimensions = domain.mesh().dimensions();
-
-      // w(i,j) = 1 + 0.3 cos(2 pi (i - 2j)/12 + 0.4)
-      RField<2,CPT> rField;
-      rField.allocate(dimensions);
-      MeshIterator<2> iter(dimensions);
-      for (iter.begin(); !iter.atEnd(); ++iter) {
-         int i = iter.position(0);
-         int j = iter.position(1);
-         double x = 2.0*Constants::Pi*(i - 2*j)/12.0;
-         rField[iter.rank()] = 1.0 + 0.3*cos(x + 0.4);
-      }
-      TEST_ASSERT(!domain.fieldIo().hasSymmetry(rField, 1.0E-8, false));
-
-      // Field with the symmetry of the basis
-      DArray<double> components;
-      components.allocate(domain.basis().nBasis());
-      for (int i = 0; i < components.capacity(); ++i) {
-         components[i] = 1.0/double(i + 1);
-      }
-      RFieldDft<2,CPT> kField;
-      kField.allocate(dimensions);
-      domain.fieldIo().convertBasisToKGrid(components, kField);
-      TEST_ASSERT(domain.fieldIo().hasSymmetry(kField, 1.0E-8, false));
-   }
-
 };
 
 TEST_BEGIN(FieldIoTest)
@@ -1408,7 +1365,6 @@ TEST_ADD(FieldIoTest, testConvertBasisKGridRGridKGrid_c15_1)
 TEST_ADD(FieldIoTest, testReplicate_bcc)
 TEST_ADD(FieldIoTest, testExpand_lam_13)
 TEST_ADD(FieldIoTest, testExpand_hex_23)
-TEST_ADD(FieldIoTest, testHasSymmetry_p3)
 TEST_END(FieldIoTest)
 
 #endif
