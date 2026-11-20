@@ -806,6 +806,7 @@ namespace Rp {
             in >> d;
             checkCommandInput(in, command);
             UTIL_CHECK(d > D);
+            UTIL_CHECK(d <= 3);
             Log::file() << Str("Expand dimension to: ") << d << "\n";
 
             // Read numbers of grid points along added dimensions
@@ -813,6 +814,7 @@ namespace Rp {
             newGridDimensions.allocate(d-D);
             for (int i = 0; i < d-D; i++) {
                in >> newGridDimensions[i];
+               UTIL_CHECK(newGridDimensions[i] > 0);
             }
             checkCommandInput(in, command);
             Log::file()
@@ -834,6 +836,7 @@ namespace Rp {
             IntVec<D> replicas;
             for (int i = 0; i < D; i++){
                in >> replicas[i];
+               UTIL_CHECK(replicas[i] > 0);
             }
             checkCommandInput(in, command);
             for (int i = 0; i < D; i++){
