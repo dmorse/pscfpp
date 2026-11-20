@@ -78,7 +78,7 @@ namespace Pscf {
             // Count the number of clumps of nonzero size
             nc = 0;
             for (j = 0; j < nm; ++j) {
-               if (c_[j] > 1.0E-8) {
+               if (c_[j] > 0.0) {
                   ++nc;
                }
             }
@@ -87,7 +87,7 @@ namespace Pscf {
             // Set clump properties for this FhMolecule
             k = 0; // Clump index
             for (j = 0; j < nm; ++j) {
-               if (c_[j] > 1.0E-8) {
+               if (c_[j] > 0.0) {
                   molecule(i).clump(k).setMonomerId(j);
                   molecule(i).clump(k).setSize(c_[j]);
                   ++k;
