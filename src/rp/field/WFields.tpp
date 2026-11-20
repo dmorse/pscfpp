@@ -284,6 +284,13 @@ namespace Rp {
       UTIL_CHECK(nMonomer_ > 0);
       UTIL_CHECK(readUnitCellPtr_);
 
+      // Mark fields as invalid until read successfully completes
+      hasData_ = false;
+      isSymmetric_ = false;
+
+      // Notify signal observers of field modification (before reading)
+      signal().notify();
+
       // Read field file header
       int nMonomerIn;
       bool isSymmetricIn;
@@ -317,11 +324,9 @@ namespace Rp {
       // Convert to r-grid form (array rgrid_)
       fieldIo().convertBasisToRGrid(basis_, rgrid_);
 
+      // Set flags to reflect successful completion
       hasData_ = true;
       isSymmetric_ = true;
-
-      // Notify signal observers of field modification
-      signal().notify();
    }
 
    /*
@@ -352,8 +357,7 @@ namespace Rp {
    */
    template <int D, class T>
    void
-   WFields<D,T>::readRGrid(std::istream& in,
-                                        bool isSymmetric)
+   WFields<D,T>::readRGrid(std::istream& in, bool isSymmetric)
    {
       // Preconditions
       UTIL_CHECK(nMonomer_ > 0);
@@ -364,6 +368,13 @@ namespace Rp {
          Mesh<D> const & mesh = fieldIo().mesh();
          allocateRGrid(mesh.dimensions());
       }
+
+      // Mark fields as invalid until read successfully completes
+      hasData_ = false;
+      isSymmetric_ = false;
+
+      // Notify signal observers of field modification
+      signal().notify();
 
       // Read field file in r-grid format (array rgrid_)
       fieldIo().readFieldsRGrid(in, rgrid_, *readUnitCellPtr_);
@@ -378,11 +389,9 @@ namespace Rp {
          fieldIo().convertRGridToBasis(rgrid_, basis_);
       }
 
+      // Set flags to reflect successful completion
       hasData_ = true;
       isSymmetric_ = isSymmetric;
-
-      // Notify signal observers of field modification
-      signal().notify();
    }
 
    /*
