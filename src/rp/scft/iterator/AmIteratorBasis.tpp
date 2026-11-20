@@ -90,7 +90,7 @@ namespace Rp {
          ParamComposite::readOptionalFSArray(in, "flexibleParams", 
                                              flexibleParams_, np);
          if (Iterator<D,T>::nFlexibleParams() == 0) {
-            Iterator<D,T>::isFlexible_ = false;
+            UTIL_THROW("Error: flexbleParams array with all values false");
          }
       } else { // If isFlexible_ == false
          // Set all flexibleParams_ values to false
