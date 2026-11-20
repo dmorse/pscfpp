@@ -55,13 +55,15 @@ namespace Rp {
       */
       double compute() override;
 
-      // Aliases for base classes.
-      using AnalyzerT = Analyzer<D,T>;
-      using AverageAnalyzerT = AverageAnalyzer<D,T>;
-
       // Inherited protected member functions (selected).
       using Analyzer<D,T>::simulator;
       using Analyzer<D,T>::system;
+
+   private:
+
+      // Aliases for base classes.
+      using AnalyzerT = Analyzer<D,T>;
+      using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
    };
 

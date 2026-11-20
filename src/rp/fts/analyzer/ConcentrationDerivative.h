@@ -45,16 +45,12 @@ namespace Rp {
       */
       ~ConcentrationDerivative() = default;
 
-   protected:
+   private:
 
       /**
       * Compute and return the derivative of H w/ respect to concentration.
       */
       double compute() override;
-
-      // Aliases for base classes.
-      //using AnalyzerT = Analyzer<D,T>;
-      //using AverageAnalyzerT = AverageAnalyzer<D,T>;
 
       // Inherited protected member functions (selected).
       using Analyzer<D,T>::simulator;

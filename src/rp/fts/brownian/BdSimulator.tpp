@@ -169,10 +169,12 @@ namespace Rp {
       Simulator<D,T>::system().compute();
 
       // Compress the initial state (adjust pressure-like field)
-      if (isSimulation && Simulator<D,T>::hasCompressor()) {
-         int status = Simulator<D,T>::compressor().compress();
-         if (status != 0) {
-            UTIL_THROW("Initial compression failed");
+      if (Simulator<D,T>::hasCompressor()) {
+         if (isSimulation) {
+            int status = Simulator<D,T>::compressor().compress();
+            if (status != 0) {
+               UTIL_THROW("Initial compression failed");
+            }
          }
          Simulator<D,T>::compressor().clearTimers();
       }

@@ -204,7 +204,7 @@ namespace Rp {
       UTIL_CHECK(bunches.size() == nBunch_);
 
       // Set bunchWavenumbers_, waveBunchIds_, and waveWeights_
-      double wavenumberSq, newWavenumber, oldWavenumber;
+      double wavenumberSq, wavenumber, oldWavenumberSq;
       double count, sum, tot;
       int begin, end, k, iw;
       int nw = 0;
@@ -212,16 +212,18 @@ namespace Rp {
          begin = bunches[ib][0];
          end = bunches[ib][1];
 
-         // Compute bunchWavenumbers_[ib] from first wave in bunch
+         // Compute wavenumberSq from first wave in bunch
          iw = sortedIds[begin]; // wave id of first wave in bunch
          wavenumberSq = kSq[iw];
          UTIL_CHECK(wavenumberSq >= 0.0);
-         newWavenumber = std::sqrt(wavenumberSq);
-         bunchWavenumbers_[ib] = newWavenumber;
          if (ib > 0) {
-            UTIL_CHECK(newWavenumber - oldWavenumber > 1.0E-8);
+            UTIL_CHECK(wavenumberSq - oldWavenumberSq > 5.0E-9);
          }
-         oldWavenumber = newWavenumber;
+         oldWavenumberSq = wavenumberSq;
+
+         // Compute bunchWavenumbers_[ib]
+         wavenumber = std::sqrt(wavenumberSq);
+         bunchWavenumbers_[ib] = wavenumber;
 
          // Set bunchIds, unnormalized weights for all waves in this bunch
          sum = 0.0;
@@ -239,7 +241,7 @@ namespace Rp {
             // count = 1.0;   // Uncomment to weight waves equally
             waveWeights_[iw] = count;
             sum += count;
-            UTIL_CHECK(std::abs(kSq[iw] - wavenumberSq) < 1.0E-8);
+            UTIL_CHECK(std::abs(kSq[iw] - wavenumberSq) < 2.0E-8);
          }
 
          // Normalize weights for all waves in this bunch

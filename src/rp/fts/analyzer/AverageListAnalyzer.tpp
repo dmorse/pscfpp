@@ -45,12 +45,6 @@ namespace Rp {
       ParamComposite::readOptional(in,"nSamplePerOutput",
                                    nSamplePerOutput_);
       UTIL_CHECK(nSamplePerOutput_ >= 0);
-      if (nSamplePerOutput() > 0) {
-         std::string fileName = AnalyzerT::outputFileName(".dat");
-         system().fileMaster().openOutputFile(fileName, outputFile_);
-      }
-      // Note: ReadParameters method of derived classes should call this,
-      // determine nValue and then call initializeAccumulators(nValue).
    }
 
    /*
@@ -61,6 +55,13 @@ namespace Rp {
    {
       UTIL_CHECK(hasAccumulators_);
       clearAccumulators();
+
+      if (nSamplePerOutput() > 0) {
+         std::string fileName = AnalyzerT::outputFileName(".dat");
+         system().fileMaster().openOutputFile(fileName, outputFile_);
+      }
+      // Note: ReadParameters method of derived classes should call this,
+      // determine nValue and then call initializeAccumulators(nValue).
    }
 
    /*

@@ -45,10 +45,6 @@ namespace Rp {
       nSamplePerOutput_ = 1;
       ParamComposite::readOptional(in,"nSamplePerOutput", 
                                    nSamplePerOutput_);
-      if (nSamplePerOutput_ > 0) {
-         std::string fileName = Analyzer<D,T>::outputFileName(".dat");
-         Analyzer<D,T>::system().fileMaster().openOutputFile(fileName, outputFile_);
-      }
 
       // Set the Average accumulator to compute block averages
       // for blocks containing nSamplePerOutput_ sampled values
@@ -56,11 +52,19 @@ namespace Rp {
    }
 
    /*
-   * Setup before system.
+   * Setup before main loop.
    */
    template <int D, class T>
    void AverageAnalyzer<D,T>::setup()
-   {  accumulator_.clear(); }
+   {
+      accumulator_.clear();
+
+      if (nSamplePerOutput_ > 0) {
+         std::string fileName = Analyzer<D,T>::outputFileName(".dat");
+         Analyzer<D,T>::system().fileMaster().openOutputFile(fileName, 
+                                                             outputFile_);
+      }
+   }
 
    /*
    * Compute and sample current values.
