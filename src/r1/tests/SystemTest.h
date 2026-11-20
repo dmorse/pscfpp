@@ -115,9 +115,9 @@ public:
          Log::file() << q10 << "\n";
          Log::file() << q11 << "\n";
       }
-      UTIL_ASSERT(abs((q01 - q00)/q00) < 1.0E-6);
-      UTIL_ASSERT(abs((q10 - q00)/q00) < 1.0E-6);
-      UTIL_ASSERT(abs((q11 - q00)/q00) < 1.0E-6);
+      TEST_ASSERT(std::abs((q01 - q00)/q00) < 1.0E-6);
+      TEST_ASSERT(std::abs((q10 - q00)/q00) < 1.0E-6);
+      TEST_ASSERT(std::abs((q11 - q00)/q00) < 1.0E-6);
 
       // Test spatial integral of block concentration
       double sum0 = domain.spatialAverage(sys.cField(0));
@@ -169,9 +169,9 @@ public:
          Log::file() << q10 << "\n";
          Log::file() << q11 << "\n";
       }
-      UTIL_ASSERT(abs((q01 - q00)/q00) < 1.0E-6);
-      UTIL_ASSERT(abs((q10 - q00)/q00) < 1.0E-6);
-      UTIL_ASSERT(abs((q11 - q00)/q00) < 1.0E-6);
+      TEST_ASSERT(std::abs((q01 - q00)/q00) < 1.0E-6);
+      TEST_ASSERT(std::abs((q10 - q00)/q00) < 1.0E-6);
+      TEST_ASSERT(std::abs((q11 - q00)/q00) < 1.0E-6);
 
       // Test spatial integral of block concentration
       double sum0 = domain.spatialAverage(sys.cField(0));
