@@ -3,6 +3,7 @@
 
 #include "LinearRamp.h"
 #include <rp/fts/simulator/Simulator.h>
+#include <rp/fts/compressor/Compressor.h>
 #include <rp/system/System.h>
 #include <rp/solvers/Mixture.h>
 #include <util/global.h>
@@ -29,8 +30,8 @@ namespace Rp {
       parameters_.allocate(nParameter_);
 
       // Read array of RampParameters, using << operator for each
-      ParamComposite::readDArray(in, "parameters", parameters_, 
-                                 nParameter_);
+      ParamComposite::readDArray(in, "parameters", 
+                                 parameters_, nParameter_);
 
       // Verify net zero change in volume fractions, if these are swept
       // and every species is closed (open species take up the rest of
@@ -71,16 +72,27 @@ namespace Rp {
 
       // Update the system parameter values
       double newVal;
+      bool hasChi = false;
       for (int i = 0; i < nParameter_; ++i) {
+
+         // Update value
          newVal = parameters_[i].initial() + s*parameters_[i].change();
          parameters_[i].update(newVal);
 
-         // Update chiEvals and chiEvecs if parameter is chi
-         if (parameters_[i].type() == "chi") {
-            Ramp<D,T>::simulator().analyzeChi();
-         }
-
+         // Check if this is a chi parameter
+         if (parameters_[i].type() == "chi") hasChi = true;
       }
+
+      // If chi parameters changed, update chiEvals and chiEvecs
+      if (hasChi) {
+         Ramp<D,T>::simulator().analyzeChi();
+      }
+
+      // Clear compressor data that may depend on ramped parameters
+      if (Ramp<D,T>::simulator().hasCompressor()) {
+         Ramp<D,T>::simulator().compressor().clearCache();
+      }
+
    }
 
    template <int D, class T>

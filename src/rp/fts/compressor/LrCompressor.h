@@ -71,35 +71,31 @@ namespace Rp {
       *
       * \param in  input parameter file stream
       */
-      void readParameters(std::istream& in);
-
-      /**
-      * Initialize just before entry to iterative loop.
-      *
-      * This function is called by the solve function before entering the
-      * loop over iterations. Store the current values of the fields at the
-      * beginning of iteration
-      */
-      void setup();
+      void readParameters(std::istream& in) override;
 
       /**
       * Iterate pressure field to obtain partial saddle point.
       *
       * \return 0 for convergence, 1 for failure
       */
-      int compress();
+      int compress() override;
+
+      /**
+      * Mark the stored intramolecular correlation function as outdated.
+      */
+      void clearCache() override;
 
       /**
       * Return compressor times contributions.
       *
       * \param out  output stream
       */
-      void outputTimers(std::ostream& out) const;
+      void outputTimers(std::ostream& out) const override;
 
       /**
       * Clear all timers.
       */
-      void clearTimers();
+      void clearTimers() override;
 
    protected:
 
@@ -153,10 +149,19 @@ namespace Rp {
       // Has required memory been allocated?
       bool isAllocated_;
 
-      // Has the IntraCorrelation been calculated?
-      bool isIntraCalculated_;
+      // Is the IntraCorrelationK_ array up to date?
+      bool hasIntraCorrelationK_;
 
       // Private member functions
+
+      /**
+      * Initialize just before entry to iterative loop.
+      *
+      * This function is called by the solve function before entering the
+      * loop over iterations. Store the current values of the fields at the
+      * beginning of iteration
+      */
+      void setup();
 
       /**
       * Compute the residual vector.

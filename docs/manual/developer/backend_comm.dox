@@ -34,35 +34,37 @@ namespace Pscf {
 }
 \endcode
 where the parameter Data is the type of each array element and T is 
-backend identifier class. Specializations of these templates with 
-T=Pscf::CUT are designed to provide a convenient syntax for operations 
-that copy arrays between the CPU host and CPU device, in either 
-direction. Specializations with T=Pscf::CPT are designed to use the 
-same syntax but to not actually perform any unnecessary copy operations. 
-This is done by requiring that the sequence of function calls that is 
-used to perform a "deep" copy of data between GPU and CPU arrays when 
-used with specializations of these templates with T=Pscf::CUT instead 
-create a "shallow" copy that simply makes two arrays point temporarily
-point to the same data when used with specializations with T=Pscf::CPT.
+backend identifier class. 
 
-The design of these two templates is based on the assumption that 
-most large, long-lived arrays in PSCF are allocated on the GPU in 
-specializations with T = Pscf::CUT, and are thus defined in template code 
-as instances of BackendArray<Data,T> or a subclass thereof.  The design 
-is designed to allow operations that copy data between a long-lived 
-BackendArray and a shorter-lived HostSendArray or HostRecvArray, for 
-which the data in the HostSendArray or HostRecvArray only needs to be 
-accessed within the scope of a single function. 
+Specializations of these templates with T=Pscf::CUT are designed to provide
+a convenient syntax for operations that copy arrays between the CPU host 
+and CPU device, in either direction. Specializations with T=Pscf::CPT are 
+designed to use the same syntax but to not actually perform any unnecessary
+copy operations.  This is done by requiring that the sequence of function 
+calls that is used to perform a "deep" copy of data between backend (GPU)
+and host (CPU) arrays when used with specializations of these templates 
+with T=Pscf::CUT instead temporarily makes the host array a "shallow" copy 
+of the backend array when used with specializations with T=Pscf::CPT, by 
+setting the data pointer owned by host array to temporarily point to a 
+block of memory that is owned by the backend array. 
 
-The template HostSendArray is designed to be used for CPU-to-GPU copy 
-operations, while HostRecvArray is designed to be used for GPU-to-CPU 
-copy operations.  A HostSendArray defines a subscript ([]) operator 
-that allows read and write access to elements of the array, which is
-needed to allow elements to be assigned values on the CPU host before 
-they are copied to the backend array.  The HostRecvArray instead defines 
-a subscript operator that only allows read access to elements, allowing 
-elements to be read after they are copied from the associated 
-BackendArray.
+The design of these two templates is based on the assumption that most 
+large, long-lived arrays in PSCF will be instances of BackendArray<Data,T> 
+or a subclass thereof.  The design is designed to allow operations that 
+copy data between a long-lived BackendArray and a shorter-lived 
+HostSendArray or HostRecvArray, for which the data in the HostSendArray 
+or HostRecvArray only needs to be accessed within the scope of a single 
+function. 
+
+When used with a CUDA backend, the template HostSendArray is designed to 
+be used for CPU-to-GPU copy operations, while HostRecvArray is designed 
+to be used for GPU-to-CPU copy operations.  A HostSendArray defines a 
+subscript ([]) operator that allows read and write access to elements of 
+the array, which is needed to allow elements to be assigned values on the 
+CPU host before they are copied to the GPU memory owned by a BackendArray.
+The HostRecvArray instead defines a subscript operator that only allows 
+read access to elements, allowing elements to be read after they are 
+copied from the associated BackendArray.
 
 \section developer_backend_HostToDev Host-to-Device Copy
 
@@ -80,36 +82,36 @@ segment.
     devArray = hostArray;
     hostArray.dissociate();
 \endcode
-In this code snippet, the associate function, assignment 
-operator, and dissociate member function perform completely
-different operations for specializations with T=Pscf:CUT and 
-T=Pscf:CPT.
+In this code snippet, the associate function, assignment operator, and 
+dissociate member function perform completely different operations for 
+specializations with T=Pscf:CUT and T=Pscf:CPT.
 
-In specializations with T=Pscf::CUT (Cuda backend):
+In specializations with T=Pscf::CUT (CUDA backend):
    - The statement hostArray.associate(devArray) checks if hostArray is 
      allocated and, if it is not, allocates it with the same capacity as 
-     that of the devArray container that is passed to the associate 
-     function.
+     that of the BackendArray<D,T> container devArray that is passed to 
+     the associate function.
    - The statement devArray = hostArray copies all elements of hostArray 
-     to devArray, by performing a CPU-to-GPU copy of the array.
+     to devArray, by performing a CPU-to-GPU copy of all array elements.
    - The statement hostArray.dissociate() does nothing.
 
 In specializations with T=Pscf::CPT (C++ backend):
    - The statement hostArray.associate(devArray) sets a pointer owned by 
-     hostArray to be a copy of the pointer to the array owned by devArray, 
-     thus making hostArray a shallow copy of devArray.
+     hostArray to be a copy of the pointer to a block of memory that is 
+     owned by devArray, thus making hostArray a shallow copy of devArray.
    - The statement devArray = hostArray does nothing.  
    - The statement hostArray.dissociate() nullifies the pointer member of 
      hostArray that points to an array, thus destroying the association 
      between the two arrays.
 
-In specializations with T=Pscf::CPT, assignment of values to
-the elements of hostArray thus automatically also assigns
-values to elements of devArray, because the two containers 
-temporarily refer to the same memory. In this case, the use
-of a shallow copy avoids the need to actually copy any data,
-while allowing the same function template to be used with 
-either backend.
+In specializations with T=Pscf::CPT, assignment of values to the elements 
+of hostArray thus automatically also assigns values to elements of 
+devArray, because the two containers temporarily refer to the same memory. 
+In this case, the dissociate function then frees the host array to be 
+reused, while leaving the data in a block of memory that is owned by
+the backend arary.  This patterns allows the same syntax to be used with 
+either backend, while avoiding the need to actually physically copy any 
+data when used with a C++ backend. 
 
 In specializations with T=Pscf::CPT, the pointer owned by the host array 
 is null after the call to hostArray.dissociate(), and so does not have any 
@@ -124,7 +126,7 @@ In specializations with T=Pscf::CUT, the HostSendArray owns a separate
 block of CPU heap memory that can be allocated by the associate function. 
 The dissociate function does not deallocate this memory, but the 
 destructor function for a HostSendArray does deallocates any heap memory
-that it owns when the object is destroyed. If the HostRecvArray is a 
+that it owns when the array is destroyed. If the HostRecvArray is a 
 local variable that is defined within a function, as in the above example, 
 this memory will thus be deallocated when the function ends and the host 
 array goes out of scope.  If the HostRecvArray is instead a class member 
@@ -140,10 +142,9 @@ made to allow this reuse of memory if desired.
 
 \section developer_backend_DevToHost Device-to-Host Copy
 
-The pseudo-code shown below outlines the usage for transferring
-data from a long-lived instance of BackendArray<Data,T> named 
-devArray to a temporary instance of HostRecvArray<Data,T> 
-named hostArray:
+The pseudo-code shown below outlines the pattern for transferring data 
+from a long-lived instance of BackendArray<Data,T> named devArray to a 
+temporary instance of HostRecvArray<Data,T> named hostArray:
 \code
     HostRecvArray<Data,T> hostArray;
     hostArray = devArray;
@@ -162,44 +163,41 @@ perform completely different operations for specializations with
 T=Pscf:CUT and T=Pscf:CPT. 
 
 In specializations with T=Pscf::CUT (Cuda backend):
-   - The statement hostArray = devArray copies all elements of
-     the array from devArray to hostArray, by performing a 
-     GPU-to-CPU copy.
+   - The statement hostArray = devArray copies all elements of the array 
+     from devArray to hostArray, by performing a GPU-to-CPU copy.
    - The statement hostArray.dissociate() does nothing.
 
 In specializations with T=Pscf::CPT (C++ backend):
 
-   - The hostArray = devArray assigns a pointer member of
-     hostArray the address of the array owned by devArray,
-     thus making hostArray a shallow, temporary read-only 
-     copy of devArray.
-   - The statement hostArray.dissociate() nullifies the 
-     pointer member of hostArray, thus destroying the 
-     association between the two arrays.
+   - The hostArray = devArray assigns a pointer member of hostArray the 
+     address of an array owned by devArray, thus temporarily making the
+     hostArray a shallow, read-only copy of devArray.
+   - The statement hostArray.dissociate() nullifies the pointer member 
+     of hostArray, thus destroying the temporary association between the 
+     two arrays.
 
-In order for this pattern to be used safely in template code that 
-must work correctly with both backends, the assignment operator, and 
-dissociate function should all be called within the same function, and 
-elements of hostArray may only accessed only between the calls to the 
-assignment operator and the dissociate member function.
+In order for this pattern to be used safely in template code that must 
+work correctly with both backends, the assignment operator, and dissociate 
+function should all be called within the same function, and elements of 
+hostArray may only accessed only between the calls to the assignment 
+operator and the dissociate member function. 
 
 This pattern can be simplified somewhat in code in which the hostArray 
 is a local variable that is defined within a function, while the array 
-owned by the deviceArray exists before and after the lifetime of the 
+owned by the BackendArray exists before and after the lifetime of the 
 host array. In this case:
 
-  - The default constructor and assignment operator can 
-    be combined into a call to a conversion operator that
-    takes takes the backend array as an argument. This
-    effect of this conversion constructor is equivalent 
-    to default construction followed by assignment.
+  - The default constructor and assignment operator can be combined into 
+    a call to a conversion constructor that takes takes the backend array 
+    as an argument. This effect of this conversion constructor is 
+    equivalent to default construction followed by assignment, for either
+    choice of backend.
 
-  - The dissociate function may sometimes be omitted,
-    because the destructor of HostRecvArray class 
-    template will delete any memory owned by the array
-    for (for T=Pscf::CUT) or release any remaining 
-    association (for T=Pscf::CPT) when the function
-    ends and the hostArray is destroyed. 
+  - The dissociate function may generally be omitted, because the 
+    destructor of the HostRecvArray class template will delete any memory 
+    owned by the array for (for T=Pscf::CUT) or release any remaining 
+    association (for T=Pscf::CPT) when the function ends and the 
+    hostArray is destroyed. 
 
 The most concise version of this pattern, for use with a host array that 
 is a local variable, is thus:
@@ -210,23 +208,22 @@ is a local variable, is thus:
 
 \endcode
 There is, however, also no harm in calling the dissociate function 
-explicitly in this situation, to documment the need to release resources.
+explicitly in this situation, to document the need to release resources.
 
 The class template HostRecvArray is designed to provide read-only access 
 to array elements in order to guarantee that specializations that use 
-different backends yield equivalent behavior in template code that involves 
-a device-to-host copy.  If write access were allowed to elements of the 
-array that received such a Device-to-Host copy, modifying elements of the 
-host array would modify corresponding elements of the backend array when 
-used with C++ backend, because of the existence of a shallow copy, but
-would have no effect on data in the backend array when used with a Cuda 
-backend, because in this case these two arrays uses distinct memory 
-blocks allocated on different devices.  Write access is thus prohibited 
-to prevent this inconsistency. 
+different backends yield equivalent behavior.  If write access were 
+allowed to elements of the array that received such a Device-to-Host copy, 
+modifying elements of the host array would modify corresponding elements 
+of the backend array when used with C++ backend, because of the existence 
+of a shallow copy, but would have no effect on data in the backend array 
+when used with a Cuda backend, because in this case these two arrays 
+uses distinct memory spaces.  Write access by the HostRecvArray is thus 
+prohibited to prevent this potential inconsistency. 
 
 Management of memory owned by a HostRecvArray specialization with 
 T=Pscf::CUT is analogous to management of memory owned by a corresponding 
-HostSendArray. Memory is allocated by conversion constructor or the 
+HostSendArray. Memory is allocated by a conversion constructor or the 
 assignment operator, and deallocated by the destructor, but is not 
 de-allocated by the dissociate member function.
 

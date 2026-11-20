@@ -46,7 +46,7 @@ namespace Rp {
       totalItr_(0),
       verbose_(0),
       isAllocated_(false),
-      isIntraCalculated_(false)
+      hasIntraCorrelationK_(false)
    {  ParamComposite::setClassName("LrCompressor"); }
 
    /*
@@ -90,11 +90,6 @@ namespace Rp {
          isAllocated_ = true;
       }
 
-      // Compute intraCorrelation
-      if (!isIntraCalculated_){
-         intra_.computeOmegaTotal(intraCorrelationK_);
-         isIntraCalculated_ = true;
-      }
    }
 
    /*
@@ -103,12 +98,12 @@ namespace Rp {
    template <int D, class T>
    int LrCompressor<D,T>::compress()
    {
+      // Start overall timer
+      timerTotal_.start();
+
       // Initialization and allocate operations on entry to loop.
       setup();
       UTIL_CHECK(isAllocated_);
-
-      // Start overall timer
-      timerTotal_.start();
 
       // Solve MDE
       timerMDE_.start();
@@ -129,6 +124,8 @@ namespace Rp {
 
          // Compute residual vector
          computeResidual();
+
+         // Compute scalar error
          double error;
          try {
             error = computeError(verbose_);
@@ -156,15 +153,15 @@ namespace Rp {
                Log::file() << "\n";
                computeError(2);
             }
-            //mdeCounter_ += itr_;
             totalItr_ += itr_;
 
             return 0; // Success
 
-         } else {
+         } else {  // if not yet converged
 
-            // Not yet converged.
             updateWFields();
+
+            // Solve MDE in new state
             timerMDE_.start();
             system().compute();
             ++Compressor<D,T>::mdeCounter_;
@@ -204,6 +201,16 @@ namespace Rp {
    template <int D, class T>
    void LrCompressor<D,T>::updateWFields()
    {
+      // Preconditions
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(system().c().hasData());
+
+      // Compute intraCorrelation if necessary
+      if (!hasIntraCorrelationK_){
+         intra_.computeOmegaTotal(intraCorrelationK_);
+         hasIntraCorrelationK_ = true;
+      }
+
       const int nMonomer = system().mixture().nMonomer();
       const double vMonomer = system().mixture().vMonomer();
 
@@ -231,6 +238,13 @@ namespace Rp {
    template <int D, class T>
    void LrCompressor<D,T>::outputToLog()
    {}
+
+   /*
+   * Mark intraCorrelationK_ as outdated.
+   */
+   template <int D, class T>
+   void LrCompressor<D,T>::clearCache()
+   {  hasIntraCorrelationK_ = false; }
 
    /*
    * Output timing information to evaluate performance.

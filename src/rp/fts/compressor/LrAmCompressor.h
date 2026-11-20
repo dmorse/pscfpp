@@ -74,22 +74,16 @@ namespace Rp {
       void readParameters(std::istream& in) override;
 
       /**
-      * Initialize just before entry to iterative loop.
-      *
-      * This function is called by the solve function before entering the
-      * loop over iterations. It stores the initial values of the fields
-      * prior to iteration.
-      *
-      * \param isContinuation  true iff continuation within a sweep
-      */
-      void setup(bool isContinuation) override;
-
-      /**
       * Compress to obtain partial saddle point field.
       *
       * \return 0 for convergence, 1 for failure
       */
       int compress() override;
+
+      /**
+      * Mark stored intramolecular correlation function as outdated.
+      */
+      void clearCache() override;
 
       /**
       * Return compressor time contributions.
@@ -161,9 +155,9 @@ namespace Rp {
       int kSize_;
 
       /**
-      * Has intraCorrelationK_ been calculated?
+      * Is intraCorrelationK_ calculated and up-to-date?
       */
-      bool isIntraCalculated_;
+      bool hasIntraCorrelationK_;
 
       /**
       * Has required memory been allocated?
@@ -183,6 +177,17 @@ namespace Rp {
       * Does the system have an initial guess for the field?
       */
       bool hasInitialGuess() override;
+
+      /**
+      * Initialize just before entry to iterative loop.
+      *
+      * This function is called by the solve function before entering the
+      * loop over iterations. It stores the initial values of the fields
+      * prior to iteration.
+      *
+      * \param isContinuation  true iff continuation within a sweep
+      */
+      void setup(bool isContinuation) override;
 
       /**
       * Gets the current field vector from the system.
@@ -226,7 +231,6 @@ namespace Rp {
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog() override;
-
 
    };
 

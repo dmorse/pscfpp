@@ -66,7 +66,6 @@ namespace Rp {
 
       // Private type aliases
       using RealT = typename T::Real;
-      //using FFTT = FFT<D,T>;
 
       // Private member variables
 

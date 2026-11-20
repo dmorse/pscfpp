@@ -52,6 +52,8 @@ namespace Correlation {
       /**
       * Create an association with a Mixture.
       *
+      * For use with the default constructor.
+      *
       * \param mixture  associated Composition
       */
       void associate(Composition<WT> const& mixture);

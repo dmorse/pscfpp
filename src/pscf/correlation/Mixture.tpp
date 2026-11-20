@@ -61,11 +61,11 @@ namespace Correlation {
    {
       // Constant and preconditions
       UTIL_CHECK(mixturePtr_);  
+      UTIL_CHECK(!polymers_.isAllocated());
       const int nMonomer = mixture().nMonomer();
       const int nPolymer = mixture().nPolymer();
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(nPolymer > 0);
-      UTIL_CHECK(!polymers_.isAllocated());
 
       // Allocation
       polymers_.allocate(nPolymer);

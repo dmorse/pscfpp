@@ -61,6 +61,17 @@ namespace Rp {
       virtual int compress() = 0;
 
       /**
+      * Discard internal data used by the compressor.
+      *
+      * A compressor may store internal data that may depend on the
+      * unit cell or model parameters. This function clears all such
+      * data after a change in unit cell or parameters. The default
+      * implementation does nothing.
+      */
+      virtual void clearCache()
+      {}
+
+      /**
       * Output report of timing results to stream.
       *
       * \param out output stream for results

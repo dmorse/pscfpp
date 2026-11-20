@@ -1153,6 +1153,9 @@ namespace Rp {
       if (hasEnvironment()) {
          environment().reset();
       }
+      if (hasSimulator() && simulator().hasCompressor()) {
+         simulator().compressor().clearCache();
+      }
    }
 
    // Property Output

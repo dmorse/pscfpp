@@ -59,13 +59,14 @@ namespace Rp {
    IntraCorrelation<D,T>::computeOmegaTotal(RField<D,T>& correlations)
    {
       getMeshDimensions();
-      int nk = kSize();
+      int nk = kSize_;
       UTIL_CHECK(correlations.isAllocated());
       UTIL_CHECK(correlations.capacity() == nk);
 
       correlations_h_.associate(correlations);
       computeOmegaTotalArray(correlations_h_);
       correlations = correlations_h_;
+      correlations_h_.dissociate();
    }
 
    /*
@@ -109,6 +110,11 @@ namespace Rp {
       }
 
       // Check allocation of Gsq_ (k-space array of square wavenumbers)
+      if (Gsq_.isAllocated()) {
+         if (Gsq_.capacity() != kSize_) {
+            Gsq_.deallocate();
+         }
+      }
       if (!Gsq_.isAllocated()) {
          Gsq_.allocate(kSize_);
       }

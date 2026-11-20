@@ -39,11 +39,11 @@ namespace Rp {
    template <int D, class T>
    LrAmCompressor<D,T>::LrAmCompressor(System<D,T>& system)
     : intra_(system),
-      isIntraCalculated_(false),
+      hasIntraCorrelationK_(false),
       isAllocated_(false)
    {
-      Compressor<D,T>::setSystem(system);  
-      ParamComposite::setClassName("LrAmCompressor"); 
+      Compressor<D,T>::setSystem(system);
+      ParamComposite::setClassName("LrAmCompressor");
    }
 
    /*
@@ -63,47 +63,6 @@ namespace Rp {
    }
 
    /*
-   * Initialize just before entry to iterative loop.
-   */
-   template <int D, class T>
-   void LrAmCompressor<D,T>::setup(bool isContinuation)
-   {
-
-      // Allocate memory required by AM algorithm, if not done earlier
-      AmTmpl::setup(isContinuation);
-
-      const int nMonomer = system().mixture().nMonomer();
-      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
-      FFT<D,T>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
-
-      // Allocate memory required by compressor, if not done earlier
-      if (!isAllocated_) {
-         w0_.allocate(nMonomer);
-         wFieldTmp_.allocate(nMonomer);
-         resid_.allocate(dimensions);
-         residK_.allocate(dimensions);
-         intraCorrelationK_.allocate(kMeshDimensions_);
-         for (int i = 0; i < nMonomer; ++i) {
-            w0_[i].allocate(dimensions);
-            wFieldTmp_[i].allocate(dimensions);
-         }
-         isAllocated_ = true;
-      }
-
-      // Compute intraCorrelationK_
-      if (!isIntraCalculated_){
-         intra_.computeOmegaTotal(intraCorrelationK_);
-         isIntraCalculated_ = true;
-      }
-
-      // Store initial values of monomer chemical potential fields
-      for (int i = 0; i < nMonomer; ++i) {
-         VecOp::eqV(w0_[i], system().w().rgrid(i));
-      }
-
-   }
-
-   /*
    * Main function - iteratively adjust the pressure field.
    */
    template <int D, class T>
@@ -112,6 +71,13 @@ namespace Rp {
       int solve = AmTmpl::solve();
       return solve;
    }
+
+   /*
+   * Mark the intraCorrelationsK_ array as outdated.
+   */
+   template <int D, class T>
+   void LrAmCompressor<D,T>::clearCache()
+   {  hasIntraCorrelationK_ = false; }
 
    /*
    * Output timer results.
@@ -151,6 +117,41 @@ namespace Rp {
    {  return system().w().hasData(); }
 
    /*
+   * Initialize just before entry to iterative loop.
+   */
+   template <int D, class T>
+   void LrAmCompressor<D,T>::setup(bool isContinuation)
+   {
+
+      // Allocate memory required by AM algorithm, if not done earlier
+      AmTmpl::setup(isContinuation);
+
+      const int nMonomer = system().mixture().nMonomer();
+      IntVec<D> const & dimensions = system().domain().mesh().dimensions();
+      FFT<D,T>::computeKMesh(dimensions, kMeshDimensions_, kSize_);
+
+      // Allocate memory required by compressor, if not done earlier
+      if (!isAllocated_) {
+         w0_.allocate(nMonomer);
+         wFieldTmp_.allocate(nMonomer);
+         resid_.allocate(dimensions);
+         residK_.allocate(dimensions);
+         intraCorrelationK_.allocate(kMeshDimensions_);
+         for (int i = 0; i < nMonomer; ++i) {
+            w0_[i].allocate(dimensions);
+            wFieldTmp_[i].allocate(dimensions);
+         }
+         isAllocated_ = true;
+      }
+
+      // Store initial values of monomer chemical potential fields
+      for (int i = 0; i < nMonomer; ++i) {
+         VecOp::eqV(w0_[i], system().w().rgrid(i));
+      }
+
+   }
+
+   /*
    * Get the current field variable from the system.
    *
    * The field variable is the change in the Lagrange multiplier field
@@ -184,6 +185,10 @@ namespace Rp {
    template <int D, class T>
    void LrAmCompressor<D,T>::getResidual(VectorT& resid)
    {
+      // Precondition
+      UTIL_CHECK(resid.size() == nElements());
+      UTIL_CHECK(system().c().hasData());
+
       // Initialize residual to -1.0
       VecOp::eqS(resid, -1.0);
 
@@ -203,8 +208,21 @@ namespace Rp {
    template <int D, class T>
    void
    LrAmCompressor<D,T>::addCorrection(VectorT& fieldTrial,
-                                    VectorT const & resTrial)
+                                      VectorT const & resTrial)
    {
+      // Preconditions
+      int n = nElements();
+      UTIL_CHECK(fieldTrial.size() == n);
+      UTIL_CHECK(resTrial.size() == n);
+      UTIL_CHECK(system().c().hasData());
+      UTIL_CHECK(isAllocated_);
+
+      // Update intraCorrelationK_ if necessary
+      if (!hasIntraCorrelationK_){
+         intra_.computeOmegaTotal(intraCorrelationK_);
+         hasIntraCorrelationK_ = true;
+      }
+
       // Copy resTrial to RField resid_
       // Allows use of FFT functions that take an RField container
       VecOp::eqV(resid_, resTrial);
@@ -229,6 +247,11 @@ namespace Rp {
    template <int D, class T>
    void LrAmCompressor<D,T>::update(VectorT& newGuess)
    {
+      // Preconditions
+      int n = nElements();
+      UTIL_CHECK(newGuess.size() == n);
+      UTIL_CHECK(isAllocated_);
+
       // New field is w0_ + newGuess for the pressure field
       const int nMonomer = system().mixture().nMonomer();
       for (int i = 0; i < nMonomer; ++i) {
