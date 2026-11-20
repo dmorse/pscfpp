@@ -17,6 +17,7 @@
 
 #include <util/misc/FileMaster.h>
 #include <util/containers/FSArray.h>
+#include <util/param/Label.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
@@ -292,6 +293,46 @@ public:
    }
 
    /*
+   * Does reading an McSimulator with two RealMoves of the given
+   * probabilities throw an Exception?
+   */
+   bool probabilityReadThrows(std::string const & p0,
+                              std::string const & p1)
+   {
+      Rp::System<1,CPT> system;
+      initSystem1D(system, "");
+      Rp::McSimulator<1,CPT> simulator(system);
+      std::istringstream in(
+         "McSimulator{ seed 1234 McMoveManager{\n"
+         " RealMove{ probability " + p0 + " sigma 0.1 }\n"
+         " RealMove{ probability " + p1 + " sigma 0.2 }\n"
+         " }\n"
+         " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 } }\n");
+      bool thrown = false;
+      try {
+         simulator.readParam(in);
+      } catch (Exception& e) {
+         Label::clear();
+         thrown = true;
+      }
+      return thrown;
+   }
+
+   /*
+   * A negative move probability must be rejected, also if the sum of
+   * the probabilities is 1.
+   */
+   void testNegativeProbability()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testNegativeProbability.log");
+
+      TEST_ASSERT(probabilityReadThrows("1.5", "-0.5"));
+      TEST_ASSERT(probabilityReadThrows("-0.5", "1.5"));
+      TEST_ASSERT(!probabilityReadThrows("0.25", "0.75"));
+   }
+
+   /*
    * A BdMove whose compressor fails in every BD step (maxItr = 1), so
    * also in the last one (issue #274). The McSimulator is that of the
    * System, as in pscf_rpc. The move must complete and leave the c
@@ -330,6 +371,7 @@ public:
 };
 
 TEST_BEGIN(McSimulatorTest)
+TEST_ADD(McSimulatorTest, testNegativeProbability)
 TEST_ADD(McSimulatorTest, testMcSimulateDiblocks)
 TEST_ADD(McSimulatorTest, testMcSimulateTriblocks)
 TEST_ADD(McSimulatorTest, testInitialCompressionFailure)

@@ -52,7 +52,15 @@ namespace Rp {
    */
    template <int D, class T>
    void McMove<D,T>::readProbability(std::istream &in)
-   {  read<double>(in, "probability", probability_); }
+   {
+      read<double>(in, "probability", probability_);
+
+      // The McMoveManager only checks that the sum of the probabilities
+      // of all moves is 1, which a negative value can satisfy
+      if (!(probability_ >= 0.0)) {
+         UTIL_THROW("Negative MC move probability");
+      }
+   }
 
    /*
    * Setup at beginning of loop.
