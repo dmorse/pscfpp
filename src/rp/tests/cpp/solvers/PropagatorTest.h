@@ -318,6 +318,60 @@ public:
       block.setupSolver(w);
    }
 
+   /*
+   * Test setNBead for an allocated bead block.
+   */
+   void testSetNBead1D_bead()
+   {
+      printMethod(TEST_FUNC);
+
+      PolymerModel::setModel(PolymerModel::Bead);
+
+      Rp::Block<1,CPT> block;
+      setupBlock<1>(block);
+      TEST_ASSERT(block.nBead() == 20);
+
+      Mesh<1> mesh;
+      setupMesh<1>(mesh);
+      FFT<1,CPT> fft;
+      fft.setup(mesh.dimensions());
+      UnitCell<1> unitCell;
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+      WaveList<1,CPT> waveList;
+      waveList.allocate(mesh, unitCell);
+      block.associate(mesh, fft, unitCell, waveList);
+      block.allocate(1.0);
+      block.propagator(0).setEndFlags(true, true);
+      block.propagator(1).setEndFlags(true, true);
+
+      // Homogeneous field
+      RField<1,CPT> w;
+      w.allocate(mesh.dimensions());
+      int nx = mesh.size();
+      double wc = 0.3;
+      for (int i = 0; i < nx; ++i) {
+         w[i] = wc;
+      }
+      block.clearUnitCellData();
+
+      // Decrease, then increase the number of beads
+      int nBeads[2] = {10, 30};
+      double q0, q1;
+      for (int k = 0; k < 2; ++k) {
+         int nBead = nBeads[k];
+         block.setNBead(nBead);
+         TEST_ASSERT(block.nBead() == nBead);
+         TEST_ASSERT(block.ns() == nBead + 2);
+         block.setupSolver(w);
+         block.propagator(0).solve();
+         block.propagator(1).solve();
+         block.propagator(0).computeQ(q0);
+         block.propagator(1).computeQ(q1);
+         TEST_ASSERT(eq(q0, exp(-wc*nBead)));
+         TEST_ASSERT(eq(q1, exp(-wc*nBead)));
+      }
+   }
+
    void testSetupSolver3D()
    {
       printMethod(TEST_FUNC);
@@ -739,6 +793,7 @@ TEST_ADD(PropagatorTest, testSetup3D)
 TEST_ADD(PropagatorTest, testSetupSolver1D)
 TEST_ADD(PropagatorTest, testSetupSolver2D)
 TEST_ADD(PropagatorTest, testSetupSolver2D_bead)
+TEST_ADD(PropagatorTest, testSetNBead1D_bead)
 TEST_ADD(PropagatorTest, testSetupSolver3D)
 TEST_ADD(PropagatorTest, testSolver1D)
 TEST_ADD(PropagatorTest, testSolver1D_bead)
