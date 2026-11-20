@@ -122,6 +122,36 @@ public:
 
    }
 
+   void testSetup1D_bead() // contour step of a bead-model block
+   {
+      printMethod(TEST_FUNC);
+
+      PolymerModel::setModel(PolymerModel::Bead);
+
+      // Create and initialize block
+      Pscf::Rp::Block<1,CUT> block;
+      setupBlock<1>(block);
+
+      // Create and initialize mesh
+      Mesh<1> mesh;
+      setupMesh<1>(mesh);
+      FFT<1,CUT> fft;
+      fft.setup(mesh.dimensions());
+
+      UnitCell<1> unitCell;
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+
+      WaveList<1,CUT> wavelist;
+      wavelist.allocate(mesh, unitCell);
+
+      // In the bead model, ds is 1 whatever the argument of allocate
+      double ds = 0.5;
+      block.associate(mesh, fft, unitCell, wavelist);
+      block.allocate(ds);
+      TEST_ASSERT(block.ns() == block.nBead() + 2);
+      TEST_ASSERT(eq(block.ds(), 1.0));
+   }
+
    void testSetup2D() // test allocate and associate methods
    {
       printMethod(TEST_FUNC);
@@ -834,6 +864,7 @@ public:
 TEST_BEGIN(PropagatorTest)
 TEST_ADD(PropagatorTest, testConstructor1D)
 TEST_ADD(PropagatorTest, testSetup1D)
+TEST_ADD(PropagatorTest, testSetup1D_bead)
 TEST_ADD(PropagatorTest, testSetup2D)
 TEST_ADD(PropagatorTest, testSetup3D)
 TEST_ADD(PropagatorTest, testSetupSolver1D)
