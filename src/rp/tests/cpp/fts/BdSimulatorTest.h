@@ -233,6 +233,27 @@ public:
                      "in/w_explicitBd_diblock_ref.rf", 
                      "out/testExplicitBdStepDiblocks.log");                                                               
    }
+
+   /*
+   * The generic block label BdStep selects the default BD step
+   * algorithm, LMBdStep, as stated in the manual.
+   */
+   void testBdStepLabel()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testBdStepLabel.log");
+
+      Rp::System<1,CPT> system;
+      initSystem1D(system,
+          "BdSimulator{ seed 1234 BdStep{ mobility 0.001 }"
+          " Compressor{ epsilon 1.0e-8 } }");
+      Rp::BdSimulator<1,CPT>& simulator
+          = dynamic_cast< Rp::BdSimulator<1,CPT>& >(system.simulator());
+      TEST_ASSERT(simulator.hasBdStep());
+      Rp::BdStep<1,CPT>* stepPtr = &simulator.bdStep();
+      bool isLMBdStep = dynamic_cast< Rp::LMBdStep<1,CPT>* >(stepPtr);
+      TEST_ASSERT(isLMBdStep);
+   }
    
    void testExplicitBdStepTriblocks()
    {
@@ -277,6 +298,7 @@ TEST_ADD(BdSimulatorTest, testInitialCompressionFailure)
 TEST_ADD(BdSimulatorTest, testLMBdStepDiblocks)
 TEST_ADD(BdSimulatorTest, testLMBdStepTriblocks)
 TEST_ADD(BdSimulatorTest, testExplicitBdStepDiblocks)
+TEST_ADD(BdSimulatorTest, testBdStepLabel)
 TEST_ADD(BdSimulatorTest, testExplicitBdStepTriblocks)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepDiblocks)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepTriblocks)

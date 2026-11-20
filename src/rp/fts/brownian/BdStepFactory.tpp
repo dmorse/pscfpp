@@ -37,14 +37,15 @@ namespace Rp {
       ptr = trySubfactories(className);
       if (ptr) return ptr;
 
-      // Try to match classname
-      if (className == "ExplicitBdStep" || className == "BdStep") {
+      // Try to match classname. The generic label "BdStep" selects the
+      // default algorithm, LMBdStep.
+      if (className == "ExplicitBdStep") {
          ptr = new ExplicitBdStep<D,T>(*simulatorPtr_);
       } else
       if (className == "PredCorrBdStep") {
          ptr = new PredCorrBdStep<D,T>(*simulatorPtr_);
       } else
-      if (className == "LMBdStep") {
+      if (className == "LMBdStep" || className == "BdStep") {
          ptr = new LMBdStep<D,T>(*simulatorPtr_);
       }
 
