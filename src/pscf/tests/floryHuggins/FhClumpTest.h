@@ -8,6 +8,7 @@
 #include <util/misc/Log.h>
 
 #include <fstream>
+#include <sstream>
 
 using namespace Pscf;
 using namespace Util;
@@ -58,12 +59,33 @@ public:
       }
    }
 
+   /*
+   * Output to a stream set to fixed format: setf(scientific) without
+   * the floatfield mask gave hexadecimal output, which operator >>
+   * cannot read.
+   */
+   void testWriteFixedStream()
+   {
+      printMethod(TEST_FUNC);
+
+      FhClump v, u;
+      v.setMonomerId(1);
+      v.setSize(2.5);
+      std::stringstream stream;
+      stream << std::fixed << v;
+      TEST_ASSERT(stream.str().find("0x") == std::string::npos);
+      stream >> u;
+      TEST_ASSERT(u.monomerId() == 1);
+      TEST_ASSERT(u.size() == 2.5);
+   }
+
 };
 
 TEST_BEGIN(FhClumpTest)
 TEST_ADD(FhClumpTest, testConstructor)
 TEST_ADD(FhClumpTest, testSetters)
 TEST_ADD(FhClumpTest, testReadWrite)
+TEST_ADD(FhClumpTest, testWriteFixedStream)
 TEST_END(FhClumpTest)
 
 #endif

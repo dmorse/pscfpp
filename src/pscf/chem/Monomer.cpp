@@ -34,7 +34,7 @@ namespace Pscf
    std::ostream& operator << (std::ostream& out, const Monomer& monomer) 
    {
       // out << monomer.id_;
-      out.setf(std::ios::scientific);
+      out.setf(std::ios::scientific, std::ios::floatfield);
       out.width(15);
       out.precision(8);
       out << monomer.kuhn_;

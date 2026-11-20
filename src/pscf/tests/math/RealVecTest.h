@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace Pscf;
 
@@ -142,6 +143,24 @@ public:
    }
    #endif
 
+   /*
+   * Output to a stream set to fixed format: setf(scientific) without
+   * the floatfield mask gave hexadecimal output, which operator >>
+   * cannot read.
+   */
+   void testWriteFixedStream()
+   {
+      printMethod(TEST_FUNC);
+      double a[3]  = {1.25, 3.0, -2.5};
+      RealVec<3> v(a);
+      RealVec<3> u;
+      std::stringstream stream;
+      stream << std::fixed << v;
+      TEST_ASSERT(stream.str().find("0x") == std::string::npos);
+      stream >> u;
+      TEST_ASSERT(u == v);
+   }
+
 };
 
 TEST_BEGIN(RealVecTest)
@@ -154,6 +173,7 @@ TEST_ADD(RealVecTest, testAdd)
 TEST_ADD(RealVecTest, testSubtract)
 TEST_ADD(RealVecTest, testMultiply)
 TEST_ADD(RealVecTest, testDot)
+TEST_ADD(RealVecTest, testWriteFixedStream)
 //TEST_ADD(RealVecTest, testReadWrite)
 TEST_END(RealVecTest)
 
