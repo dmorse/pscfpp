@@ -7,7 +7,9 @@
 
 #include "Species.h"
 #include <pscf/math/arithmetic.h>
+#include <util/misc/Log.h>
 #include <cmath>
+#include <complex>
 
 namespace Pscf { 
 
@@ -38,6 +40,10 @@ namespace Pscf {
       if (hasPhi) {
          ensemble_ = Ensemble::Closed;
          assign(phi_, phiMu_);
+         if (!(std::real(phiMu_) >= 0.0 && std::real(phiMu_) <= 1.0)) {
+            Log::file() << "phi = " << phiMu_ << "\n";
+            UTIL_THROW("Volume fraction phi must lie in [0, 1]");
+         }
       } else {
          ensemble_ = Ensemble::Open;
          read(in, "mu", phiMu_);

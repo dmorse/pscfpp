@@ -9,6 +9,10 @@
 */
 
 #include "MixtureTmpl.h"
+#include <util/misc/Log.h>
+#include <cmath>
+#include <iomanip>
+#include <sstream>
 
 namespace Pscf
 {
@@ -91,6 +95,12 @@ namespace Pscf
          for (int i = 0; i < nPolymer_; ++i) {
             for (int j = 0; j < polymer(i).nBlock(); ++j) {
                monomerId = polymer(i).block(j).monomerId();
+               if (monomerId < 0 || monomerId >= nMonomer_) {
+                  Log::file() << "Polymer " << i << ", block " << j
+                              << ": monomerId = " << monomerId
+                              << ", nMonomer = " << nMonomer_ << "\n";
+                  UTIL_THROW("Block monomerId out of range");
+               }
                kuhn = Composition<WT>::monomer(monomerId).kuhn();
                polymer(i).block(j).setKuhn(kuhn);
             }
@@ -104,6 +114,13 @@ namespace Pscf
          solvents_.allocate(nSolvent_);
          for (int i = 0; i < nSolvent_; ++i) {
             readParamComposite(in, solvent(i));
+            int monomerId = solvent(i).monomerId();
+            if (monomerId < 0 || monomerId >= nMonomer_) {
+               Log::file() << "Solvent " << i << ": monomerId = "
+                           << monomerId << ", nMonomer = " << nMonomer_
+                           << "\n";
+               UTIL_THROW("Solvent monomerId out of range");
+            }
          }
 
       }
@@ -111,6 +128,32 @@ namespace Pscf
       // Optionally read monomer reference value
       vMonomer_ = 1.0; // Default value
       readOptional(in, "vMonomer", vMonomer_);
+      if (!(vMonomer_ > 0.0)) {
+         Log::file() << "vMonomer = " << vMonomer_ << "\n";
+         UTIL_THROW("vMonomer must be positive");
+      }
+
+      // If every species is closed, the volume fractions must add up
+      // to 1, within rounding errors. (The AM iterators of pscf_rpc and
+      // pscf_rpg would converge to a total concentration equal to the
+      // sum of the volume fractions.)
+      if (Composition<WT>::isCanonical()) {
+         WT sum = 0.0;
+         for (int i = 0; i < nPolymer_; ++i) {
+            sum += polymer(i).phi();
+         }
+         for (int i = 0; i < nSolvent_; ++i) {
+            sum += solvent(i).phi();
+         }
+         if (std::abs(sum - 1.0) > 1.0E-10) {
+            std::ostringstream message;
+            message << std::setprecision(16)
+                    << "Volume fractions of the closed species add up "
+                    << "to " << sum << ", but must add up to 1 within "
+                    << "1e-10";
+            UTIL_THROW(message.str().c_str());
+         }
+      }
 
    }
 
