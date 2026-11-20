@@ -63,13 +63,13 @@ namespace R1
       std::string label;
       in >> label;
       UTIL_CHECK(label == "nx");
-      int nx;
+      int nx = 0;
       in >> nx;
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(nx == domain().nx());
       in >> label;
       UTIL_CHECK (label == "nm");
-      int nm;
+      int nm = 0;
       in >> nm;
       UTIL_CHECK(nm > 0);
 
@@ -87,6 +87,11 @@ namespace R1
          for (j = 0; j < nm; ++j) {
             in >> fields[j][i];
          }
+      }
+
+      // A missing or invalid value leaves the stream in a failed state
+      if (in.fail()) {
+         UTIL_THROW("Missing or invalid value in field file");
       }
    }
    
