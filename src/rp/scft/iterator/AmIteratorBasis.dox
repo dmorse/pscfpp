@@ -18,13 +18,12 @@ The variant of Anderson mixing implemented by the AmIteratorBasis class
 template is very similar to that described in a paper by Arora et al.
 [Arora, Morse, Bates, and Dorfman, J. Chem.  Phys. vol. 146, 244902 (2017)].
 This paper which was written as a description of an algorithm used in the 
-older Fortran version of PSCF, but also describes the version of this
-algorithm used in the current version. 
+older Fortran version of PSCF, but also describes the algorithm used here.
 
-The version of this algorithm used by AmIteratorBasis adjusts the fields 
-by adjusting the compoments of each field in a basis of symmetry adapted 
-basis functions. Expansion in a symmetry-adapted bases automatically 
-preserves the space-group symmetry of the fields throughout the iteration.
+The AmIteratorBasis algorithm adjusts the w fields by adjusting the 
+compoments of each field in a basis of symmetry-adapted basis functions. 
+Use of an expansion in a symmetry-adapted bases automatically preserves 
+the space-group symmetry of the fields throughout the iteration.
 
 The algorithm can be used to either solve the SCFT equations for a rigid 
 unit cell or to solve the SCFT equations and also optimize some or all 
@@ -107,19 +106,23 @@ parameters. The meaning of the various parameters are described below:
   </tr>
   <tr>
     <td> flexibleParams* </td>
-    <td> Use flexibleParams to declare only *some* lattice parameters
-         as flexible. **This optional entry is allowed only if the 
-         isFlexible parameter is true.** This array must contain one entry 
-         for each lattice parameter, with a value 1 (true) if the parameter 
-         is flexible or 0 (false) if the parameter value is fixed.
-         If isFlexible is true but flexibleParams is absent, then all
-         lattice parameters will be flexible. </td>
+    <td> Use flexibleParams to declare only *some* lattice parameters as 
+         flexible. **This optional entry is allowed only if the isFlexible
+         parameter is true.** This array must contain one entry for each 
+         lattice parameter, with a value 1 (true) if the parameter is 
+         flexible or 0 (false) if the parameter value is fixed, listed in 
+         the conventional order for unit cell parameters of the specified
+         lattice type.  If isFlexible is true but flexibleParams is absent,
+         then all lattice parameters will be flexible. If flexibleParams 
+         is present in the parameter file, at least one element of this
+         array must be set to 1 (true).
+         </td>
   </tr>
   <tr>
     <td> scaleStress* </td>
     <td> Constant factor by which stress components are multiplied in
-         the definition of the residual attempted if isFlexible is
-         true (10.0 by default). </td>
+         the definition of the residual attempted if isFlexible is true.
+         Must be nonzero and not tiny (10.0 by default). </td>
   </tr>
   <tr>
     <td> lambda* </td>
