@@ -23,3 +23,20 @@ f.reorder([0, 2, 1, 3, 4, 5, 6])
 print(f)
 
 
+# Values with three-digit exponents must remain separate columns
+import os, tempfile
+f = Field('in/w.rf')
+f.data[0] = [-1.5e-100, -2.5e-100]
+with tempfile.TemporaryDirectory() as d:
+   f.write(os.path.join(d, 'w.rf'))
+   g = Field(os.path.join(d, 'w.rf'))
+assert g.type == 'rgrid'
+assert g.data[0] == [-1.5e-100, -2.5e-100]
+
+f.type = 'kgrid'
+f.data = [[i, -1.5e-100, -2.5e-100, -3.5e-100, -4.5e-100] for i in range(3)]
+with tempfile.TemporaryDirectory() as d:
+   f.write(os.path.join(d, 'w.kf'))
+   g = Field(os.path.join(d, 'w.kf'))
+assert g.type == 'kgrid'
+assert g.data == f.data
