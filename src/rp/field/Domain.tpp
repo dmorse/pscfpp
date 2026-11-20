@@ -64,6 +64,7 @@ namespace Rp {
    template <int D, class T>
    Domain<D,T>::~Domain()
    {
+      delete groupPtr_;
       delete basisPtr_;
       delete fftPtr_;
       delete waveListPtr_;
