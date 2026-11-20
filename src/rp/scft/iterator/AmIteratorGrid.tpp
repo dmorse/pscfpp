@@ -106,6 +106,7 @@ namespace Rp {
       // Optionally read scaleStress value
       scaleStress_ = 10.0;  // default
       ParamComposite::readOptional(in, "scaleStress", scaleStress_);
+      UTIL_CHECK(std::abs(scaleStress_) > 1.0E-6);
 
       // Read optional mixing parameters (lambda, useLambdaRamp, r)
       AmIterTmplT::readMixingParameters(in);
