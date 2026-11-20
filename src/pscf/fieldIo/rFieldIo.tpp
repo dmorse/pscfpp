@@ -817,6 +817,8 @@ namespace Pscf {
       typename Basis<D>::Wave const* wavePtr; // pointer to current wave
       std::complex<double> waveCoeff;         // coefficient from wave
       std::complex<double> rootCoeff;         // coefficient from root
+      std::complex<double> openRootCoeff;     // root of open star (+1)
+      bool hasOpenRoot = false;               // is openRootCoeff set?
       int is;                                 // star index
       int iw;                                 // wave index
       int beginId, endId;                     // star begin, end ids
@@ -891,6 +893,30 @@ namespace Pscf {
                      result = false;
                   }
                }
+            }
+
+            // For a pair of open stars (invertFlag +1 at is, -1 at
+            // is+1), the coefficients of a real symmetric field obey
+            // rootCoeff(is+1) = conj(rootCoeff(is)). Each star is only
+            // compared with its own root above, so check this relation
+            // when both stars have an explicit wave. (If one star has
+            // none, its waves are the implicit inverses of the explicit
+            // waves of the other star, which were checked above.)
+            if (starPtr->invertFlag == 1) {
+               openRootCoeff = rootCoeff;
+               hasOpenRoot = hasRoot;
+            } else
+            if (starPtr->invertFlag == -1) {
+               if (hasRoot && hasOpenRoot) {
+                  error = std::abs(rootCoeff - std::conj(openRootCoeff));
+                  if (error > uncancelledError) {
+                     uncancelledError = error;
+                     if (uncancelledError > epsilon) {
+                        result = false;
+                     }
+                  }
+               }
+               hasOpenRoot = false;
             }
 
          }
