@@ -33,6 +33,22 @@ public:
       //std::cout << G << std::endl;
    }
 
+   /*
+   * Reading the identity group "I" into a group must replace the
+   * elements that the group held before.
+   */
+   void test2DreadIdentity()
+   {
+      printMethod(TEST_FUNC);
+
+      SpaceGroup<2> g;
+      readGroup("p_6_m_m", g);
+      TEST_ASSERT(12 == g.size());
+      readGroup("I", g);
+      TEST_ASSERT(1 == g.size());
+      TEST_ASSERT(g.isValid());
+   }
+
    void test2Dmake1() 
    {
       printMethod(TEST_FUNC);
@@ -316,6 +332,7 @@ public:
 
 TEST_BEGIN(SpaceGroupTest)
 TEST_ADD(SpaceGroupTest, test2DmakeIdentity)
+TEST_ADD(SpaceGroupTest, test2DreadIdentity)
 TEST_ADD(SpaceGroupTest, test2Dmake1)
 TEST_ADD(SpaceGroupTest, test2Dmake2)
 TEST_ADD(SpaceGroupTest, test2Dmake3)
