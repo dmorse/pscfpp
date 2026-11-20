@@ -19,6 +19,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
+#include <vector>
 
 using namespace Util;
 using namespace Pscf;
@@ -45,6 +47,67 @@ public:
       TEST_ASSERT(eq(sampleBasis.nWave(),0));
       TEST_ASSERT(eq(sampleBasis.nStar(),0));
       TEST_ASSERT(eq(sampleBasis.nBasis(),0));
+   }
+
+   /*
+   * Write the wave and star lists of a basis on a 1D mesh of 20001
+   * points, with wave indices from -10000 to 10000, and check that
+   * every integer column is a separate word with the right value.
+   */
+   void testOutputWavesStars_1D()
+   {
+      printMethod(TEST_FUNC);
+
+      UnitCell<1> unitCell;
+      std::ifstream in;
+      openInputFile("in/Lamellar", in);
+      in >> unitCell;
+      in.close();
+      IntVec<1> d;
+      d[0] = 20001;
+      Mesh<1> mesh(d);
+      Basis<1> basis;
+      basis.makeBasis(mesh, unitCell, "I");
+      TEST_ASSERT(eq(basis.nStar(), 20001));
+
+      // Split a line into words separated by white space
+      auto split = [](std::string const & line) -> std::vector<std::string> {
+         std::istringstream words(line);
+         std::vector<std::string> list;
+         std::string word;
+         while (words >> word) {
+            list.push_back(word);
+         }
+         return list;
+      };
+
+      // Waves: id, id, index, star id, real and imaginary coefficient
+      std::stringstream waves;
+      basis.outputWaves(waves);
+      std::string line;
+      std::getline(waves, line);
+      std::getline(waves, line);
+      for (int i = 0; i < basis.nWave(); ++i) {
+         std::getline(waves, line);
+         std::vector<std::string> words = split(line);
+         TEST_ASSERT(eq((int)words.size(), 6));
+         TEST_ASSERT(eq(std::stoi(words[1]), i));
+         TEST_ASSERT(eq(std::stoi(words[2]), basis.wave(i).indicesMin[0]));
+         TEST_ASSERT(eq(std::stoi(words[3]), basis.wave(i).starId));
+      }
+
+      // Stars: basis id, star id, size, begin, end, invertFlag, index
+      std::stringstream stars;
+      basis.outputStars(stars);
+      std::getline(stars, line);
+      std::getline(stars, line);
+      for (int i = 0; i < basis.nStar(); ++i) {
+         std::getline(stars, line);
+         std::vector<std::string> words = split(line);
+         TEST_ASSERT(eq((int)words.size(), 7));
+         TEST_ASSERT(eq(std::stoi(words[1]), i));
+         TEST_ASSERT(eq(std::stoi(words[6]), basis.star(i).waveMin[0]));
+      }
    }
 
    void testMake1DBasis_I() {
@@ -576,6 +639,7 @@ public:
 
 TEST_BEGIN(BasisTest)
 TEST_ADD(BasisTest, testConstructor)
+TEST_ADD(BasisTest, testOutputWavesStars_1D)
 TEST_ADD(BasisTest, testMake1DBasis_I)
 TEST_ADD(BasisTest, testMake1DBasis_Ib)
 TEST_ADD(BasisTest, testMake2DBasis_square_33)
