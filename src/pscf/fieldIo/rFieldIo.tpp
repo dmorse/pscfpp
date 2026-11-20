@@ -533,11 +533,13 @@ namespace Pscf {
             for (int j = 0; j < nMonomer; ++j) {
                out << Dbl(fields[j][ib], 20, 10);
             }
+            // Each integer column is preceded by a space, so that
+            // columns stay separated when a value fills its width
             out << "   ";
             for (int j = 0; j < D; ++j) {
-               out << Int(basis.star(i).waveMin[j], 5);
+               out << ' ' << Int(basis.star(i).waveMin[j], 4);
             }
-            out << Int(basis.star(i).size, 5) << std::endl;
+            out << ' ' << Int(basis.star(i).size, 4) << std::endl;
             ++ib;
          }
       }

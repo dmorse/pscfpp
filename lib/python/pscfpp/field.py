@@ -231,9 +231,11 @@ class Field:
                   val = f'{self.data[i][j]:.10e}'
                   row += f'{val:>20}'
                else:
+                  # Each integer column is preceded by a space, so that
+                  # columns stay separated when a value fills its width
                   if j == self.header['N_monomer']:
                      row += '   '
-                  row += f'{self.data[i][j]:>5}'
+                  row += ' ' + f'{self.data[i][j]:>4}'
 
             if self.type == 'rgrid':
                val = f'{self.data[i][j]:.15e}'
