@@ -232,7 +232,7 @@ namespace R1 {
       * \param version archive format version index
       */
       template <class Archive>
-      void serialize(Archive ar, const unsigned int version);
+      void serialize(Archive& ar, const unsigned int version);
 
    private:
 
@@ -305,10 +305,14 @@ namespace R1 {
    };
 
    template <class Archive>
-   void SweepParameter::serialize(Archive ar, const unsigned int version)
+   void SweepParameter::serialize(Archive& ar, const unsigned int version)
    {
       serializeEnum(ar, type_, version);
       ar & nId_;
+      if (Archive::is_loading()) {
+         if (id_.isAllocated()) id_.deallocate();
+         if (nId_ > 0) id_.allocate(nId_);
+      }
       for (int i = 0; i < nId_; ++i) {
          ar & id_[i];
       }

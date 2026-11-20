@@ -14,6 +14,8 @@
 #include <r1/sweep/SweepParameter.h>
 
 #include <util/misc/Exception.h>
+#include <util/archives/MemoryOArchive.h>
+#include <util/archives/MemoryIArchive.h>
 
 #include <fstream>
 #include <sstream>
@@ -818,6 +820,59 @@ public:
       }
    }
 
+   /*
+   * SweepParameter::serialize took the archive by value, so that a
+   * SweepParameter could not be written to a MemoryOArchive (whose copy
+   * constructor is private).
+   */
+   void testSweepParameterSerialize()
+   {
+      printMethod(TEST_FUNC);
+
+      SweepParameter p;
+      MemoryOArchive oArchive;
+      oArchive.allocate(64);
+      oArchive << p;
+      TEST_ASSERT(oArchive.cursor() == oArchive.begin()
+                  + sizeof(unsigned int) + sizeof(int) + 2*sizeof(double));
+   }
+
+   /*
+   * Loading a SweepParameter into a new object wrote the identifiers to
+   * an array that was not allocated.
+   */
+   void testSweepParameterLoad()
+   {
+      printMethod(TEST_FUNC);
+
+      // Record of a block length parameter (type 0) with ids 0 and 1
+      unsigned int type = 0;
+      int nId = 2;
+      int id0 = 0;
+      int id1 = 1;
+      double initial = 0.5;
+      double change = 0.25;
+      MemoryOArchive oArchive;
+      oArchive.allocate(64);
+      oArchive << type;
+      oArchive << nId;
+      oArchive << id0;
+      oArchive << id1;
+      oArchive << initial;
+      oArchive << change;
+
+      SweepParameter p;
+      MemoryIArchive iArchive;
+      iArchive = oArchive;
+      iArchive >> p;
+      iArchive.release();
+      TEST_ASSERT(p.type() == "block");
+      TEST_ASSERT(p.id(0) == 0);
+      TEST_ASSERT(p.id(1) == 1);
+      TEST_ASSERT(p.initial() == 0.5);
+      TEST_ASSERT(p.change() == 0.25);
+   }
+
    void testLinearSweepPhiMixed()
    {
       printMethod(TEST_FUNC);
@@ -894,6 +949,8 @@ TEST_ADD(SystemTest, testReadFieldsIncomplete)
 TEST_ADD(SystemTest, testComputeThermo)
 TEST_ADD(SystemTest, testReadCommandsStatus)
 TEST_ADD(SystemTest, testSweepParameterIdRange)
+TEST_ADD(SystemTest, testSweepParameterSerialize)
+TEST_ADD(SystemTest, testSweepParameterLoad)
 TEST_ADD(SystemTest, testLinearSweepPhiMixed)
 TEST_ADD(SystemTest, testLinearSweepPhiSum)
 TEST_END(SystemTest)
