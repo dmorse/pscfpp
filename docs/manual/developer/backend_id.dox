@@ -7,13 +7,12 @@
 
 \section developer_backend_id_class_sec Backend Identifier Classes
 
-In PSCF, classes that are designed to allow the use of more than one 
-computational backend are defined as specializations of class templates
-that accept a special type of "backend identifier class" as a template 
-argument. A backend identifier class is a class that is designed 
-specifically to be used in this role, as an argument of a typename 
-template parameter whose primary purpose is to identify a choice of 
-computational backend. 
+A "backend identifier class" is a simple type of class that is designed 
+to be used a template argument whose primary purpose is to identify a 
+choice of computational backend.  In PSCF, classes that are defined to
+use a specific computational backend are defined as specializations of 
+class templates that accept a special type of "backend identifier class" 
+as a template argument. 
 
 PSCF currently defines such backend identifier classes, named Pscf::CPT 
 and Pscf::CUT, for which:
@@ -22,25 +21,25 @@ and Pscf::CUT, for which:
 
   - Pscf::CUT is the identifier class for the CUDA GPU backend
 
-Template specializations for which Pscf::CPT is a template argument thus 
-use the C++ backend, and are used to construct the pscf_rpc executable. 
-Template specializations for which Pscf:CUT is a template argument 
-instead use the CUDA GPU backend, and are used to construct the pscf_rpg 
-executable.  
+Specializations of class and function templates for which Pscf::CPT 
+is a template argument thus use the C++ backend, and corresponding
+template specializations for which Pscf:CUT is a template argument 
+instead use the CUDA GPU backend.
 
 \section developer_backend_id_rp_sec Template Patterns
 
-The Pscf and Pscf::Rp namespaces contain many class templates that take 
-a backend identifier class as a template parameter.  Most of these 
+The Pscf and Pscf::Rp namespaces contain many class templates that 
+take a backend identifier class as a template parameter. Many of these 
 templates also take an additional int template parameter, denoted by D, 
 that represents the integer dimension of space. For such classes, the 
 dimension of space D generally appears as the first template parameter, 
-and a backend identifier class parameter, denoted by T, generally appears 
-as a second parameter.  
+and a backend identifier class parameter, denoted by T, generally 
+appears as a second parameter.  
 
+<b> Example </b>:
 The Pscf::Rp::System class template represents a complete physical system, 
-and is used to construct the highest level object in a SCFT or PS-SCFT 
-calculation. This template is declared as:
+and is used to construct the highest level object in the ownership
+hierarchy used by pscf_rpc or pscf_rpg. This template is declared as:
 \code
 namespace Pscf {
    namespace Rp {
@@ -49,9 +48,8 @@ namespace Pscf {
 }
 \endcode
 A valid specialization of this template must take an integer argument 
-1, 2, or 3 as the argument of parameter D, and must take one of the two 
-possible template identifier classes as the argument of parameter T.  
-For example, the class
+D=1, 2, or 3, and must take one of the two possible template identifier 
+classes as the argument of parameter T.  The template instantiation
 \code
 namespace Pscf {
    Pscf::Rp::System <3, CUT>
@@ -61,10 +59,13 @@ is thus a specialization of the Pscf::Rp::System class template that is
 designed to use a CUDA backend to treat systems with three-dimensional 
 (D=3) periodic boundary conditions.
 
+Almost all of the class templates defined in the Pscf::Rp namespace take
+these same template parameters, with the same meaning.
+
 \section developer_backend_id_enum_sec BackendId Enum Class
 
 The Pscf namespace also defines an enum class named Pscf::BackendId for 
-which different enum values represent different backends.  This enum 
+which different enum values also identify different backends.  This enum 
 class is defined in the file src/pscf/backend/BackendId.h, as follows:
 \code
 namespace Pscf {
@@ -80,8 +81,8 @@ Pscf::BackendId::Cuda represents the CUDA GPU-enabled backend.
 
 The backend identifier classes Pscf::CPT and Pscf::CUT each define a const 
 static member variable named "id" that is an instance of the BackendId 
-enum class. This variable is assigned the appropriate constant value in 
-each backend identifier class.  The definition of the class Pscf::CUT 
+enum class. This static variable is assigned the appropriate constant value 
+in each backend identifier class.  The definition of the class Pscf::CUT 
 thus reads, in part
 \code
 namespace Pscf {
@@ -96,17 +97,18 @@ namespace Pscf {
 
 }
 \endcode
-The corresponding definition of the class Pscf::CPT instead contains 
-a member declaration "static const BackendId id = BackendId::Cpp".
+The corresponding definition of the class Pscf::CPT instead contains a 
+member declaration "static const BackendId id = BackendId::Cpp".
 
-A backend identifier class and a value of the BackendId enum are both
-designed to identify a choice of backend, but are used in different 
+Each backend identifier class and each value of the BackendId enum are 
+both designed to identify a choice of backend, but are used in different 
 contexts. A backend identifier class is used at compile time, as a 
-label for template specializations that use a particular backend. The 
-value of an enum variable of type BackendId can instead be tested at 
-run time. Specifically, within a function template in which a template
-parameter name T represents a backend identifier class, the value of 
-T::id can be tested to identify the backend at run time.
+template argument that identifies a template specialization that uses
+uses a particular backend. A value of type BackendId can instead be 
+tested at run time. Specifically, within a class or function template 
+in which the template parameter name T represents a backend identifier 
+class, the value of T::id can be tested to identify the backend at run 
+time.
 
 <BR>
 \ref developer_backend_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;

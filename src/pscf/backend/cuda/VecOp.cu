@@ -1136,12 +1136,12 @@ namespace {
       {
          int nThreads = blockDim.x * gridDim.x;
          int startID = blockIdx.x * blockDim.x + threadIdx.x;
-         cudaReal bx, by;
+         cudaReal expbx, by;
          for (int i = startID; i < n; i += nThreads) {
-            bx = b[i].x;
+            expbx = exp(b[i].x);
             by = b[i].y;
-            a[i].x = exp(bx) * cos(by);
-            a[i].y = exp(bx) * sin(by);
+            a[i].x = expbx * cos(by);
+            a[i].y = expbx * sin(by);
          }
       }
 

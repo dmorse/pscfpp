@@ -83,21 +83,20 @@ namespace R1
       double dWmNorm = 0.0;
       double dWpNorm = 0.0;
 
-      // The SCF equations require w1 - w0 = (chi01 - chi00)*c0
-      // + (chi11 - chi01)*c1. The exchange residual dWm is this
-      // equation divided by 2*chi, with chi = chi01 - (chi00 + chi11)/2,
-      // so that r0 = r1 = 1 if chi00 = chi11 = 0.
+      // Compute chi
       Interaction const & interaction = system().interaction();
       const double chi01 = interaction.chi(0,1);
-      const double chi = chi01
-                       - 0.5*(interaction.chi(0,0) + interaction.chi(1,1));
-      if (chi == 0.0) {
-         UTIL_THROW("BinaryRelaxIterator requires a nonzero effective chi");
+      const double chi00 = interaction.chi(0,0);
+      const double chi11 = interaction.chi(1,1);
+      const double chi = chi01 - 0.5*(chi00 + chi11);
+      if (std::abs(chi) < 1.0E-10) {
+         UTIL_THROW("Error: Tiny chi in BinaryRelaxIterator");
       }
-      const double r0 = (chi01 - interaction.chi(0,0))/chi;
-      const double r1 = (chi01 - interaction.chi(1,1))/chi;
-      int nx = domain().nx();        // number of grid points
-      //For AB diblok
+      const double r0 = (chi01 - chi00)/chi;
+      const double r1 = (chi01 - chi11)/chi;
+      int nx = domain().nx(); 
+
+      // Compute dW for all grid points
       for (int i = 0; i < nx; ++i) {
          c0 = cFields[0][i];
          c1 = cFields[1][i];

@@ -6,22 +6,22 @@
 
 Each executable program created by the PSCF package is designed 
 using a hierarchical system of object ownership. All but one of the 
-objects used in a PSCF program is a "child" that is owned by an instance 
-of some higher-level "parent" class.  In this system, each "child" object 
-is either a member variable of its parent, or a dynamically allocated 
-object that is accessed through a pointer that is a member variable of 
-the parent object. Each parent is responsible for creating and 
-destroying its children.
+objects used in a PSCF program is a "child" that is owned by some
+"parent" object.  In this system, each "child" object is either a 
+member variable of its parent, or a dynamically allocated object 
+that is accessed through a pointer that is a member variable of the 
+parent object. Each parent is responsible for creating and destroying 
+its children.
 
 The Pscf::Rp namespace contains a large number of definitions for class
 templates that take the dimension of space, D, and a backend identifer 
-class as template parameters. Throughout this namespace, the same pair 
+class T as template parameters. Throughout this namespace, the same pair 
 of arguments for these two template parameters are used throughout 
-objects in the hierarchy of objects used by a particular executable.
+objects in the ownership hierarchy used by a particular executable.
 An instance of a class template specialization with a specific pair 
 of arguments for D and T may own children that are instances of other 
-template specializations with the same values for these two template 
-arguments, and may be a child of a parent that is an instance of yet 
+template specializations with the same arguments for these two template 
+parameters, and may be a child of a parent that is an instance of yet 
 another class template specialization with the same arguments of these 
 parameters. Construction of the highest level object in this hierarchy 
 thus automatically creates a large set of descendant objects that are
@@ -39,23 +39,24 @@ which is declared as
    template <int D, class T> class System;
 \endcode
 The top-level object used by the pscf_rpc executable is an instance of 
-a specialization with T=Pscf::CPT, while the top-level object used by 
-pscf_rpg is an instance of a specialization with T=Pscf::CUT.  
+a specialization with D=1, 2, or 3 and T=Pscf::CPT, while the top-level 
+object used by pscf_rpg is an instance of a valid specialization with 
+T=Pscf::CUT.  
 
-A value for the integer D is passed to the main pscf_rp program as a 
-command line parameter, as the parameter of command line option -d.  
-Thus, for example, if the pscf_rpg executable is invoked with a 
-command line option "-d 3", as
+A value for the integer D is passed must be passed to pscf_rpc or
+pscf_rpg executable as a command line argument, as the parameter of 
+command line option -d.  For example, if the pscf_rpg executable is 
+invoked with command line option "-d 3", as
 \code
    pscf_rpg -d 3 -p param -c command
 \endcode
-then this program constructs an instance of the class 
+then the main program constructs an instance of the class 
 \code
    Pscf::Rp::System <3, CUT>
 \endcode
-Member functions of this top-level System object are then invoked to read 
-the parameter and command files, which are given in the above example as 
-files named "param" and "command". 
+Member functions of this top-level System object are then invoked to 
+read the parameter and command files, whose names are also given as
+command line arguments.
 
 An instance of System \<D,T\> with a specific choice for D and T has
 children that are instances of the following class template 
@@ -76,17 +77,17 @@ of block polymer, and an array of instances of Pscf::Rp::Solvent \<D,T\>),
 each of which is associated with a solvent species. Each instance of 
 Pscf::Rp::Polymer \<D,T\> owns an array of instances of 
 Pscf::Rp::Block \<D,T\>, each of which is associated with a particular 
-block of that polymer species. Each block object owns two instances of 
-Pscf::Rp::Propagator \<D,T\>, each of which owns a data structure that
-stores the solution obtained by solving the MDE in either of two possible 
-directions within the relevant block.
+block of that polymer species. Each such "Block" object owns two instances 
+of Pscf::Rp::Propagator \<D,T\>, each of which owns a data structure that
+stores the solution obtained by solving the MDE in one of two possible 
+directions along the relevant block.
 
 <b> Domain </b>:
 An instance of Pscf::Rp::Domain \<D,T\> owns an instance of 
 Pscf::UnitCell \<D,T\> that contains information about the periodic 
 simulation unit cell, and an instance of Pscf::Mesh \<D\> that defines the
 periodic mesh used for all numerical calculations. This "Domain" object 
-also owns owns several other children that contain information about 
+also owns owns several other children that can hold information about 
 space group symmetries and symmetry adapted basis functions, which are 
 used in SCFT calculations that search for solutions with a specified 
 space group symmetry. 
