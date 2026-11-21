@@ -134,17 +134,18 @@ namespace Rp {
          if (D > 1) id += meshDims.x * iy;
          if (D > 2) id += meshDims.x * meshDims.y * iz;
 
-         // Determine if this grid point is in the "top" half
+         // Determine if this grid point is in the "top" half, in which
+         // the reduced coordinate along normalVecId is d >= 1/2
          bool topHalf;
          if (D == 3) {
-            if (normalVecId == 2) topHalf = (ix > meshDims.x / 2);
-            if (normalVecId == 1) topHalf = (iy > meshDims.y / 2);
-            if (normalVecId == 0) topHalf = (iz > meshDims.z / 2);
+            if (normalVecId == 2) topHalf = (2*ix >= meshDims.x);
+            if (normalVecId == 1) topHalf = (2*iy >= meshDims.y);
+            if (normalVecId == 0) topHalf = (2*iz >= meshDims.z);
          } else if (D == 2) {
-            if (normalVecId == 1) topHalf = (ix > meshDims.x / 2);
-            if (normalVecId == 0) topHalf = (iy > meshDims.y / 2);
+            if (normalVecId == 1) topHalf = (2*ix >= meshDims.x);
+            if (normalVecId == 0) topHalf = (2*iy >= meshDims.y);
          } else { // D == 1
-            topHalf = (ix > meshDims.x / 2);
+            topHalf = (2*ix >= meshDims.x);
          }
 
          if (ix < meshDims.x && iy < meshDims.y && iz < meshDims.z) {
