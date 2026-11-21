@@ -165,7 +165,9 @@ namespace Pscf {
       * loop over iterations. The default implementation calls allocateAM()
       * if isAllocatedAM() is false, and clears state and residual 
       * histories. If isContinuation is false, it also clears state and
-      * residual basis vector lists. 
+      * residual basis vector lists. If the number of elements of a
+      * vector has changed, it reallocates all vectors and clears all
+      * histories and basis vector lists.
       *
       * \param isContinuation  true iff continuation within a sweep
       */
