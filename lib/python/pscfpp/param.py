@@ -791,9 +791,6 @@ class Matrix:
                for j in range(i):
                   if val[i][j] != val[j][i]:
                      raise Exception('This is not a symmetric Matrix.')
-            for i in range(len(val)):
-               if val[i][i] != 0:
-                  raise Exception('The diagonal of the Matrix should all be zero.')
             self.val = []
             for i in range(len(val)):
                self.val.append([])
