@@ -77,7 +77,7 @@ namespace Rp {
       randomPtr_ = new Random();
       vecRandomPtr_ = new VecRandom<T>();
       compressorFactoryPtr_ = new CompressorFactory<D,T>(system);
-      perturbationFactoryPtr_ 
+      perturbationFactoryPtr_
              = new PerturbationFactory<D,T>(*this);
       rampFactoryPtr_ = new RampFactory<D,T>(*this);
 
@@ -293,7 +293,7 @@ namespace Rp {
       // Compute field Hamiltonian contribution
       fieldHamiltonian_ = 0.0;
 
-      // Quadratic field contribution 
+      // Quadratic field contribution
       double prefactor, wSquare;
       for (int j = 0; j < nMonomer - 1; ++j) {
          UTIL_CHECK(tmpField_.capacity() == meshSize);
@@ -310,7 +310,7 @@ namespace Rp {
 
       // fieldHamiltonian_ now contains a final value per monomer
 
-      // Compute nMonomerSystem = number of monomers in the system 
+      // Compute nMonomerSystem = number of monomers in the system
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       const double nMonomerSystem = vSystem / vMonomer;
@@ -321,9 +321,9 @@ namespace Rp {
 
       hamiltonian_ = idealHamiltonian_ + fieldHamiltonian_;
 
-      // Add perturbationHamiltonian_, if any 
+      // Add perturbationHamiltonian_, if any
       if (hasPerturbation()) {
-         perturbationHamiltonian_ 
+         perturbationHamiltonian_
             = perturbation().hamiltonian(hamiltonian_);
          hamiltonian_ += perturbationHamiltonian_;
       } else {
@@ -717,7 +717,7 @@ namespace Rp {
    template <int D, class T>
    void Simulator<D,T>::outputTimers(std::ostream& out) const
    {
-      UTIL_CHECK(compressorPtr_);
+      if (!compressorPtr_) return;
       outputMdeCounter(out);
       compressorPtr_->outputTimers(out);
    }
@@ -740,8 +740,9 @@ namespace Rp {
    template <int D, class T>
    void Simulator<D,T>::clearTimers()
    {
-      UTIL_CHECK(hasCompressor());
-      compressor().clearTimers();
+      if (hasCompressor()) {
+         compressor().clearTimers();
+      }
    }
 
    // Protected Functions
