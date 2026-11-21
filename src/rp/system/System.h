@@ -696,6 +696,15 @@ namespace Rp {
       void allocateFieldsBasis();
 
       /**
+      * Generate the fields of the Environment if they need an update.
+      *
+      * Used by the WRITE_MASK_* and WRITE_H_* commands, so that after a
+      * change of the unit cell they write the fields of the current
+      * cell. Does nothing if there is no Environment or unit cell.
+      */
+      void updateEnvironment();
+
+      /**
       * Read a string and echo to log file.
       *
       * Used to read filenames in readCommands.

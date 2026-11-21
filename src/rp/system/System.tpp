@@ -866,10 +866,12 @@ namespace Rp {
          } else
          if (command == "WRITE_H_BASIS") {
             readEcho(in, filename);
+            updateEnvironment();
             h().writeBasis(filename);
          } else
          if (command == "WRITE_H_RGRID") {
             readEcho(in, filename);
+            updateEnvironment();
             h().writeRGrid(filename);
          } else
          if (command == "READ_MASK_BASIS") {
@@ -882,10 +884,12 @@ namespace Rp {
          } else
          if (command == "WRITE_MASK_BASIS") {
             readEcho(in, filename);
+            updateEnvironment();
             mask().writeBasis(filename);
          } else
          if (command == "WRITE_MASK_RGRID") {
             readEcho(in, filename);
+            updateEnvironment();
             mask().writeRGrid(filename);
          } else
          if (command == "WRITE_TIMERS") {
@@ -1294,6 +1298,19 @@ namespace Rp {
       }
 
       isAllocatedBasis_ = true;
+   }
+
+   /*
+   * Generate the fields of the Environment if they need an update.
+   */
+   template <int D, class T>
+   void System<D,T>::updateEnvironment()
+   {
+      if (!hasEnvironment()) return;
+      if (!domain_().unitCell().isInitialized()) return;
+      if (environment().needsUpdate()) {
+         environment().generate();
+      }
    }
 
    /*
