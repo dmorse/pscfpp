@@ -76,6 +76,7 @@ namespace R1
       hasMixture_(0),
       hasDomain_(0),
       hasFields_(0),
+      hasCFields_(false),
       hasSweep_(0)
    {  
       setClassName("System"); 
@@ -300,12 +301,26 @@ namespace R1
          }
          Log::file() << command;
 
+         // Output of c fields, propagators or thermodynamic properties
+         // requires a solution for the current w fields
+         if (!hasCFields_ && (command == "WRITE_C"
+             || command == "WRITE_BLOCK_C" || command == "WRITE_THERMO"
+             || command == "COMPARE_HOMOGENEOUS"
+             || command == "WRITE_Q_SLICE" || command == "WRITE_Q_TAIL"
+             || command == "WRITE_Q_VERTEX" || command == "WRITE_Q"
+             || command == "WRITE_Q_ALL")) {
+            Log::file() << std::endl;
+            UTIL_THROW("No solution for the current w fields: "
+                       "use COMPUTE or ITERATE before this command");
+         }
+
          if (command == "FINISH") {
             Log::file() << std::endl;
             readNext = false;
          } else
          if (command == "READ_W") {
             readEcho(inBuffer, filename);
+            hasCFields_ = false;
             fieldIo_.readFields(wFields(), filename);  
          } else
          if (command == "COMPUTE") {
@@ -496,6 +511,7 @@ namespace R1
 
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(wFields(), cFields_);
+      hasCFields_ = true;
 
       // Free energy and pressure of these fields, so that WRITE_THERMO
       // and COMPARE_HOMOGENEOUS after COMPUTE report the current state
@@ -510,18 +526,17 @@ namespace R1
    int System::iterate(bool isContinuation)
    {
       // UTIL_CHECK(hasWFields_);
-      // hasCFields_ = false;
+      hasCFields_ = false;
 
       Log::file() << std::endl;
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
-      
-      //hasCFields_ = true;
 
       // If converged, compute related properties
       if (!error) {   
          computeFreeEnergy();
+         hasCFields_ = true;
          writeThermo(Log::file());
       }
       return error;
