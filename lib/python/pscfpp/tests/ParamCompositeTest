@@ -1,6 +1,67 @@
 #!/usr/bin/env python3
 
 from pscfpp.param import *
+import os, tempfile
+
+# Read a parameter file with the given text
+def readText(text):
+   with tempfile.TemporaryDirectory() as d:
+      name = os.path.join(d, 'param')
+      with open(name, 'w') as file:
+         file.write(text)
+      return Composite(name)
+
+# Blank lines in a block, an array and a matrix
+p = readText('''System{
+  Mixture{
+
+    nMonomer  2
+    monomers[
+               2.0
+
+               1.0
+    ]
+  }
+  Interaction{
+    chi(
+
+         1   0   25.0
+    )
+  }
+}
+''')
+assert p.Mixture.nMonomer == 2
+assert p.Mixture.monomers == [2.0, 1.0]
+assert p.Interaction.chi == [[0, 25.0], [25.0, 0]]
+
+# Arrays and a matrix without brackets
+p = readText('''System{
+  Mixture{
+    nMonomer  2
+    monomers  2.0
+              1.0
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks  0   0.25
+              1   0.75
+      phi     1.0
+    }
+    ds   0.01
+  }
+  Interaction{
+    chi  0   0   0.0
+         1   0   25.0
+         1   1   0.0
+  }
+}
+''')
+for q in [p, readText(str(p))]:
+   assert q.Mixture.monomers == [2.0, 1.0]
+   assert q.Mixture.Polymer.blocks == [[0, 0.25], [1, 0.75]]
+   assert q.Mixture.Polymer.phi == 1.0
+   assert q.Interaction.chi == [[0.0, 25.0], [25.0, 0.0]]
 
 p = Composite('in/param')
 
