@@ -145,11 +145,11 @@ namespace Rp {
       void getInitial();
 
       /**
-      * Check that the indices of this parameter are in range.
+      * Check that any indices of this parameter are in range.
       *
       * Throws an Exception if a polymer, block, solvent, monomer or
-      * lattice parameter index is not in the range of valid indices
-      * of the parent system.
+      * lattice parameter index is not in the range of valid index
+      * values for the parent system.
       */
       void checkIds() const;
 
@@ -231,8 +231,8 @@ namespace Rp {
 
       /// Enumeration of allowed parameter types.
       enum ParamType { Block, Chi, Kuhn, Phi_Polymer, Phi_Solvent,
-                       Mu_Polymer, Mu_Solvent, Solvent, Cell_Param,
-                       Lambda_Pert, Vmonomer, Null};
+                  Mu_Polymer, Mu_Solvent, Solvent, Cell_Param,
+                  Lambda_Pert, V_monomer, Null};
 
       /// Type of parameter associated with an object of this class
       ParamType type_;
