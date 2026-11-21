@@ -71,7 +71,7 @@ class Script:
       # Determine type of parameter in
       if isinstance(filename, str):
          file = open(filename, 'r')
-      elif isinstance(filename, file):
+      elif hasattr(filename, 'readlines'):
          file = filename
       else:
          raise Exception("Invalid parameter in")
@@ -97,7 +97,7 @@ class Script:
             index = self._indices[label]
             if isinstance(index, int):
                self._indices[label] = [index]
-            elif not instance(index, list):
+            elif not isinstance(index, list):
                raise Exception('Values of _indices must be int or list')
             self._indices[label].append(i)
          else:
