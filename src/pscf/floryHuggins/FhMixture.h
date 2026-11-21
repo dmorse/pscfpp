@@ -84,6 +84,9 @@ namespace Pscf {
       /**
       * Set system composition.
       *
+      * The volume fraction of the species with the largest value of
+      * phi is set to 1 minus the sum of the others.
+      *
       * \param phi array of molecular volume fractions.
       */
       void setComposition(DArray<double> const & phi);
@@ -101,6 +104,10 @@ namespace Pscf {
 
       /**
       * Compute composition from chemical potentials.
+      *
+      * A species with mu = -infinity (a closed species with phi = 0)
+      * is absent: its volume fraction is set to zero. The guess of
+      * every other species must be positive.
       *
       * \param interaction  excess free energy model (input)
       * \param mu  target molecular chemical potentials (input)
@@ -241,9 +248,17 @@ namespace Pscf {
       DMatrix<double> jacobian_;
 
       /**
-      * Array of old molecular volume fractions, for use in computePhi.
+      * Array of logarithms of the molecular volume fractions.
+      *
+      * Chemical potentials are computed from these values, which
+      * remain finite where a volume fraction in phi_ underflows to 0.
       */
-      DArray<double> phiOld_;
+      DArray<double> lnPhi_;
+
+      /**
+      * Array of old values of lnPhi_, for use in computePhi.
+      */
+      DArray<double> lnPhiOld_;
 
       /**
       * Free energy per monomer / kT.
