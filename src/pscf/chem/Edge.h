@@ -333,6 +333,8 @@ namespace Pscf
       ar & monomerId_;
       ar & vertexIds_;
       ar & length_;
+      ar & nBead_;
+      ar & polymerType_;
    }
 
 }
