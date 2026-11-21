@@ -40,7 +40,8 @@ namespace Rp {
       dwc_(),
       etaNewPtr_(nullptr),
       etaOldPtr_(nullptr),
-      mobility_(0.0)
+      mobility_(0.0),
+      nStep_(0)
    {  ParamComposite::setClassName("BdMove"); }
 
    /*
@@ -52,6 +53,7 @@ namespace Rp {
       McMoveT::readProbability(in);
       ParamComposite::read(in, "mobility", mobility_);
       ParamComposite::read(in, "nStep", nStep_);
+      UTIL_CHECK(nStep_ > 0);
 
       // Allocate memory
       int nMonomer = system().mixture().nMonomer();
