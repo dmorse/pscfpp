@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+from pscfpp.file import *
+import os, tempfile
+
+d = tempfile.TemporaryDirectory()
+name = os.path.join(d.name, 'file')
+with open(name, 'w') as file:
+   file.write('abc\n')
+
+# Metadata of a file, with and without a scan of size and time
+f = File(name)
+assert repr(f).split()[2] == '4'
+assert 'size ="4"' in f.xml()
+f = File(name, scan=0)
+assert repr(f) == name
+assert f.xml() == '<File path ="' + name + '" />\n'
+
+# String, repr, XML and difference reports of a Directory
+os.mkdir(os.path.join(d.name, 'sub'))
+D = Directory(d.name)
+assert str(D) == d.name + '\n' + name + '\n' + os.path.join(d.name, 'sub') + '\n'
+assert repr(D) == str(D)
+assert D.xml().count('<File') == 1 and D.xml().count('<Directory') == 2
+assert D.diff(Directory(os.path.join(d.name, 'sub'))) != ''
+
+d.cleanup()
