@@ -3,6 +3,7 @@
 #include "ThreadArray.h"
 #include <util/global.h>
 #include <sys/time.h>
+#include <cstdint>
 #include <string>
 
 namespace Pscf {
@@ -178,14 +179,31 @@ namespace Pscf {
          setSeed(0);
       }
 
+      // cuRAND generates normal values in pairs. It requires an even
+      // number of values and an output array aligned to the size of a
+      // pair. Otherwise, generate an even number of values in an aligned
+      // work array and copy the required values to data.
       int n = data.capacity();
-      if (n % 2 == 1) {
-         UTIL_THROW("normal() requires array size to be an even number.");
+      int nGen = n + (n % 2);
+      float* ptr = data.cArray();
+      std::uintptr_t address = reinterpret_cast<std::uintptr_t>(ptr);
+      if (nGen != n || address % (2*sizeof(float)) != 0) {
+         if (floatWork_.capacity() < nGen) {
+            if (floatWork_.isAllocated()) {
+               floatWork_.deallocate();
+            }
+            floatWork_.allocate(nGen);
+         }
+         ptr = floatWork_.cArray();
       }
 
       curandStatus_t status;
-      status = curandGenerateNormal(gen_, data.cArray(), n, mean, stddev);
+      status = curandGenerateNormal(gen_, ptr, nGen, mean, stddev);
       errorCheck(status);
+      if (ptr != data.cArray()) {
+         cudaErrorCheck( cudaMemcpy(data.cArray(), ptr, n*sizeof(float),
+                                    cudaMemcpyDeviceToDevice) );
+      }
    }
 
    /*
@@ -199,15 +217,31 @@ namespace Pscf {
          setSeed(0);
       }
 
+      // cuRAND generates normal values in pairs. It requires an even
+      // number of values and an output array aligned to the size of a
+      // pair. Otherwise, generate an even number of values in an aligned
+      // work array and copy the required values to data.
       int n = data.capacity();
-      if (n % 2 == 1) {
-         UTIL_THROW("normal() requires array size to be an even number.");
+      int nGen = n + (n % 2);
+      double* ptr = data.cArray();
+      std::uintptr_t address = reinterpret_cast<std::uintptr_t>(ptr);
+      if (nGen != n || address % (2*sizeof(double)) != 0) {
+         if (doubleWork_.capacity() < nGen) {
+            if (doubleWork_.isAllocated()) {
+               doubleWork_.deallocate();
+            }
+            doubleWork_.allocate(nGen);
+         }
+         ptr = doubleWork_.cArray();
       }
 
       curandStatus_t status;
-      status = curandGenerateNormalDouble(gen_, data.cArray(),
-                                          n, mean, stddev);
+      status = curandGenerateNormalDouble(gen_, ptr, nGen, mean, stddev);
       errorCheck(status);
+      if (ptr != data.cArray()) {
+         cudaErrorCheck( cudaMemcpy(data.cArray(), ptr, n*sizeof(double),
+                                    cudaMemcpyDeviceToDevice) );
+      }
    }
 
    /*

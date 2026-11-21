@@ -8,6 +8,7 @@
 #include <pscf/backend/cuda/VecRandom.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
+#include <util/misc/Exception.h>
 
 #include <iostream>
 #include <fstream>
@@ -273,6 +274,125 @@ public:
       TEST_ASSERT(fabs(ave) < 0.1);
       TEST_ASSERT(fabs(var) < 0.1);
    }
+
+   /*
+   * Normal random numbers for arrays with an odd number of elements.
+   *
+   * Every element must be set, and the values of a large array must
+   * have the requested mean and standard deviation.
+   */
+   template <typename Data>
+   void checkNormalOdd()
+   {
+      VecRandom<CUT> random;
+      random.setSeed(6712983651284);
+
+      const Data mean = 1.0;
+      const Data stddev = 0.5;
+      const Data unset = 1.0E+30;
+
+      int sizes[3] = {1, 3, 100001};
+      for (int s = 0; s < 3; ++s) {
+         int n = sizes[s];
+         HostSendArray<Data,CUT> h_(n);
+         for (int i = 0; i < n; ++i) {
+            h_[i] = unset;
+         }
+         BackendArray<Data,CUT> d_(n);
+         d_ = h_;
+
+         bool thrown = false;
+         try {
+            random.normal(d_, stddev, mean);
+         } catch (Exception& e) {
+            thrown = true;
+         }
+         TEST_ASSERT(!thrown);
+         h_ = d_;
+
+         double ave = 0.0;
+         double var = 0.0;
+         double val = 0.0;
+         for (int i = 0; i < n; ++i) {
+            val = h_[i] - mean;
+            TEST_ASSERT(fabs(val) < 10.0*stddev);
+            ave += val;
+            var += val*val;
+         }
+         if (n > 1000) {
+            ave = ave/double(n);
+            var = var/double(n);
+            var = sqrt(var) - stddev;
+            ave = ave/stddev;
+            var = var/stddev;
+            TEST_ASSERT(fabs(ave) < 0.1);
+            TEST_ASSERT(fabs(var) < 0.1);
+         }
+      }
+   }
+
+   void testNormalOdd()
+   {
+      printMethod(TEST_FUNC);
+      checkNormalOdd<float>();
+      checkNormalOdd<double>();
+   }
+
+   /*
+   * Normal random numbers for a slice of a larger array that begins at
+   * index 1, which is not aligned to the size of a pair of values.
+   *
+   * The slice must get the same values as a separate array from a
+   * generator with the same seed, and the rest of the larger array
+   * must not change.
+   */
+   template <typename Data>
+   void checkNormalSlice()
+   {
+      VecRandom<CUT> random, reference;
+      random.setSeed(6712983651284);
+      reference.setSeed(6712983651284);
+
+      const Data unset = 1.0E+30;
+
+      int sizes[2] = {4, 5};
+      for (int s = 0; s < 2; ++s) {
+         int n = sizes[s];
+         HostSendArray<Data,CUT> h_(n+2), r_(n);
+         for (int i = 0; i < n+2; ++i) {
+            h_[i] = unset;
+         }
+         BackendArray<Data,CUT> parent(n+2), slice, separate(n);
+         parent = h_;
+         slice.associate(parent, 1, n);
+
+         bool thrown = false;
+         try {
+            random.normal(slice, 0.5, 1.0);
+            reference.normal(separate, 0.5, 1.0);
+            h_ = parent;
+            r_ = separate;
+         } catch (Exception& e) {
+            thrown = true;
+         }
+         TEST_ASSERT(!thrown);
+
+         TEST_ASSERT(h_[0] == unset);
+         TEST_ASSERT(h_[n+1] == unset);
+         for (int i = 0; i < n; ++i) {
+            TEST_ASSERT(h_[i+1] == r_[i]);
+         }
+         slice.dissociate();
+      }
+   }
+
+   void testNormalSlice()
+   {
+      printMethod(TEST_FUNC);
+      checkNormalSlice<float>();
+      checkNormalSlice<double>();
+   }
+
 };
 
 TEST_BEGIN(CudaVecRandomTest)
@@ -282,6 +402,8 @@ TEST_ADD(CudaVecRandomTest, testUniformFloat)
 TEST_ADD(CudaVecRandomTest, testUniformRangeDouble)
 TEST_ADD(CudaVecRandomTest, testNormalDouble)
 TEST_ADD(CudaVecRandomTest, testNormalFloat)
+TEST_ADD(CudaVecRandomTest, testNormalOdd)
+TEST_ADD(CudaVecRandomTest, testNormalSlice)
 TEST_END(CudaVecRandomTest)
 
 #endif
