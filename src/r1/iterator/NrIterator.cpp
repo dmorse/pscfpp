@@ -15,6 +15,8 @@
 #include <util/misc/Log.h>
 
 #include <math.h>
+#include <cmath>
+#include <limits>
 
 namespace Pscf {
 namespace R1
@@ -226,6 +228,12 @@ namespace R1
       norm = 0.0;
       for (int ir = 0; ir <  nr; ++ir) {
          value = fabs(residual[ir]);
+         // A NaN element fails every comparison, and would be skipped.
+         // Return infinity, so that a residual that is not finite is
+         // never accepted as an improvement or as converged.
+         if (!std::isfinite(value)) {
+            return std::numeric_limits<double>::infinity();
+         }
          if (value > norm) {
             norm = value;
          }
@@ -281,6 +289,10 @@ namespace R1
       system().mixture().compute(system().wFields(), system().cFields());
       computeResidual(system().wFields(), system().cFields(), residual_);
       double norm = residualNorm(residual_);
+      if (!std::isfinite(norm)) {
+         Log::file() << "Initial residual is not finite" << std::endl;
+         return 1;
+      }
 
       // Set Jacobian status
       newJacobian_ = false;
