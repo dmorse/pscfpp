@@ -12,6 +12,7 @@
 #include <rp/system/System.h>
 #include <rp/field/Domain.h>
 #include <rp/field/WFields.h>
+#include <rp/field/CFields.h>
 
 #include <rp/fts/compressor/Compressor.h>
 
@@ -307,6 +308,36 @@ public:
                      "in/w_predCorrBdStep_diblock_ref.rf", 
                      "out/testPredCorrBdStepDiblocks.log");                                                               
    }
+
+   /*
+   * A run in which every BD step fails (maxItr = 1, from homogeneous
+   * fields), so also the last one: the system must be left with the c
+   * fields of its final w fields.
+   */
+   void testFailedLastStep()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testFailedLastStep.log");
+
+      Rp::System<1,CPT> system;
+      initSystem1D(system,
+          "BdSimulator{ seed 1234 LMBdStep{ mobility 0.05 }"
+          " LrAmCompressor{ epsilon 1.0e-8 maxItr 1 maxHist 20 } }",
+          0.0);
+      system.simulate(3);
+      TEST_ASSERT(system.simulator().iStep() == 0);
+      TEST_ASSERT(system.c().hasData());
+
+      DArray< RField<1,CPT> > c;
+      allocateRGridFields(system, c);
+      for (int i = 0; i < 2; ++i) {
+         c[i] = system.c().rgrid(i);
+      }
+      system.compute();
+      RFieldComparison<1,CPT> comparison;
+      comparison.compare(c, system.c().rgrid());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+   }
    
    void testPredCorrBdStepTriblocks()
    {
@@ -331,6 +362,7 @@ TEST_ADD(BdSimulatorTest, testBdStepLabel)
 TEST_ADD(BdSimulatorTest, testExplicitBdStepTriblocks)
 TEST_ADD(BdSimulatorTest, testGenericLabels)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepDiblocks)
+TEST_ADD(BdSimulatorTest, testFailedLastStep)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepTriblocks)
 TEST_END(BdSimulatorTest)
 
