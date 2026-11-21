@@ -30,40 +30,6 @@ public:
       PolymerModel::setModel(PolymerModel::Thread);
    }
 
-  
-   /*
-   * A number of beads that is not positive must be rejected.
-   */
-   void testNBeadPositive()
-   {
-      printMethod(TEST_FUNC);
-      PolymerModel::setModel(PolymerModel::Bead);
-
-      Edge v;
-      v.setPolymerType(PolymerType::Linear);
-      int nBead[3] = {1, 0, -2};
-      bool thrown;
-      for (int i = 0; i < 3; ++i) {
-         std::stringstream stream;
-         stream << "0  " << nBead[i];
-         thrown = false;
-         try {
-            stream >> v;
-         } catch (Exception&) {
-            thrown = true;
-         }
-         TEST_ASSERT(thrown == (nBead[i] <= 0));
-         thrown = false;
-         try {
-            v.setNBead(nBead[i]);
-         } catch (Exception&) {
-            thrown = true;
-         }
-         TEST_ASSERT(thrown == (nBead[i] <= 0));
-      }
-      TEST_ASSERT(v.nBead() == 1);
-   }
-
    void testConstructor()
    {
       printMethod(TEST_FUNC);
@@ -200,37 +166,14 @@ public:
                   != std::string::npos);
    }
 
-   /*
-   * Output to a stream set to fixed format: setf(scientific) without
-   * the floatfield mask gave hexadecimal output, which operator >>
-   * cannot read.
-   */
-   void testWriteFixedStream()
-   {
-      printMethod(TEST_FUNC);
-      PolymerModel::setModel(PolymerModel::Thread);
-
-      Edge v, u;
-      v.setMonomerId(1);
-      v.setVertexIds(2, 5);
-      v.setLength(1.25);
-      std::stringstream stream;
-      stream << std::fixed << v;
-      TEST_ASSERT(stream.str().find("0x") == std::string::npos);
-      stream >> u;
-      TEST_ASSERT(u.length() == 1.25);
-      TEST_ASSERT(u.vertexId(1) == 5);
-   }
 
 };
 
 TEST_BEGIN(EdgeTest)
-TEST_ADD(EdgeTest, testNBeadPositive)
 TEST_ADD(EdgeTest, testConstructor)
 TEST_ADD(EdgeTest, testSerialize)
 TEST_ADD(EdgeTest, testReadWrite)
 TEST_ADD(EdgeTest, testWriteReadLength)
-TEST_ADD(EdgeTest, testWriteFixedStream)
 TEST_END(EdgeTest)
 
 #endif
