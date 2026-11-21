@@ -138,6 +138,20 @@ namespace R1
             p_[i + np] = mixture().solvent(i).cField()[ix];
          }
 
+         // These concentrations need not be valid volume fractions:
+         // a value can exceed 1 slightly, or be zero. Replace values
+         // that are not positive by a tiny positive value, clip values
+         // above 1, and normalize the guess to a sum of 1.
+         double sum = 0.0;
+         for (int i = 0; i < nt; ++i) {
+            if (!(p_[i] > 0.0)) p_[i] = 1.0E-300;
+            if (p_[i] > 1.0) p_[i] = 1.0;
+            sum += p_[i];
+         }
+         for (int i = 0; i < nt; ++i) {
+            p_[i] /= sum;
+         }
+
          double xi = 0.0;
          fhMixture().computePhi(fhInteraction(), m_, p_, xi);
 
