@@ -14,6 +14,22 @@ namespace Rp
 
    using namespace Util;
 
+   namespace {
+
+      /*
+      * Are two lattice basis vectors orthogonal? The test is on the
+      * cosine of their angle, so it does not depend on the unit of
+      * length (a right angle with 11 digits has |cos| <= 5.0E-11).
+      */
+      template <int D>
+      bool isOrthogonal(RealVec<D> const & a, RealVec<D> const & b)
+      {
+         double ab = dot(a, b);
+         return (std::abs(ab) <= 1.0E-8*std::sqrt(dot(a, a)*dot(b, b)));
+      }
+
+   }
+
    // Explicit Specializations for checkLatticeVectors
    
    /*
@@ -36,8 +52,7 @@ namespace Rp
       a = systemLatticeVector(0);
       b = systemLatticeVector(1);
 
-      double gamma = dot(a,b);
-      if (std::abs(gamma) > 1e-8) { // Dot product between a and b should be 0
+      if (!isOrthogonal(a, b)) {
          UTIL_THROW("ERROR: Lattice basis vectors must be orthogonal");
       }
    } 
@@ -55,21 +70,21 @@ namespace Rp
       b = systemLatticeVector(1);
       c = systemLatticeVector(2);
 
-      double alpha, beta, gamma;
-      gamma = dot(a,b);
-      beta = dot(a,c);
-      alpha = dot(b,c);
+      // Right angles alpha (b,c), beta (a,c) and gamma (a,b)?
+      bool alphaOk = isOrthogonal(b, c);
+      bool betaOk = isOrthogonal(a, c);
+      bool gammaOk = isOrthogonal(a, b);
 
       if (normalVecId() == 0) {
-         if (std::abs(beta) > 1e-8 || std::abs(gamma) > 1e-8) {
+         if (!betaOk || !gammaOk) {
             UTIL_THROW("ERROR: beta and gamma must be 90 degrees");
          }
       } else if (normalVecId() == 1) {
-         if (alpha > 1e-8 || gamma > 1e-8) {
+         if (!alphaOk || !gammaOk) {
             UTIL_THROW("ERROR: alpha and gamma must be 90 degrees");
          }
       } else { // normalVecId == 2
-         if (std::abs(alpha) > 1e-8 || beta > 1e-8) {
+         if (!alphaOk || !betaOk) {
             UTIL_THROW("ERROR: alpha and beta must be 90 degrees");
          }
       }
@@ -199,9 +214,31 @@ namespace Rp
          updated[4] = false;
          updated[5] = false;
 
-         // Allow the angle between the two lattice basis vectors that are 
-         // not normalVecId to be flexible
-         updated[normalVecId_+3] = current[normalVecId_+3];
+         // Allow the angle between the two lattice basis vectors that are
+         // not normalVecId to be flexible. The triclinic parameters are
+         // (a, b, c, phi, theta, gamma): b lies in the x-y plane at angle
+         // gamma from a, and c has polar angle theta and azimuth phi.
+         //  - normalVecId = 2: theta = 0; the free angle is gamma (5).
+         //  - normalVecId = 1: gamma = 90 deg, phi = 0; the angle between
+         //    a and c is 90 deg - theta, so the free angle is theta (4).
+         //  - normalVecId = 0: gamma = phi = 90 deg; the angle between
+         //    b and c is 90 deg - theta, so the free angle is theta (4).
+         //    (phi would tilt c out of the plane normal to a.)
+         int angleId = (normalVecId_ == 2) ? 5 : 4;
+         updated[angleId] = current[angleId];
+
+         // Theta is the in-plane angle only if phi has the value assumed
+         // above. At theta = 0 the orthogonality check passes for any
+         // phi, but relaxing theta would then tilt c toward the wall
+         // normal. Require phi explicitly when theta is flexible.
+         if (angleId == 4 && updated[4]) {
+            double phi = cell.parameter(3);
+            double t = (normalVecId_ == 0) ? std::cos(phi) : std::sin(phi);
+            if (std::abs(t) > 1.0E-8) {
+               UTIL_THROW("Flexible theta in a triclinic film needs phi = "
+                          "pi/2 (normalVecId 0) or 0 (normalVecId 1)");
+            }
+         }
 
       }
       
