@@ -16,10 +16,10 @@ namespace ThreadMesh {
    namespace {
 
       /*
-      * Anonymous namespace containing "static" variables and functions only 
-      * used by global functions defined in namespace ThreadMesh. These are 
-      * thus persistent pseudo-private variables and functions, much like 
-      * private static class variables.
+      * Anonymous namespace containing "static" variables and functions 
+      * only used by global functions defined in namespace ThreadMesh. 
+      * These are thus persistent pseudo-private variables and functions, 
+      * much like private static class members.
       */
 
       // Max threads per streaming multiprocessor, set by querying hardware.
@@ -103,12 +103,28 @@ namespace ThreadMesh {
          match = false;
       } else if (invert) {
          if (meshDims[D-1] != MESH_DIMS.x) match = false;
-         if (D > 1) { if (meshDims[D-2] != MESH_DIMS.y) match = false; }
-         if (D > 2) { if (meshDims[D-3] != MESH_DIMS.z) match = false; }
+         if (D > 1) { 
+            if (meshDims[D-2] != MESH_DIMS.y) match = false; 
+	 } else {
+            if (1 != MESH_DIMS.y) match = false; 
+         }
+         if (D > 2) { 
+            if (meshDims[D-3] != MESH_DIMS.z) match = false; 
+	 } else {
+            if (1 != MESH_DIMS.z) match = false; 
+	 }
       } else {
          if (meshDims[0] != MESH_DIMS.x) match = false;
-         if (D > 1) { if (meshDims[1] != MESH_DIMS.y) match = false; }
-         if (D > 2) { if (meshDims[2] != MESH_DIMS.z) match = false; }
+         if (D > 1) { 
+            if (meshDims[1] != MESH_DIMS.y) match = false; 
+	 } else {
+            if (1 != MESH_DIMS.y) match = false; 
+	 }
+         if (D > 2) { 
+            if (meshDims[2] != MESH_DIMS.z) match = false; 
+         } else {
+            if (1 != MESH_DIMS.z) match = false; 
+         }
       }
 
       if (match) {
