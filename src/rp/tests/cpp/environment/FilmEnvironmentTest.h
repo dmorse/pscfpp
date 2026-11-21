@@ -8,6 +8,8 @@
 #include <rp/scft/sweep/SweepParameter.h>
 #include <pscf/sweep/ParameterType.h>
 #include <util/containers/GArray.h>
+#include <util/math/Constants.h>
+#include <util/misc/Exception.h>
 
 #include <rp/system/System.h>
 #include <rp/scft/ScftThermo.h>
@@ -221,6 +223,62 @@ public:
    }
 
    /*
+   * A 2D film with walls normal to lattice vector a of an oblique cell.
+   * A change of the angle gamma leaves vector a unchanged, but a cell
+   * with gamma != pi/2 must still be rejected after a first COMPUTE at
+   * gamma = pi/2, as it is when it is the first cell.
+   */
+   void testCellChangeCompatibility()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestCellChangeCompatibility.log");
+
+      Rp::System<2,CPT> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ Mixture{ nMonomer 2 monomers[ 1.0 1.0 ] nPolymer 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 0.5 1 0.5 ]"
+         " phi 1.0 } ds 0.01 }"
+         " Interaction{ chi( 1 0 15.0 ) }"
+         " Domain{ mesh 16 8 lattice oblique groupName p_2 }"
+         " FilmEnvironment{ normalVecId 0 interfaceThickness 0.2"
+         " excludedThickness 0.4 chiBottom[ 5.0 0.0 ]"
+         " chiTop[ 5.0 0.0 ] } }\n");
+      system.readParam(param);
+
+      // Orthogonal cell, and w fields with only a homogeneous part
+      FSArray<double, 6> parameters;
+      parameters.append(3.1);
+      parameters.append(1.6);
+      parameters.append(0.5*Constants::Pi);
+      system.setUnitCell(parameters);
+      int nBasis = system.domain().basis().nBasis();
+      DArray< DArray<double> > w;
+      w.allocate(2);
+      for (int i = 0; i < 2; ++i) {
+         w[i].allocate(nBasis);
+         for (int k = 0; k < nBasis; ++k) {
+            w[i][k] = 0.0;
+         }
+      }
+      w[0][0] = 1.0;
+      system.w().setBasis(w);
+      system.compute();
+
+      // Change gamma, which leaves lattice vector a unchanged
+      parameters[2] = 1.2;
+      system.setUnitCell(parameters);
+      bool thrown = false;
+      try {
+         system.compute();
+      } catch (Exception& e) {
+         thrown = true;
+      }
+      TEST_ASSERT(thrown);
+   }
+
+   /*
    * A film system without an Iterator: COMPUTE must generate the mask
    * and the wall fields and solve the MDE, and WRITE_STRESS must work.
    */
@@ -374,6 +432,7 @@ TEST_ADD(FilmEnvironmentTest, testReadParameters)
 TEST_ADD(FilmEnvironmentTest, testWallChiParameter)
 TEST_ADD(FilmEnvironmentTest, testSolve1D)
 TEST_ADD(FilmEnvironmentTest, testSolve2D)
+TEST_ADD(FilmEnvironmentTest, testCellChangeCompatibility)
 TEST_ADD(FilmEnvironmentTest, testComputeNoIterator)
 TEST_ADD(FilmEnvironmentTest, testSweep)
 TEST_ADD(FilmEnvironmentTest, testSolveWithFBulk)
