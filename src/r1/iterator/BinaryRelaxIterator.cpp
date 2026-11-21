@@ -82,7 +82,20 @@ namespace R1
       double dWm, dWp, c0, c1, w0, w1, wm;
       double dWmNorm = 0.0;
       double dWpNorm = 0.0;
-      double chi = system().interaction().chi(0,1);
+
+      // The SCF equations require w1 - w0 = (chi01 - chi00)*c0
+      // + (chi11 - chi01)*c1. The exchange residual dWm is this
+      // equation divided by 2*chi, with chi = chi01 - (chi00 + chi11)/2,
+      // so that r0 = r1 = 1 if chi00 = chi11 = 0.
+      Interaction const & interaction = system().interaction();
+      const double chi01 = interaction.chi(0,1);
+      const double chi = chi01
+                       - 0.5*(interaction.chi(0,0) + interaction.chi(1,1));
+      if (chi == 0.0) {
+         UTIL_THROW("BinaryRelaxIterator requires a nonzero effective chi");
+      }
+      const double r0 = (chi01 - interaction.chi(0,0))/chi;
+      const double r1 = (chi01 - interaction.chi(1,1))/chi;
       int nx = domain().nx();        // number of grid points
       //For AB diblok
       for (int i = 0; i < nx; ++i) {
@@ -92,7 +105,7 @@ namespace R1
          w1 = wOld[1][i];
          wm = w1 - w0;
          dWp = c1 + c0 - 1.0;
-         dWm = 0.5*( c0 - c1 - wm/chi);
+         dWm = 0.5*( r0*c0 - r1*c1 - wm/chi);
          dWpNorm += dWp*dWp;
          dWmNorm += dWm*dWm;
          dWp *= lambdaPlusWork_;
