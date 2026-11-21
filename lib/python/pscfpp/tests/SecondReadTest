@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+
+from pscfpp.field import *
+from pscfpp.output import *
+import io
+
+# Read a Thermo object from text
+def readThermo(text):
+   t = Thermo()
+   t.read(io.StringIO(text))
+   return t
+
+thermo = '''
+fHelmholtz     2.54644869605e+00
+pressure       2.99799018142e+00
+
+fIdeal         5.48458514628e-01
+fInter         1.99799018143e+00
+
+polymers:
+             phi                 mu
+    0   1.00000000000e+00   5.54443887748e+00
+
+cellParams:
+    0   1.54046133979e+00
+    1   1.60000000000e+00
+
+'''
+
+# A second read replaces the contents of the first
+f = Field('in/w.bf')
+with open('in/w.bf') as file:
+   f.read(file)
+assert len(f.data) == f.header['N_basis']
+
+# A second read replaces all values of the first, e.g. the stress
+t = readThermo(thermo + 'stress:\n    0   1.0e-03\n    1   2.0e-03\n\n')
+t.read(io.StringIO(thermo))
+assert t.stress == None
