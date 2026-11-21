@@ -59,13 +59,6 @@ namespace R1 {
       */    
       void setParameters(double s);
 
-      /**
-      * Output data to a running summary.
-      *
-      * \param out  output file, open for writing
-      */
-      void outputSummary(std::ostream& out);
-
    protected:
 
       using Sweep::system;
