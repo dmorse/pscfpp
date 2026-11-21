@@ -14,6 +14,7 @@
 #include <util/containers/DArray.h>
 #include <util/containers/FSArray.h>
 #include <util/math/Constants.h>
+#include <util/misc/Exception.h>
 #include <util/format/Dbl.h>
 
 #include <iostream>
@@ -305,6 +306,58 @@ public:
 
    }
 
+   /*
+   * Make a 2D basis. Return the number of basis functions, or -1 if an
+   * Exception is thrown.
+   */
+   int nBasis2D(std::string const & cell, int n, std::string groupName)
+   {
+      UnitCell<2> unitCell;
+      std::istringstream in(cell);
+      in >> unitCell;
+      IntVec<2> d;
+      d[0] = n;
+      d[1] = n;
+      Mesh<2> mesh(d);
+      Basis<2> basis;
+      try {
+         basis.makeBasis(mesh, unitCell, groupName);
+      } catch (Exception& e) {
+         return -1;
+      }
+      return basis.nBasis();
+   }
+
+   /*
+   * Squared norms of waves are compared with a tolerance relative to
+   * their magnitude, so that bases can be made for small cells and for
+   * cell parameters rounded to the 11 significant digits of field
+   * files.
+   */
+   void testMake2DBasis_normTolerance()
+   {
+      printMethod(TEST_FUNC);
+
+      // Hexagonal cells of different sizes, p_6_m_m on a 24 x 24 mesh
+      TEST_ASSERT(eq(nBasis2D("hexagonal 1.0", 24, "p_6_m_m"), 61));
+      TEST_ASSERT(eq(nBasis2D("hexagonal 0.01", 24, "p_6_m_m"), 61));
+      TEST_ASSERT(eq(nBasis2D("hexagonal 1.0E-4", 24, "p_6_m_m"), 61));
+
+      // Rhombic cell with gamma = 2 pi/3, exact and rounded
+      std::string exact = "rhombic 1.7 2.0943951023931953";
+      std::string rounded = "rhombic 1.7 2.0943951024";
+      TEST_ASSERT(eq(nBasis2D(exact, 16, "p_2"), 130));
+      TEST_ASSERT(eq(nBasis2D(rounded, 16, "p_2"), 130));
+      TEST_ASSERT(eq(nBasis2D(exact, 16, "p_6_m_m"), 30));
+      TEST_ASSERT(eq(nBasis2D(rounded, 16, "p_6_m_m"), 30));
+      TEST_ASSERT(eq(nBasis2D(exact, 13, "p_6_m_m"), 21));
+      TEST_ASSERT(eq(nBasis2D(rounded, 13, "p_6_m_m"), 21));
+
+      // A rhombic angle that does not have hexagonal symmetry
+      std::string other = "rhombic 1.7 2.0944051024";
+      TEST_ASSERT(eq(nBasis2D(other, 16, "p_6_m_m"), -1));
+   }
+
    void testMake3DBasis_I()
    {
       printMethod(TEST_FUNC);
@@ -590,6 +643,94 @@ public:
 
    }
 
+   /*
+   * Group p_1 in a skewed oblique cell on a mesh with very different
+   * grid spacings, where minimum images lie more than two image shifts
+   * away from some wavevectors. Every wave forms its own star.
+   */
+   void testMake2DBasis_p_1_oblique()
+   {
+      printMethod(TEST_FUNC);
+
+      UnitCell<2> unitCell;
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      parameters.append(2.0);
+      parameters.append(2.8);
+      unitCell.set(UnitCell<2>::Oblique, parameters);
+      IntVec<2> d;
+      d[0] = 8;
+      d[1] = 64;
+      Mesh<2> mesh(d);
+
+      Basis<2> basis;
+      basis.makeBasis(mesh, unitCell, std::string("p_1"));
+      TEST_ASSERT(basis.isValid());
+      TEST_ASSERT(eq(basis.nWave(), 512));
+      TEST_ASSERT(eq(basis.nStar(), 512));
+      TEST_ASSERT(eq(basis.nBasis(), 512));
+   }
+
+   /*
+   * Groups without inversion in skewed cells on a mesh with very
+   * different grid spacings, where tied minimum images lie several
+   * image shifts apart.
+   */
+   void testMake3DBasis_P_1_triclinic()
+   {
+      printMethod(TEST_FUNC);
+
+      UnitCell<3> unitCell;
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      parameters.append(1.0);
+      parameters.append(1.0);
+      parameters.append(0.0);
+      parameters.append(1.2);
+      parameters.append(0.5*Constants::Pi);
+      unitCell.set(UnitCell<3>::Triclinic, parameters);
+      IntVec<3> d;
+      d[0] = 4;
+      d[1] = 4;
+      d[2] = 32;
+      Mesh<3> mesh(d);
+
+      Basis<3> basis;
+      basis.makeBasis(mesh, unitCell, std::string("P_1"));
+      TEST_ASSERT(basis.isValid());
+      TEST_ASSERT(eq(basis.nStar(), 512));
+      TEST_ASSERT(eq(basis.nBasis(), 512));
+   }
+
+   /*
+   * The 512 waves form 264 stars: the 16 waves with h in {0, 2} and
+   * l in {0, 16} are invariant under the 2-fold axis along b, and the
+   * other 496 waves form 248 pairs.
+   */
+   void testMake3DBasis_P_1_2_1_monoclinic()
+   {
+      printMethod(TEST_FUNC);
+
+      UnitCell<3> unitCell;
+      FSArray<double, 6> parameters;
+      parameters.append(1.0);
+      parameters.append(1.0);
+      parameters.append(1.0);
+      parameters.append(2.8);
+      unitCell.set(UnitCell<3>::Monoclinic, parameters);
+      IntVec<3> d;
+      d[0] = 4;
+      d[1] = 4;
+      d[2] = 32;
+      Mesh<3> mesh(d);
+
+      Basis<3> basis;
+      basis.makeBasis(mesh, unitCell, std::string("P_1_2_1"));
+      TEST_ASSERT(basis.isValid());
+      TEST_ASSERT(eq(basis.nStar(), 264));
+      TEST_ASSERT(eq(basis.nBasis(), 264));
+   }
+
 
    /*
    * Make the basis of a hexagonal 3D group on a 12x12x12 mesh, and
@@ -645,12 +786,16 @@ TEST_ADD(BasisTest, testMake1DBasis_Ib)
 TEST_ADD(BasisTest, testMake2DBasis_square_33)
 TEST_ADD(BasisTest, testMake2DBasis_square_44)
 TEST_ADD(BasisTest, testMake2DBasis_hex)
+TEST_ADD(BasisTest, testMake2DBasis_normTolerance)
 TEST_ADD(BasisTest, testMake3DBasis_I)
 TEST_ADD(BasisTest, testMake3DBasis_I_m_3b_m)
 TEST_ADD(BasisTest, testMake3DBasis_I_a_3b_d) 
 TEST_ADD(BasisTest, testMake3DBasis_F_d_3b_m_2)
 TEST_ADD(BasisTest, testMake3DBasis_F_d_3b_m_1)
 TEST_ADD(BasisTest, testMake3DBasis_I_41_3_2)
+TEST_ADD(BasisTest, testMake2DBasis_p_1_oblique)
+TEST_ADD(BasisTest, testMake3DBasis_P_1_triclinic)
+TEST_ADD(BasisTest, testMake3DBasis_P_1_2_1_monoclinic)
 TEST_ADD(BasisTest, testMake3DBasis_R_3b_c_H)
 TEST_ADD(BasisTest, testMake3DBasis_R_3_c_H)
 TEST_END(BasisTest)
