@@ -35,8 +35,9 @@ namespace Rp {
       ptr = trySubfactories(className);
       if (ptr) return ptr;
        
-      // Try to match classname
-      if (className == "LinearRamp") {
+      // Try to match classname. The generic label "Ramp" selects the
+      // default algorithm, LinearRamp.
+      if (className == "LinearRamp" || className == "Ramp") {
          ptr = new LinearRamp<D,T>(*simulatorPtr_);
       }
 

@@ -21,6 +21,7 @@
 #include <util/misc/FileMaster.h>
 #include <util/containers/FSArray.h>
 #include <util/tests/LogFileUnitTest.h>
+#include <util/param/Label.h>
 
 #include <fstream>
 #include <sstream>
@@ -267,6 +268,34 @@ public:
                      "out/testExplicitBdStepTriblocks.log");  
    }
 
+   /*
+   * The generic block labels Ramp and Perturbation, which the manual
+   * uses, select the default algorithms (LinearRamp and
+   * EinsteinCrystalPerturbation).
+   */
+   void testGenericLabels()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testGenericLabels.log");
+
+      Rp::System<1,CPT> system;
+      bool success = true;
+      try {
+         initSystem1D(system,
+             "BdSimulator{ seed 1234 LMBdStep{ mobility 0.001 }"
+             " LrAmCompressor{ epsilon 1.0e-8 maxItr 100 maxHist 20 }"
+             " Perturbation{ lambda 0.5"
+             " fieldFileName in/w_diblock_homogenous.rf }"
+             " Ramp{ nParameter 1 parameters[ chi 0 1 2.0 ] } }");
+      } catch (Exception& e) {
+         Label::clear();
+         success = false;
+      }
+      TEST_ASSERT(success);
+      TEST_ASSERT(system.simulator().hasPerturbation());
+      TEST_ASSERT(system.simulator().hasRamp());
+   }
+
    void testPredCorrBdStepDiblocks()
    {
       printMethod(TEST_FUNC);
@@ -300,6 +329,7 @@ TEST_ADD(BdSimulatorTest, testLMBdStepTriblocks)
 TEST_ADD(BdSimulatorTest, testExplicitBdStepDiblocks)
 TEST_ADD(BdSimulatorTest, testBdStepLabel)
 TEST_ADD(BdSimulatorTest, testExplicitBdStepTriblocks)
+TEST_ADD(BdSimulatorTest, testGenericLabels)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepDiblocks)
 TEST_ADD(BdSimulatorTest, testPredCorrBdStepTriblocks)
 TEST_END(BdSimulatorTest)
