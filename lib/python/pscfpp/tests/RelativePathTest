@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+
+from pscfpp.file import *
+
+# Path of a file relative to the directory of another file
+assert relative_path('a/b/input', 'a/c/output') == '../c/output'
+assert relative_path('./a/input', 'a/output') == 'output'
+assert relative_path('a/input', 'a//output') == 'output'
+try:
+   relative_path('/x/a/input', '/y/output')
+   message = ''
+except Exception as e:
+   message = str(e)
+assert 'common directory' in message
