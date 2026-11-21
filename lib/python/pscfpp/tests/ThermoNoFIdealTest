@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+
+from pscfpp.output import *
+import io
+
+# Read a Thermo object from text
+def readThermo(text):
+   t = Thermo()
+   t.read(io.StringIO(text))
+   return t
+
+thermo = '''
+fHelmholtz     2.54644869605e+00
+pressure       2.99799018142e+00
+
+fIdeal         5.48458514628e-01
+fInter         1.99799018143e+00
+
+polymers:
+             phi                 mu
+    0   1.00000000000e+00   5.54443887748e+00
+
+cellParams:
+    0   1.54046133979e+00
+    1   1.60000000000e+00
+
+'''
+
+# A thermo block without fIdeal, as written when fIdeal is None
+t = readThermo(thermo)
+t.fIdeal = None
+u = readThermo(str(t))
+assert u.fIdeal == None and u.fInter == t.fInter
+assert u.polymers[0].mu == t.polymers[0].mu
