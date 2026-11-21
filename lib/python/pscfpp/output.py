@@ -285,19 +285,23 @@ class Thermo:
             self.homogeneous = {}
             self.homogeneousSpecies = []
 
+            # Lines 'label = value [unit]', in which the width of the
+            # label depends on the mode of the comparison
             while line.strip() != '':
-               self.homogeneous[line[:11].strip()] = float(line[12:31])
+               label, value = line.split('=', 1)
+               self.homogeneous[label.strip()] = float(value.split()[0])
                line = file.readline()
             
             line = self.skipEmptyLine(file)
             if line.lower().startswith('species:'):
                line = file.readline()
+               # Column labels (3 columns in mode 0, 4 in modes 1 and 2)
                speciesParams = line.split()
                line = file.readline()
                while line.strip() != '':
                   l = line.split()
                   self.homogeneousSpecies.append({})
-                  for i in range(4):
+                  for i in range(len(speciesParams)):
                      prm = speciesParams[i]
                      if i == 0:
                         self.homogeneousSpecies[-1][prm] = int(l[i])
@@ -423,12 +427,16 @@ class Thermo:
 
       if self.homogeneousSpecies:
          s += 'Species:\n'
-         s += '    i      mu                  phi(homo)           deltaV\n'
+         # Column labels, which depend on the mode of the comparison
+         labels = '    i'
+         for key in list(self.homogeneousSpecies[0])[1:]:
+            labels += '      ' + f'{key:<14}'
+         s += labels.rstrip() + '\n'
          for sp in self.homogeneousSpecies:
             s += f'{sp["i"]:>5}'
-            s += f'{sp["mu"]:>20.11e}'
-            s += f'{sp["phi(homo)"]:>20.11e}'
-            s += f'{sp["deltaV"]:>20.11e}\n'
+            for key in list(sp)[1:]:
+               s += f'{sp[key]:>20.11e}'
+            s += '\n'
          s += '\n'
       
       if self.stress != None:
