@@ -1,6 +1,21 @@
 #!/usr/bin/env python3
 
 from pscfpp.command import *
+import os, tempfile
+
+# Read a command file with the given text
+def readText(text):
+   with tempfile.TemporaryDirectory() as d:
+      name = os.path.join(d, 'command')
+      with open(name, 'w') as file:
+         file.write(text)
+      return Script(name)
+
+# Tabs between fields
+p = readText('READ_W\tin/w\nWRITE_TIMERS \t out/timers\nFINISH\n')
+assert p[0].label == 'READ_W' and p[0].param() == 'in/w'
+assert p[1].param() == 'out/timers'
+assert str(p[1]) == 'WRITE_TIMERS \t out/timers'
 
 p = Script('in/command')
 

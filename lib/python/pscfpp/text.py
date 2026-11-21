@@ -105,18 +105,18 @@ class Record:
       gap = ''
       for i in range(len(line)):
          if blank:
-            if line[i] != ' ':
+            if line[i] not in ' \t':
                begin = i
                blank = False
             else:
-               gap = gap + ' '
+               gap = gap + line[i]
          else:
-            if line[i] == ' ':
+            if line[i] in ' \t':
                end = i
                blank = True
                self.fields.append(line[begin:end])
                self.spaces.append(gap)
-               gap = ' '
+               gap = line[i]
                n += 1
       if not blank:
          end = len(line)
