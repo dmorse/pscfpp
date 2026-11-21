@@ -188,9 +188,6 @@ namespace Rp {
       // If this point is reached, stress contribution must be calculated
       UTIL_CHECK(system().mask().hasData());
       
-      // Get the length of the lattice basis vector normal to the walls
-      double nvLength = system().domain().unitCell().parameter(paramId);
-
       // Get the volume fraction of the unit cell occupied by polymers
       double phiTot = system().mask().phiTot();
 
@@ -235,8 +232,11 @@ namespace Rp {
          sysPtr_->scft().compute();
       }
       double pSys = sysPtr_->scft().pressure();
-      double pTerm = pSys * excludedThickness() / 
-                     (phiTot * nvLength * nvLength);
+
+      // d(phiTot)/dL is the spatial average of deriv. (The ratio
+      // excludedThickness()/L^2 is exact only for a sharp interface.)
+      double dPhiTot = Reduce::sum(deriv) / double(deriv.capacity());
+      double pTerm = pSys * dPhiTot / phiTot;
       
       return pTerm - intTerm;
    }
@@ -260,11 +260,13 @@ namespace Rp {
          UTIL_THROW("fBulk must be set before calling modifyStress.");
       }
 
-      // Get system free energy
+      // Get the semi-grand potential (fHelmholtz if all species are
+      // closed), of which the stress is the derivative
       if (!sysPtr_->scft().hasData()) {
          sysPtr_->scft().compute();
       }
-      double fSys = sysPtr_->scft().fHelmholtz();
+      double fSys = FilmFieldGenMaskBase<D>::semiGrandPotential(
+                         system().mixture(), sysPtr_->scft().fHelmholtz());
 
       // Get the length L of the basis vector normal to the walls
       double L = system().domain().unitCell().parameter(paramId);

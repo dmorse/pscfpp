@@ -30,7 +30,8 @@ namespace Rp
       normalVecId_(-1),
       interfaceThickness_(-1.0),
       excludedThickness_(-1.0),
-      hasFBulk_(false)
+      hasFBulk_(false),
+      hasSemiGrandNote_(false)
    {  
       type_ = Mask; 
       normalVecCurrent_.setToZero();

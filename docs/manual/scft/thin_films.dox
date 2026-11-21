@@ -606,6 +606,16 @@ unless the user specifies in the Iterator block that the parameter should
 be rigid. The value to use for `fBulk` should be computed using a separate
 PSCF calculation for the corresponding bulk phase.
 
+If all species are closed (canonical ensemble), `fBulk` is the Helmholtz
+free energy per monomer (fHelmholtz) of the bulk phase. If some species are
+open (grand-canonical or mixed ensemble), the film thickness instead
+minimizes the excess of the semi-grand potential
+\f$ g = f - \sum_i \phi_i \mu_i / N_i \f$, in which f is fHelmholtz, the
+sum is over the open species, and \f$ N_i \f$ is the polymer length
+(number of beads in the bead model) or the solvent size. `fBulk` is then
+the value of g in the bulk phase at the same chemical potentials; if every
+species is open, this is the negative of the bulk pressure.
+
 <BR>
  \ref scft_environment_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
  \ref scft_page              (Up) &nbsp; &nbsp; &nbsp; &nbsp;
