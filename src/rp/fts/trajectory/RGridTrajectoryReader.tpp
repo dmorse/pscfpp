@@ -72,12 +72,14 @@ namespace Rp {
    template <int D, class T>
    void RGridTrajectoryReader<D,T>::readHeader()
    {
-      int nMonomer = system().mixture().nMonomer();
       FieldIo<D,T> const & fieldIo = system().domain().fieldIo();
       UnitCell<D> tmpUnitCell;
+      int nMonomer;
       bool hasSymmetry;
       fieldIo.readFieldHeader(inputfile_, nMonomer, tmpUnitCell,
                               hasSymmetry);
+      // readFieldHeader sets nMonomer to value in the header file
+      UTIL_CHECK(nMonomer == system().mixture().nMonomer());
       system().setUnitCell(tmpUnitCell);
       Log::file() << "Read Header" << "\n";
    }
@@ -113,14 +115,16 @@ namespace Rp {
       Log::file() << "step " << step << "\n";
       #endif
 
-      // Read mesh dimensions
+      // Read and check the mesh dimensions
       notEnd = getNextLine(inputfile_, line);
       UTIL_CHECK(notEnd);
       checkString(line, "mesh");
-
-      // Read empty line
       notEnd = getNextLine(inputfile_, line);
       UTIL_CHECK(notEnd);
+      IntVec<D> fileMeshDimensions;
+      line >> fileMeshDimensions;
+      UTIL_CHECK(!line.fail());
+      UTIL_CHECK(fileMeshDimensions == meshDimensions_);
 
       // Read a w-field configuration in r-grid format
       int nMonomer = system().mixture().nMonomer();
