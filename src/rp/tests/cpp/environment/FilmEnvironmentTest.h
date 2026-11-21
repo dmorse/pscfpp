@@ -58,6 +58,51 @@ public:
       Rp::FilmEnvironment<1,CPT> ext(system);
    }
 
+   /*
+   * A MixAndMatchEnv whose first field generator generates external
+   * fields, and whose second one generates a mask.
+   */
+   void testExternalGeneratorFirst()
+   {
+      printMethod(TEST_FUNC);
+
+      // Field generator of a given type with one parameter
+      class TestGenerator : public Rp::FieldGenerator
+      {
+      public:
+         TestGenerator(Type type)
+         {  type_ = type; }
+         void readParameters(std::istream& in)
+         {  read(in, "value", value_); }
+         bool needsUpdate() const
+         {  return false; }
+         void checkCompatibility()
+         {}
+      protected:
+         void compute()
+         {}
+      private:
+         double value_;
+      };
+
+      // Environment with generators of type External and Mask
+      class TestEnvironment : public Rp::MixAndMatchEnv
+      {
+      protected:
+         void createGenerators()
+         {
+            fieldGenPtr1_ = new TestGenerator(FieldGenerator::External);
+            fieldGenPtr2_ = new TestGenerator(FieldGenerator::Mask);
+         }
+      };
+
+      TestEnvironment env;
+      std::istringstream in("value 1.0\nvalue 2.0\n");
+      env.readParameters(in);
+      TEST_ASSERT(env.generatesExternalFields());
+      TEST_ASSERT(env.generatesMask());
+   }
+
    void testReadParameters() // test FilmEnvironment::readParameters()
    {
       printMethod(TEST_FUNC);
@@ -370,6 +415,7 @@ public:
 
 TEST_BEGIN(FilmEnvironmentTest)
 TEST_ADD(FilmEnvironmentTest, testConstructor)
+TEST_ADD(FilmEnvironmentTest, testExternalGeneratorFirst)
 TEST_ADD(FilmEnvironmentTest, testReadParameters)
 TEST_ADD(FilmEnvironmentTest, testWallChiParameter)
 TEST_ADD(FilmEnvironmentTest, testSolve1D)
