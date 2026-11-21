@@ -58,6 +58,25 @@ public:
       Rp::FilmFieldGenExt<1,CPT> ext(system);
    }
 
+   /*
+   * Walls with chi values smaller than 1.0E-7, or that differ by less
+   * than 1.0E-7, are neither athermal nor identical.
+   */
+   void testSmallChi()
+   {
+      printMethod(TEST_FUNC);
+
+      Rp::System<1,CPT> system;
+      createSystem(system, "in/system1D");
+      Rp::FilmFieldGenExt<1,CPT> ext(system);
+      std::istringstream in(
+         "normalVecId 0  interfaceThickness 0.2  excludedThickness 0.4\n"
+         "chiBottom[ 5.0E-8 0.0 ]  chiTop[ 2.0E-8 0.0 ]\n");
+      ext.readParameters(in);
+      TEST_ASSERT(!ext.isAthermal());
+      TEST_ASSERT(!ext.hasSymmetricWalls());
+   }
+
    void testReadParameters() // test FilmFieldGenExtBase::readParameters()
    {
       printMethod(TEST_FUNC);
@@ -369,6 +388,7 @@ public:
 
 TEST_BEGIN(FilmFieldGenExtTest)
 TEST_ADD(FilmFieldGenExtTest, testConstructor)
+TEST_ADD(FilmFieldGenExtTest, testSmallChi)
 TEST_ADD(FilmFieldGenExtTest, testReadParameters)
 TEST_ADD(FilmFieldGenExtTest, testCheckCompatibility)
 TEST_ADD(FilmFieldGenExtTest, testGenerate)
