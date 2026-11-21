@@ -364,19 +364,20 @@ namespace Rp {
       }
       timer.stop();
       Log::file() << "end main loop" << std::endl;
-      int nFrames = iStep_ - min;
+      int nFrame = iStep_ - min;
       trajectoryReaderPtr->close();
       delete trajectoryReaderPtr;
+      UTIL_CHECK(nFrame > 0);
 
       // Output results of all analyzers to output files
       analyzerManager().output();
 
       // Output number of frames and times
       Log::file() << std::endl;
-      Log::file() << "# of frames   " << nFrames << std::endl;
+      Log::file() << "# of frames   " << nFrame << std::endl;
       Log::file() << "run time      " << timer.time()
                   << "  sec" << std::endl;
-      Log::file() << "time / frame " << timer.time()/double(nFrames)
+      Log::file() << "time / frame " << timer.time()/double(nFrame)
                   << "  sec" << std::endl;
       Log::file() << std::endl;
 
