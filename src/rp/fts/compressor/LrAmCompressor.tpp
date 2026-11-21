@@ -186,7 +186,7 @@ namespace Rp {
    void LrAmCompressor<D,T>::getResidual(VectorT& resid)
    {
       // Precondition
-      UTIL_CHECK(resid.size() == nElements());
+      UTIL_CHECK(resid.capacity() == nElements());
       UTIL_CHECK(system().c().hasData());
 
       // Initialize residual to -1.0
@@ -212,8 +212,8 @@ namespace Rp {
    {
       // Preconditions
       int n = nElements();
-      UTIL_CHECK(fieldTrial.size() == n);
-      UTIL_CHECK(resTrial.size() == n);
+      UTIL_CHECK(fieldTrial.capacity() == n);
+      UTIL_CHECK(resTrial.capacity() == n);
       UTIL_CHECK(system().c().hasData());
       UTIL_CHECK(isAllocated_);
 
@@ -249,7 +249,7 @@ namespace Rp {
    {
       // Preconditions
       int n = nElements();
-      UTIL_CHECK(newGuess.size() == n);
+      UTIL_CHECK(newGuess.capacity() == n);
       UTIL_CHECK(isAllocated_);
 
       // New field is w0_ + newGuess for the pressure field
