@@ -13,6 +13,10 @@
 #include <rp/field/WFields.h>
 #include <rp/field/Mask.h>
 #include <rp/environment/FieldGenerator.h>
+#include <util/format/Dbl.h>
+#include <util/containers/FSArray.h>
+#include <rp/solvers/Mixture.h>
+#include <rp/environment/MixAndMatchEnv.h>
 
 #include <pscf/field/cuda/RField.h>
 #include <pscf/field/cuda/RFieldComparison.h>
@@ -22,6 +26,7 @@
 
 #include <sstream>
 #include <fstream>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -272,7 +277,7 @@ public:
       // Check that the right film thickness was found
       double param = system.domain().unitCell().parameter(0);
       //double paramRef = 2.061207269;  // old value
-      double paramRef = 2.06121822708647739475e+00; // changed v1.3.4
+      double paramRef = 2.06125919708e+00; // changed for #272
       double paramErr = std::abs(param - paramRef);
       if (verbose() > 0) {
          std::cout << "\nFilm thickness       = " << Dbl(param, 20, 12);
@@ -297,12 +302,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "\nFree Energy error = " 
-                   << (system.scft().fHelmholtz() - 3.80033554388);
+                   << (system.scft().fHelmholtz() - 3.80031009905);
          std::cout << "\nPressure error = " 
-                   << (system.scft().pressure() + 12.9408830685);
+                   << (system.scft().pressure() + 12.9405443827);
       }
-      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80033554388) < 1e-5);
-      TEST_ASSERT(abs(system.scft().pressure() + 12.9408830685) < 1e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80031009905) < 1e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.9405443827) < 1e-4);
    }
 
    void testSolve1DGrid() // solve a 1D system with an FilmEnvironment
@@ -458,7 +463,7 @@ public:
       // Check that the right film thickness was found
       double param = system.domain().unitCell().parameter(0);
       //double paramRef = 2.061207269; // old reference value
-      double paramRef = 2.06121822708647739475e+00; // changed v1.3.4
+      double paramRef = 2.06125919708e+00; // changed for #272
       //double paramErr = system.domain().unitCell().parameter(0) - 2.061207269;
       double paramErr = param - paramRef;
       if (verbose() > 0) {
@@ -484,12 +489,12 @@ public:
       // Check thermo parameters
       if (verbose() > 0) {
          std::cout << "\nFree Energy error = " 
-                   << (system.scft().fHelmholtz() - 3.80033554388);
+                   << (system.scft().fHelmholtz() - 3.80031009905);
          std::cout << "\nPressure error = " 
-                   << (system.scft().pressure() + 12.9408830685);
+                   << (system.scft().pressure() + 12.9405443827);
       }
-      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80033554388) < 1.0e-5);
-      TEST_ASSERT(abs(system.scft().pressure() + 12.9408830685) < 1.0e-4);
+      TEST_ASSERT(abs(system.scft().fHelmholtz() - 3.80031009905) < 1.0e-5);
+      TEST_ASSERT(abs(system.scft().pressure() + 12.9405443827) < 1.0e-4);
    }
 
    // Read parameter file to create a System object
@@ -502,6 +507,62 @@ public:
       openInputFile(fname, in);
       system.readParam(in);
       in.close();
+   }
+
+
+   /*
+   * Compare the stress of a 1D film (bead model, rigid cell, athermal
+   * walls) with the derivative of fHelmholtz with respect to the film
+   * thickness L, computed by central finite differences (issue #272).
+   * The stress is the sum of the Mixture stress and the stress terms
+   * of the field generators. The mask term contains d(phiTot)/dL.
+   */
+   void testStressFiniteDifference1D()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestStressFiniteDifference1D.log");
+
+      // Converged solution for a film of thickness L
+      Rp::System<1,CUT> system;
+      createSystem(system, "in/system1DStressFD");
+      system.w().readBasis("in/w1DStressFD.bf");
+      double L = system.domain().unitCell().parameter(0);
+      int error = system.iterate();
+      TEST_ASSERT(!error);
+
+      // Stress, as used by the iterator for a flexible film thickness
+      system.computeStress();
+      Rp::MixAndMatchEnv const & env
+            = dynamic_cast<Rp::MixAndMatchEnv const &>(system.environment());
+      double stress = system.mixture().stress(0);
+      stress += env.fieldGenerator1().stress(0);
+      if (env.hasFieldGenerator2()) {
+         stress += env.fieldGenerator2().stress(0);
+      }
+
+      // Free energies for thicknesses L + h and L - h
+      double h = 1.0E-4;
+      FSArray<double, 6> parameters;
+      parameters.append(L + h);
+      system.setUnitCell(parameters);
+      error = system.iterate();
+      TEST_ASSERT(!error);
+      double fp = system.scft().fHelmholtz();
+
+      system.w().readBasis("in/w1DStressFD.bf");
+      parameters[0] = L - h;
+      system.setUnitCell(parameters);
+      error = system.iterate();
+      TEST_ASSERT(!error);
+      double fm = system.scft().fHelmholtz();
+
+      double stressFD = (fp - fm)/(2.0*h);
+      double diff = std::abs(stress - stressFD);
+      Log::file() << "\nstress            = " << Dbl(stress, 20, 12)
+                  << "\nstress (fin diff) = " << Dbl(stressFD, 20, 12)
+                  << "\ndifference        = " << Dbl(diff, 20, 12)
+                  << std::endl;
+      TEST_ASSERT(diff < 1.0E-7);
    }
 
 };
@@ -518,6 +579,7 @@ TEST_ADD(FilmEnvironmentTest, testSolve1DGrid)
 TEST_ADD(FilmEnvironmentTest, testSolve2DGrid)
 //TEST_ADD(FilmEnvironmentTest, testSweepGrid)
 TEST_ADD(FilmEnvironmentTest, testSolveWithFBulkGrid)
+TEST_ADD(FilmEnvironmentTest, testStressFiniteDifference1D)
 TEST_END(FilmEnvironmentTest)
 
 #endif
