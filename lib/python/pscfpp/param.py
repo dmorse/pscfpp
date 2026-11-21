@@ -721,14 +721,9 @@ class Matrix:
          att.append(l)
          line = file.readline()
          l = line.split()
-      rowMax = att[0][0]
-      colMax = att[0][1]
-      for i in range(1, len(att)):
-         if att[i][0] > rowMax:
-            rowMax = att[i][0]
-         if att[i][1] > colMax:
-            colMax = att[i][1]
-      size = int(max(rowMax, colMax))+1
+      size = 0
+      for a in att:
+         size = max(size, int(a[0])+1, int(a[1])+1)
       for i in range(0, size):
          self.val.append([])
          for j in range(0, size):
