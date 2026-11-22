@@ -20,6 +20,12 @@ namespace Pscf {
 
    using namespace Util;
 
+   /*
+   * Initialize state to that of a Composition<W>.
+   *
+   * This function allocates iff necessary, and may be called more
+   * than once.
+   */
    template <typename WT>
    void FhMixture::initialize(Composition<WT> const & mixture)
    {
@@ -31,18 +37,19 @@ namespace Pscf {
       int nt = np + ns;
 
       // Check nMonomer, set if necessary
-      if (nMonomer() == 0) {
+      if (nMonomer_ == 0) {
          setNMonomer(nm);
       } 
       UTIL_CHECK(nMonomer() == nm);
+      UTIL_CHECK(nMonomer_ == nm);
       UTIL_CHECK(c_.capacity() == nm);
       UTIL_CHECK(w_.capacity() == nm);
 
       // Check nMolecule, set if necessary
-      if (nMolecule() == 0) {
+      if (nMolecule_ == 0) {
          setNMolecule(nt);
       }
-      UTIL_CHECK(nMolecule() == nt);
+      UTIL_CHECK(nMolecule_ == nt);
       UTIL_CHECK(molecules_.capacity() == nt);
       UTIL_CHECK(phi_.capacity() == nt);
       UTIL_CHECK(mu_.capacity() == nt);
@@ -55,7 +62,6 @@ namespace Pscf {
       int j;   // monomer index
       int k;   // block or clump index
       int nb;  // number of blocks
-      int nc;  // number of clumps
  
       // Loop over polymer molecule species
       if (np > 0) {
@@ -75,15 +81,6 @@ namespace Pscf {
                c_[j] += edge.length();
             }
     
-            // Count the number of clumps of nonzero size
-            nc = 0;
-            for (j = 0; j < nm; ++j) {
-               if (c_[j] > 0.0) {
-                  ++nc;
-               }
-            }
-            molecule(i).setNClump(nc);
-    
             // Set clump properties for this FhMolecule
             k = 0; // Clump index
             for (j = 0; j < nm; ++j) {
@@ -93,7 +90,7 @@ namespace Pscf {
                   ++k;
                }
             }
-            UTIL_CHECK(k == nc);
+            molecule(i).setNClump(k);
             molecule(i).computeSize();
    
          }

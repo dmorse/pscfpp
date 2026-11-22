@@ -205,12 +205,12 @@ namespace Pscf {
    */
    void FhMixture::computePhi(FhInteraction const & interaction, 
                               DArray<double> const & mu, 
-                           DArray<double> const & phi, 
-                           double& xi)
+                              DArray<double> const & phi, 
+                              double& xi)
    {
-      UTIL_ASSERT(interaction.nMonomer() == nMonomer_);
+      UTIL_CHECK(interaction.nMonomer() == nMonomer_);
 
-      // Allocate residual and jacobian on first use.
+      // Allocate resources used by solver on first use
       if (residual_.capacity() == 0) {
          residual_.allocate(nMolecule_);
          dX_.allocate(nMolecule_);
@@ -222,50 +222,50 @@ namespace Pscf {
          solverPtr_->allocate(nMolecule_);
       }
 
-      // Initial composition: the guess (except for the dependent
-      // species, see below). A species with mu = -infinity (a closed
-      // species with phi = 0) is absent: its phi stays 0.
+      // Set initial guess for the composition
+      // Set phi = 0 for any species with mu = -infinity.
       validate();
       int m1, m2; // molecule type indices
+      int mAbsent = 0;
       for (m1 = 0; m1 < nMolecule_; ++m1) {
          if (isAbsent(mu[m1])) {
             phi_[m1] = 0.0;
+            lnPhi_[m1] = -std::numeric_limits<double>::infinity();
+            ++mAbsent;
          } else {
             UTIL_CHECK(phi[m1] > 0.0);
             UTIL_CHECK(phi[m1] <= 1.0);
             phi_[m1] = phi[m1];
+            lnPhi_[m1] = log(phi_[m1]);
          }
-         lnPhi_[m1] = log(phi_[m1]);
       }
+      UTIL_CHECK(mAbsent < nMolecule_);
       hasComposition_ = true;
 
       double error;
       double epsilon = 1.0E-10;
-      double s1;  // clump size
-      double v1;  // molecule size
-      double f1;  // clump fraction
-      int c1;     // clump index
-      int t1, t2; // monomer type indices
-      int mDep = -1; // index of the dependent species
+      double s1;      // clump size
+      double v1;      // molecule size
+      double f1;      // clump fraction
+      int c1;         // clump index
+      int t1, t2;     // monomer type indices
+      int mDep = -1;  // index of the dependent species
       double sum;
 
       for (int it = 0; it < 50; ++it) {
 
          // The dependent species is the species with the largest phi:
-         // its phi is 1 minus the sum of the others, and xi replaces it
-         // as a Newton variable. Any other choice loses the relative
-         // precision of the phi of the dependent species when it is
-         // dilute, so that the residual cannot reach the tolerance. It
-         // is chosen again in each iteration, since the largest species
-         // can change. The residual is computed for the initial state
-         // and after a change of the dependent species.
+         // Its phi is 1 minus the sum of the others, and xi replaces it
+         // as a Newton variable.  
+
+         // Find the index mMax of the species of greatest phi
          int mMax = 0;
          for (m1 = 1; m1 < nMolecule_; ++m1) {
             if (phi_[m1] > phi_[mMax]) mMax = m1;
          }
-         if (isAbsent(mu[mMax])) {
-            UTIL_THROW("No species is present (all mu = -infinity)");
-         }
+
+         // Check if the index of the dependent species has changed.
+         // This always occurs on the first iteration, when mDep = -1.
          if (mMax != mDep) {
             mDep = mMax;
             sum = 0.0;
@@ -303,15 +303,20 @@ namespace Pscf {
             }
          }
 
-         // Compute the interaction part of matrix d(mu)/d(Phi), stored
-         // in jacobian_ (the ideal part is added below)
+         // The Newton variables are xi and ln(phi) of every species other
+         // than the dependent species, with index mDep. The residual is
+         // a difference between mu and its target value, for all species.
+         // The column for xi is d( mu[m])/d xi = size[m], for all m. 
+
+         // Initialize jacobian to zero
          for (m1 = 0; m1 < nMolecule_; ++m1) {
             for (m2 = 0; m2 < nMolecule_; ++m2) {
                jacobian_(m1, m2) = 0.0;
             }
          }
+
+         // Set jacobian_ to interaction part of matrix d(mu)/d(Phi)
          for (m1 = 0; m1 < nMolecule_; ++m1) {
-            v1 = molecule(m1).size();
             for (c1 = 0; c1 < molecule(m1).nClump(); ++c1) {
                t1 = molecule(m1).clump(c1).monomerId();
                s1 = molecule(m1).clump(c1).size();
@@ -320,38 +325,40 @@ namespace Pscf {
                }
             }
          }
+         // This is now a full matrix that still contains the column with
+         // index mDep, and is d(mu)/d(phi) rather than d(mu)/d(ln phi).
 
-         // Impose incompressibility
+         // Impose incompressibility on interaction part of d(mu)/d(phi).
          for (m1 = 0; m1 < nMolecule_; ++m1) {
             for (m2 = 0; m2 < nMolecule_; ++m2) {
                if (m2 != mDep) {
                   jacobian_(m1, m2) -= jacobian_(m1, mDep);
                }
             }
-            // Derivative of mu_[m1] with respect to xi
+         }
+
+         // Construct the Jacobian column d(mu)/d(xi) with index mDep
+         for (m1 = 0; m1 < nMolecule_; ++m1) {
             jacobian_(m1, mDep) = molecule(m1).size();
          }
 
-         // The Newton variables are xi and ln(phi) of every species
-         // other than the dependent one, mDep, whose phi is 1 minus
-         // the sum of the others. Steps in ln(phi) reach a dilute
-         // species, whose mu depends on ln(phi), in a few steps, and
-         // ln(phi) remains finite where phi underflows to zero. The
-         // columns of these variables are d(mu)/d(ln phi) =
-         // phi*d(mu)/d(phi), plus the ideal part:
-         // d(ln phi[m2])/d(ln phi[m2]) = 1, and
-         // d(ln phi[mDep])/d(ln phi[m2]) = -phi[m2]/phi[mDep].
+         // Convert d(mu)/d(phi) to d(mu)/d(ln phi), for m2 != mDep
          for (m2 = 0; m2 < nMolecule_; ++m2) {
             if (m2 == mDep) continue;
             for (m1 = 0; m1 < nMolecule_; ++m1) {
                jacobian_(m1, m2) *= phi_[m2];
             }
+         }
+
+         // Add the ideal parts, for columns with m2 != mDep
+         for (m2 = 0; m2 < nMolecule_; ++m2) {
+            if (m2 == mDep) continue;
             jacobian_(m2, m2) += 1.0;
             jacobian_(mDep, m2) -= phi_[m2]/phi_[mDep];
          }
 
-         // An absent species has a unit row and a zero residual, so
-         // that its ln(phi) = -infinity does not change
+         // An absent species has a zero residual, and is assigned a unit
+         // row so that its value ln(phi) = -infinity will not be changed.
          for (m1 = 0; m1 < nMolecule_; ++m1) {
             if (isAbsent(mu[m1])) {
                for (m2 = 0; m2 < nMolecule_; ++m2) {
@@ -375,30 +382,35 @@ namespace Pscf {
             lnPhiOld_[m1] = lnPhi_[m1];
          }
 
-         // Apply update
+         // Apply update.
+         // Rescale if necessary to preserve incompressibility.
          bool inRange = false;
-         for (int j = 0; j < 30; ++j) {
+         for (int j = 0; j < 20; ++j) {
 
-            // Update volume fractions
+            // Update and check volume fractions
             sum = 0.0;
-            for (m1 = 0; m1 < nMolecule_; ++m1) {
-               if (m1 == mDep) continue;
-               lnPhi_[m1] = lnPhiOld_[m1] - dX_[m1];
-               phi_[m1] = std::exp(lnPhi_[m1]);
-               sum += phi_[m1];
+            inRange = true;
+            m1 = 0;
+            while (m1 < nMolecule_ && inRange) {
+               if (m1 != mDep) {
+                  lnPhi_[m1] = lnPhiOld_[m1] - dX_[m1];
+                  if (lnPhi_[m1] <= 0) {
+                     phi_[m1] = std::exp(lnPhi_[m1]);
+                     sum += phi_[m1];
+                  } else {
+                     inRange = false;
+                  }
+               }
+               ++m1;
             }
-            phi_[mDep] = 1.0 - sum;
-
-            // Check if all volume fractions are in (0,1]
-            inRange = (phi_[mDep] > 0.0);
-            for (m1 = 0; m1 < nMolecule_; ++m1) {
-               if (m1 == mDep) continue;
-               if (!(lnPhi_[m1] <= 0.0)) inRange = false;
+            if (inRange) {
+               phi_[mDep] = 1.0 - sum;
+               if (phi_[mDep] < 0) inRange = false;
             }
 
             // Exit loop or reduce increment
             if (inRange) {
-               break;
+               lnPhi_[mDep] = std::log1p(-sum);
             } else {
                for (m1 = 0; m1 < nMolecule_; ++m1) {
                   dX_[m1] *= 0.5;
@@ -407,7 +419,6 @@ namespace Pscf {
 
          }
          if (inRange) {
-            lnPhi_[mDep] = std::log1p(-sum);
             xi = xi - dX_[mDep];
          } else {
             UTIL_THROW("Volume fractions remain out of range");
@@ -419,38 +430,37 @@ namespace Pscf {
          adjustXi(mu, xi);
          computeResidual(mu, error);
 
-         #if 0
-         std::cout << "mu[0] =" << mu[0] << std::endl;
-         std::cout << "mu[1] =" << mu[1] << std::endl;
-         std::cout << "mu_[0] =" << mu_[0] << std::endl;
-         std::cout << "mu_[1] =" << mu_[1] << std::endl;
-         std::cout << "residual[0] =" << residual_[0] << std::endl;
-         std::cout << "residual[1] =" << residual_[1] << std::endl;
-         std::cout << "error     ="  << error << std::endl;
-         #endif
-
          if (error < epsilon) return;
       }
 
       UTIL_THROW("Failed to converge");
    }
 
+   /*
+   * Adjust Xi such that the sum of residuals is equal to zero.
+   *
+   * Apply Newton's method to a one-dimensional problem. The problem is
+   * linear, so the solution is obtained in one step.
+   */
    void FhMixture::adjustXi(DArray<double> const & mu, double& xi)
    {
-      double dxi = 0.0;
-      double sum = 0.0;
+      double err = 0.0;
+      double jac = 0.0;
       for (int i=0; i < nMolecule_; ++i) {
          if (isAbsent(mu[i])) continue;
-         dxi += mu[i] - mu_[i];
-         sum += molecules_[i].size();
+         err += mu_[i] - mu[i];
+         jac += molecules_[i].size();
       }
-      dxi = dxi/sum;
+      double dxi = -err/jac;
       for (int i=0; i < nMolecule_; ++i) {
          mu_[i] += dxi*molecules_[i].size();
       }
       xi += dxi;
    }
 
+   /*
+   * Compute and store residual_ vector.
+   */
    void FhMixture::computeResidual(DArray<double> const & mu, double& error)
    {
       error = 0.0;
