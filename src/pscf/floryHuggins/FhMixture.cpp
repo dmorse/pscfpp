@@ -8,19 +8,42 @@
 #include "FhMixture.tpp"
 #include <pscf/floryHuggins/FhInteraction.h>
 #include <pscf/math/LuSolver.h>
+#include <limits>
 #include <cmath>
+
+#define PSCF_HAS_INFINITY 
 
 namespace Pscf {
 
    using namespace Util;
 
+   // Anonymous namespace (only accessible in this file)
    namespace {
 
       /*
       * Is a species with chemical potential mu absent (mu = -infinity)?
       */
-      bool isAbsent(double mu)
-      {  return std::isinf(mu) && mu < 0.0; }
+      bool isMuAbsent(double mu)
+      { 
+         if (mu >= 0.0) return false;
+         if (std::numeric_limits<double>::has_infinity) {
+            return std::isinf(mu);
+         } else {
+            return (std::abs(mu) > 1.0E6);
+         }
+      }
+
+      /*
+      * Return the value of mu used to represent an absent species.
+      */
+      double muAbsent()
+      {
+         if (std::numeric_limits<double>::has_infinity) {
+            return -std::numeric_limits<double>::infinity();
+         } else {
+            return -1.0E8;
+         }
+      }
 
    }
 
@@ -165,8 +188,10 @@ namespace Pscf {
       }
       UTIL_CHECK(sum > 0.9999);
       UTIL_CHECK(sum < 1.0001);
-      for (k = 0; k < nMonomer_; ++k) {
-         c_[k] /= sum;
+      if (std::abs(sum - 1.0) > 1.0E-14) {
+         for (k = 0; k < nMonomer_; ++k) {
+            c_[k] /= sum;
+         }
       }
 
    }
@@ -209,6 +234,7 @@ namespace Pscf {
                               double& xi)
    {
       UTIL_CHECK(interaction.nMonomer() == nMonomer_);
+      validate();
 
       // Allocate resources used by solver on first use
       if (residual_.capacity() == 0) {
@@ -224,13 +250,12 @@ namespace Pscf {
 
       // Set initial guess for the composition
       // Set phi = 0 for any species with mu = -infinity.
-      validate();
       int m1, m2; // molecule type indices
       int mAbsent = 0;
       for (m1 = 0; m1 < nMolecule_; ++m1) {
-         if (isAbsent(mu[m1])) {
+         if (isMuAbsent(mu[m1])) {
             phi_[m1] = 0.0;
-            lnPhi_[m1] = -std::numeric_limits<double>::infinity();
+            lnPhi_[m1] = muAbsent();
             ++mAbsent;
          } else {
             UTIL_CHECK(phi[m1] > 0.0);
@@ -360,7 +385,7 @@ namespace Pscf {
          // An absent species has a zero residual, and is assigned a unit
          // row so that its value ln(phi) = -infinity will not be changed.
          for (m1 = 0; m1 < nMolecule_; ++m1) {
-            if (isAbsent(mu[m1])) {
+            if (isMuAbsent(mu[m1])) {
                for (m2 = 0; m2 < nMolecule_; ++m2) {
                   jacobian_(m1, m2) = 0.0;
                }
@@ -447,7 +472,7 @@ namespace Pscf {
       double err = 0.0;
       double jac = 0.0;
       for (int i=0; i < nMolecule_; ++i) {
-         if (isAbsent(mu[i])) continue;
+         if (isMuAbsent(mu[i])) continue;
          err += mu_[i] - mu[i];
          jac += molecules_[i].size();
       }
@@ -465,7 +490,7 @@ namespace Pscf {
    {
       error = 0.0;
       for (int i = 0; i < nMolecule_; ++i) {
-         if (isAbsent(mu[i])) {
+         if (isMuAbsent(mu[i])) {
             residual_[i] = 0.0;
             continue;
          }
