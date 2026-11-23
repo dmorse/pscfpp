@@ -62,6 +62,7 @@ namespace Pscf {
       int j;   // monomer index
       int k;   // block or clump index
       int nb;  // number of blocks
+      int nc;  // number of clumps
  
       // Loop over polymer molecule species
       if (np > 0) {
@@ -78,8 +79,19 @@ namespace Pscf {
             for (k = 0; k < nb; ++k) {
                Edge const& edge = polymer.edge(k);
                j = edge.monomerId();
+               UTIL_CHECK(edge.length() > 0);
                c_[j] += edge.length();
             }
+    
+            // Count the number of clumps of nonzero size
+            nc = 0;
+            for (j = 0; j < nm; ++j) {
+               UTIL_CHECK(c_[j] >= 0.0);
+               if (c_[j] > 0.0) {
+                  ++nc;
+               }
+            }
+            molecule(i).setNClump(nc);
     
             // Set clump properties for this FhMolecule
             k = 0; // Clump index
@@ -90,7 +102,7 @@ namespace Pscf {
                   ++k;
                }
             }
-            molecule(i).setNClump(k);
+            UTIL_CHECK(k == nc);
             molecule(i).computeSize();
    
          }
