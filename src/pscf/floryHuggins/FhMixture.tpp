@@ -54,15 +54,21 @@ namespace Pscf {
       UTIL_CHECK(phi_.capacity() == nt);
       UTIL_CHECK(mu_.capacity() == nt);
 
-      // Work space of clump sizes
-      DArray<double> c_;
-      c_.allocate(nm);
+      /*
+      * Work space for identifying clumps for each polymer species
+      * clumpSizes[j] is the sum of block lengths of monomer type j
+      * clumpFlags[j] is true iff a molecule contain a block of type j
+      */
+      DArray<double> clumpSizes;
+      DArray<bool> clumpFlags;
+      clumpSizes.allocate(nm);
+      clumpFlags.allocate(nm);
 
       int i;   // species index
       int j;   // monomer index
       int k;   // block or clump index
-      int nb;  // number of blocks
-      int nc;  // number of clumps
+      int nb;  // number of blocks in a polymer species
+      int nc;  // number of clumps in a polymer species
  
       // Loop over polymer molecule species
       if (np > 0) {
@@ -71,34 +77,39 @@ namespace Pscf {
    
             // Initial array of clump sizes 
             for (j = 0; j < nm; ++j) {
-               c_[j] = 0.0;
+               clumpSizes[j] = 0.0;
+               clumpFlags[j] = false;
             }
-   
-            // Compute clump sizes for all monomer types.
+ 
+            // Compute clump sizes and flags for all monomer types.
             nb = polymer.nBlock(); 
             for (k = 0; k < nb; ++k) {
                Edge const& edge = polymer.edge(k);
-               j = edge.monomerId();
                UTIL_CHECK(edge.length() > 0);
-               c_[j] += edge.length();
+               j = edge.monomerId();
+               clumpSizes[j] += edge.length();
+               clumpFlags[j] = true;
             }
     
-            // Count the number of clumps of nonzero size
+            // Count the number nc of clumps
             nc = 0;
             for (j = 0; j < nm; ++j) {
-               UTIL_CHECK(c_[j] >= 0.0);
-               if (c_[j] > 0.0) {
+               UTIL_CHECK(clumpSizes[j] >= 0.0);
+               if (clumpFlags[j]) {
+                  UTIL_CHECK(clumpSizes[j] > 0.0);
                   ++nc;
+               } else {
+                  UTIL_CHECK(clumpSizes[j] == 0.0);
                }
             }
             molecule(i).setNClump(nc);
     
-            // Set clump properties for this FhMolecule
+            // Set clump properties for this FhMolecule species
             k = 0; // Clump index
             for (j = 0; j < nm; ++j) {
-               if (c_[j] > 0.0) {
+               if (clumpFlags[j]) {
                   molecule(i).clump(k).setMonomerId(j);
-                  molecule(i).clump(k).setSize(c_[j]);
+                  molecule(i).clump(k).setSize(clumpSizes[j]);
                   ++k;
                }
             }
