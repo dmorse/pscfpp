@@ -1,0 +1,200 @@
+
+Data Validity Flags:
+====================
+
+  - Goals:
+
+        - Make it impossible to use a non-const reference to the
+          System to create inconsistent data.
+
+        - Create validity flags for all data at all levels that
+          correctly reflect the state of the data, labelling data
+          that has become outdated due to changes in parameters or
+          fields.
+
+  - Computed data is stored in multiple places:
+
+       Propagator: q 
+       Block:      c and stress, and internal data structures
+       Polymer:    phi, mu and Q
+       Mixture:    stress
+       CFields
+       WaveList
+
+    Primary data is stored in:
+
+       WFields
+       UnitCell
+       Mixture: kuhn
+       Block: length or nBead
+       Polymer: phi or mu
+       Interaction: chi
+
+  - Currently, a non-const reference to a System does not allow 
+    non-const access to the mixture, and thus also not to single
+    propagators or blocks. It is thus also impossible to use such 
+    a handle to update just one propagator, block cField, or block
+    stress.
+
+  - Given a non-const reference to a System, the only way to solve the 
+    MDE is to call Mixture::compute.  The Mixture::compute function does 
+    not take a field or unit cell as an argument, but instead uses the 
+    current values stored in WFIelds and Domain::UnitCell.  This makes
+    it possible for the System to keep track of when dependent data is
+    up to date. No lower level object has access to enough information
+    to coordinate this.
+
+  - It is not be necessary for operations that clear flags of objects that 
+    are lower in the solver ownership hierarchy (e.g., propgators or blocks)
+    to clear flags of higher level aggregates (polymer or mixture). We 
+    can rely on the fact that the only way to do updates are globally, 
+    by calling member functions of the System or Mixture. Clearing 
+    operations only need to go down the ownership hierarchy, not up.
+
+  - The WFields and UnitCell classes do not allow changes to individual
+    fields or individual parameters: All fields or all parameters must
+    be updated at once. Changes to these data structures can thus be
+    treated as unitary events, which trigger emission of signals. 
+    Changes in either fields or unit cell parameters invalidates all 
+    solutions.
+
+  - Principle: If private or protected data is computed within a class 
+    that holds that data, only that class or possibly classes descended
+    from it should be able to set the flag to true, and this should be
+    done inside the function that does the computation. Such classes 
+    should, however, provide public functions to access the flag and 
+    to "clear" it (i.e., set it false). The function that clears the 
+    flag (marks it as invalid) must be public in order to allow a 
+    parent object (Mixture or Polymer) to clear data held by a child 
+    (e.g., a Polymer, Block or Propagator). 
+
+  - Following this principle would mean having PropagatorTmpl provide 
+    protected access to a function that sets PropagatorTmpl::isSolved_ 
+    true, and public access to a function that sets isSolved_ false.
+
+  - Block, Polymer and Mixture should have separate clearUnitCellData 
+    and clearWFieldData functions to reflect the need to distinguish 
+    between changes in these when resetting private data used in the 
+    Block class. 
+
+  - If we continue to use Signals emitted by the UnitCell and WFields 
+    objects to clear flags, then resetting both the unit cell and the 
+    WFields would force a bit of repetitive flag clearing during SCFT 
+    iterations with a flexible unit cell, since either is sufficient 
+    to clear all operations. I think that this should be very fast, 
+    and is probably okay. 
+
+  - If we start to use signals for changes in other parameters that 
+    are changed by a Sweep or a Ramp, flags will be reset multiple 
+    times by changes in multiple parameters. Is this okay, or should
+    we figure out a way to modify all parameters of a given type at
+    once?
+
+  - Reason to worry about this: The change set functions of the System 
+    are public. We can only guarantee that they can't be misused if 
+    each call guarantees validity.
+
+  - Possible solution: Make the System set functions require that all 
+    parameters of one type be reset at once, and then strictly enforce 
+    validity on that type of call. 
+
+  - Sweeps and Ramps can accumulate changes in internal variables and 
+    then pass all changes of a given type to the System at once. 
+
+Possible changes:
+=================
+
+In Pscf::PropagatorTmpl
+
+    Change setIsSolved(bool) to
+
+    protected: setIsSolved(true)  -> public: setIsSolved();
+    protected: setIsSolved(false) -> protected: clearSolution();
+
+In Mixture, Polymer and Block:
+
+    Public virtual functions:   
+
+
+In Block:
+
+    public:
+
+       bool hasCField() const;
+       bool hasStress() const;
+
+       void clearWFieldData();
+       void clearUnitCellData();
+
+       virtual void setLength();
+
+    private:
+
+       bool hasCField_
+       bool hasStress_
+
+    Note: 
+
+    1) The block has different internal data structures that depend 
+    on the unit cell parameters and w fields. We thus need different 
+    clear functions.
+
+    2) Changing the kuhn length has the same effect on internal data
+    structures as changing the unit cell parameters. We don't need a 
+    separate clear function for the kuhn length.
+
+    3) Response to changing block lengths can be built into a virtual
+    version of the setLength(...) function that calls Edge::setLength(...).
+
+    4) Data used by Block that might be changed in a Sweep or Ramp:
+
+        - W-fields      -> clearWFieldData
+        - Kuhn          -> clearUnitCellData
+        - Cell params   -> clearUnitCellData
+        - Block lengths -> setLength(....)
+
+    5) Multiple clear functions defined in the Block class must be 
+    imitated in the Polymer and Mixture class so that they can be called 
+    hierarchichally.
+         
+In Polymer:
+
+    public: 
+
+       void clearWFieldData();
+       void clearUnitCellData();
+
+       virtual setPhi(...);
+       virtual setMu(...);
+
+In Mixture:
+
+     public:
+
+        bool isSolved() const;
+        bool hasStress() const;
+
+     private:
+
+        bool isSolved_;
+        bool hasStress_;
+
+In MixtureModifier:
+
+        setKuhn(...)
+        setBlockLength(...)
+        setPhi(...)
+        setMu(...)
+
+In System:
+
+        setKuhn(...)
+        setBlockLength(...)
+        setPhi(...)
+        setMu(...)
+        setChi(...)
+
+        // Are these needed, or are signals sufficient?
+        void clearUnitCellData()  
+        void clearWFieldData()  
+
