@@ -5,46 +5,48 @@
 <BR>
 
 PSCF is distributed only as source code, and so must be compiled by the
-user.  All C++ source code follows the ANSI 2011 C++ language standard.
-Code that uses an NVIDIA (GPU) is written in CUDA.
+user.  All C++ source code complies with the ANSI 2011 C++ language 
+standard.  Code that uses an NVIDIA graphics processing unit (GPU) is 
+written in CUDA C++.
 
 PSCF is designed to be compiled and run in a unix-like environment. The
 package has been tested and used on systems running either linux or recent
 versions of the Mac OS X operating systems.  PSCF can take advantage of a
-CUDA-capable Nvidia GPU if one is available, or can run on standard CPU
+CUDA-capable NVIDIA GPU if one is available, or can run on standard CPU
 hardware.  Compilation is controlled by a system of unix makefiles.
 
 \section require_overview_section Overview
 
-PSCF currently contains code for two programs that are designed to run on
-a conventional CPU (pscf_1d and pscf_rpg), and one that is designed to use
-an NVIDIA GPU (pscf_rpg). We distinguish these in what follows by referring
-to CPU programs and a GPU-enabled program.
+PSCF currently contains code to build two executable files that are 
+designed to run on a conventional CPU (pscf_1d and pscf_rpc), and one 
+that is designed to use an NVIDIA GPU (pscf_rpg). We refer to these
+as the CPU executables and the GPU-enabled executable.
 
-In order to compile just the two CPU programs in the PSCF package, the
-system on which the code is compiled and run must have:
+In order to compile just the two CPU executables (pscf_1d and pscf_rpc), 
+the system on which the code is compiled and run must have:
 
    - a git version control client
    - a C++ compiler
    - a Python interpreter, version 3 or greater
-   - the GNU Scientific Library (GSL) (header and library)
-   - the FFTW fast Fourier transform library (header and library)
+   - the <a href="https://www.gnu.org/software/gsl"> 
+     GNU Scientific Library (GSL) </a> (header and library)
+   - the < href="https://fftw.org"> FFTW </a> fast Fourier transform 
+     library (header and library)
 
 A git client is needed to obtain the source code, by cloning the git
 repository in which PSCF is maintained on the github.com site. A Python
 interpreter is needed during compilation because the build system that
-compiles PSCF uses several Python scripts that are provided within
-the PSCF repository. A git client, C++ compiler and Python interpreter
-will all normally come pre-installed in common linux distributions or
-in a Mac OS operating system in which
+compiles PSCF uses several Python scripts that are provided within the 
+PSCF repository. A git client, C++ compiler and Python interpreter will 
+all normally come pre-installed in common linux distributions or in a 
+Mac OS operating system in which
 \ref require_mac_commandtools_section "command line tools" have been
-installed.  The GNU scientific library is used by several programs
-within the package for linear algebra operations.  The FFTW fast Fourier
-transform library is used extensively by the pscf_rpc programs for
-periodic microstructures.
+installed.  The GNU scientific library is used by all programs to perform 
+linear algebra operations.  The FFTW fast Fourier transform library is 
+used extensively by the pscf_rpc executable.
 
-In order to compile the GPU-enabled pscf_rpg program, the user's system
-must also have:
+In order to compile the GPU-enabled pscf_rpg executable, the user's 
+system must also have:
 
    - a CUDA-enabled NVIDIA graphics card
    - the <a href="https://developer.nvidia.com/cuda-toolkit">
@@ -52,7 +54,8 @@ must also have:
 
 The CUDA Toolkit is a development environment that provides the
 nvcc C++/CUDA compiler and a variety of GPU-accelerated libraries,
-including the cuFFT fast Fourier transform library.
+including the cuFFT fast Fourier transform library and the cuRAND
+random number generator.
 
 Users who wish to generate a local copy of this web manual, as a set of
 html pages that reside on the user's computer, will also need to install
