@@ -16,7 +16,7 @@ associated with a system into several categories:
     search for a state of minimal free energy or by a stochastic field 
     theoretic simulation algorithm.
 
-  - Dependent state variables: These are variables whose values are computed
+  - Computed Data: These are variables whose values are computed
     from the parameters and the current state variables.
 
 Immutable parameters:
@@ -45,13 +45,13 @@ Mutable parameters (modified by sweep and ramp parameters):
   - Flory-Huggins interaction parameters
   - vMonomer
 
-Independent state variables:
+State variables:
 
   - W fields for all monomer types [ WFields<D,T> ]
   - Unit cell parameters (edge lengths and angles) 
     [ Domain<D,T>::unitCell ]
 
-Dependent state variables:
+Computed variables:
 
   - Data structures maintained by WaveList<D,T> that depend on unit cell
     parameters, including minimalIndices, values for squared wavevectors,

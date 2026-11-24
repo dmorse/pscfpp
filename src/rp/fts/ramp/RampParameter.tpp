@@ -80,9 +80,12 @@ namespace Rp {
    {
       std::string buffer;
       in >> buffer;
+
+      // Transform buffer string to all lower case
       std::transform(buffer.begin(), buffer.end(),
                      buffer.begin(), ::tolower);
 
+      // Attempt to match buffer to any allowed label
       if (buffer == "block" || buffer == "block_length") {
          UTIL_CHECK(PolymerModel::isThread());
          type_ = Block;
@@ -115,12 +118,13 @@ namespace Rp {
          type_ = Lambda_Pert;
          nId_ = 0; // No associated index
       } else if (buffer == "v_monomer") {
-         type_ = Vmonomer;
+         type_ = V_monomer;
          nId_ = 0; // No associated index
       } else {
          UTIL_THROW("Invalid RampParameter::ParamType value");
       }
 
+      // Allocate array id_ with capacity nId_
       if (id_.isAllocated()) id_.deallocate();
       if (nId_ > 0) {
          id_.allocate(nId_);
@@ -148,6 +152,8 @@ namespace Rp {
 
    /*
    * Check that the indices of this parameter are in range.
+   *
+   * Throw an Exception if any index is out of range.
    */
    template <int D, class T>
    void RampParameter<D,T>::checkIds() const
@@ -222,10 +228,15 @@ namespace Rp {
          return "cell_param";
       } else if (type_ == Lambda_Pert) {
          return "lambda_pert";
-      } else if (type_ == Vmonomer) {
-         return "vMonomer";
+      } else if (type_ == V_monomer) {
+         return "v_monomer";
+      } else if (type_ == Null) {
+         std::string msg
+              = "Attempt to convert a Null RampParameter type ";
+         msg += "enum value to a string";
+         UTIL_THROW(msg.c_str());
       } else {
-         UTIL_THROW("This should never happen.");
+         UTIL_THROW("This should have been impossible.");
       }
    }
 
@@ -252,7 +263,7 @@ namespace Rp {
          return systemPtr_->mixture().solvent(id(0)).mu();
       } else if (type_ == Solvent) {
          return systemPtr_->mixture().solvent(id(0)).size();
-      } else if (type_ == Vmonomer) {
+      } else if (type_ == V_monomer) {
          return systemPtr_->mixture().vMonomer();
       } else if (type_ == Cell_Param) {
          return systemPtr_->domain().unitCell().parameter(id(0));
@@ -287,7 +298,7 @@ namespace Rp {
          systemPtr_->mixtureModifier().setMuSolvent(id(0), newVal);
       } else if (type_ == Solvent) {
          systemPtr_->mixtureModifier().setSolventSize(id(0), newVal);
-      } else if (type_ == Vmonomer) {
+      } else if (type_ == V_monomer) {
          systemPtr_->mixtureModifier().setVMonomer(newVal);
       } else if (type_ == Cell_Param) {
          FSArray<double,6> params;

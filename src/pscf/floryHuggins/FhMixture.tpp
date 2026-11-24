@@ -20,6 +20,12 @@ namespace Pscf {
 
    using namespace Util;
 
+   /*
+   * Initialize state to that of a Composition<W>.
+   *
+   * This function allocates iff necessary, and may be called more
+   * than once.
+   */
    template <typename WT>
    void FhMixture::initialize(Composition<WT> const & mixture)
    {
@@ -31,31 +37,38 @@ namespace Pscf {
       int nt = np + ns;
 
       // Check nMonomer, set if necessary
-      if (nMonomer() == 0) {
+      if (nMonomer_ == 0) {
          setNMonomer(nm);
       } 
       UTIL_CHECK(nMonomer() == nm);
+      UTIL_CHECK(nMonomer_ == nm);
       UTIL_CHECK(c_.capacity() == nm);
       UTIL_CHECK(w_.capacity() == nm);
 
       // Check nMolecule, set if necessary
-      if (nMolecule() == 0) {
+      if (nMolecule_ == 0) {
          setNMolecule(nt);
       }
-      UTIL_CHECK(nMolecule() == nt);
+      UTIL_CHECK(nMolecule_ == nt);
       UTIL_CHECK(molecules_.capacity() == nt);
       UTIL_CHECK(phi_.capacity() == nt);
       UTIL_CHECK(mu_.capacity() == nt);
 
-      // Work space of clump sizes
-      DArray<double> c_;
-      c_.allocate(nm);
+      /*
+      * Work space for identifying clumps for each polymer species
+      * clumpSizes[j] is the sum of block lengths of monomer type j
+      * clumpFlags[j] is true iff a molecule contain a block of type j
+      */
+      DArray<double> clumpSizes;
+      DArray<bool> clumpFlags;
+      clumpSizes.allocate(nm);
+      clumpFlags.allocate(nm);
 
       int i;   // species index
       int j;   // monomer index
       int k;   // block or clump index
-      int nb;  // number of blocks
-      int nc;  // number of clumps
+      int nb;  // number of blocks in a polymer species
+      int nc;  // number of clumps in a polymer species
  
       // Loop over polymer molecule species
       if (np > 0) {
@@ -64,32 +77,39 @@ namespace Pscf {
    
             // Initial array of clump sizes 
             for (j = 0; j < nm; ++j) {
-               c_[j] = 0.0;
+               clumpSizes[j] = 0.0;
+               clumpFlags[j] = false;
             }
-   
-            // Compute clump sizes for all monomer types.
+ 
+            // Compute clump sizes and flags for all monomer types.
             nb = polymer.nBlock(); 
             for (k = 0; k < nb; ++k) {
                Edge const& edge = polymer.edge(k);
+               UTIL_CHECK(edge.length() > 0);
                j = edge.monomerId();
-               c_[j] += edge.length();
+               clumpSizes[j] += edge.length();
+               clumpFlags[j] = true;
             }
     
-            // Count the number of clumps of nonzero size
+            // Count the number nc of clumps
             nc = 0;
             for (j = 0; j < nm; ++j) {
-               if (c_[j] > 0.0) {
+               UTIL_CHECK(clumpSizes[j] >= 0.0);
+               if (clumpFlags[j]) {
+                  UTIL_CHECK(clumpSizes[j] > 0.0);
                   ++nc;
+               } else {
+                  UTIL_CHECK(clumpSizes[j] == 0.0);
                }
             }
             molecule(i).setNClump(nc);
     
-            // Set clump properties for this FhMolecule
+            // Set clump properties for this FhMolecule species
             k = 0; // Clump index
             for (j = 0; j < nm; ++j) {
-               if (c_[j] > 0.0) {
+               if (clumpFlags[j]) {
                   molecule(i).clump(k).setMonomerId(j);
-                  molecule(i).clump(k).setSize(c_[j]);
+                  molecule(i).clump(k).setSize(clumpSizes[j]);
                   ++k;
                }
             }

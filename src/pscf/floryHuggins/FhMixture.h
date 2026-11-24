@@ -58,6 +58,14 @@ namespace Pscf {
       /**
       * Initialize to properties of a Composition descriptor.
       *
+      * This function sets nMonomer and nMolecule and allocates related
+      * arrays if and only if necessary. As a result, it may be used to
+      * initialize, and may be called repeatedly for a Mixture with the
+      * same values of these parameters. 
+      *
+      * \throw Exception if passed a Composition with values of nMonomer
+      * or nMolecule that do not match values set previously.
+      *
       * \param mixture  descriptor for a SCFT or FTS mixture
       */
       template <typename WT>
@@ -66,12 +74,16 @@ namespace Pscf {
       /**
       * Set the number of molecular species and allocate memory.
       *
+      * \throw Exception if nMolecule has been set previously
+      *
       * \param nMolecule number of molecular species (polymer and solvent)
       */
       void setNMolecule(int nMolecule);
       
       /**
-      * Set the number of monomer types.
+      * Set the number of monomer types and allocate memory.
+      *
+      * \throw Exception if nMonomer has been set previously
       *
       * \param nMonomer number of monomer types.
       */
@@ -84,6 +96,14 @@ namespace Pscf {
       /**
       * Set system composition.
       *
+      * The volume fraction of the species with the largest value of
+      * phi adjusted to give a sum of exactly 1.0.
+      *
+      * \throw Exception if any element negative or greater than 1
+      * \throw Exception if the sum of elements other than the largest is
+      *        greater than 1.
+      * \post Upon return, phi array is set.
+      *
       * \param phi array of molecular volume fractions.
       */
       void setComposition(DArray<double> const & phi);
@@ -91,8 +111,8 @@ namespace Pscf {
       /**
       * Compute chemical potential from preset composition.
       *
-      * Precondition: setComposition must be called prior.
-      * Postcondition: Upon return, mu array is set.
+      * \pre setComposition must be called prior.
+      * \post Upon return, mu array is set.
       *
       * \param interaction  excess free energy model (input)
       * \param xi  Lagrange multiplier field (input)
@@ -101,6 +121,10 @@ namespace Pscf {
 
       /**
       * Compute composition from chemical potentials.
+      *
+      * A species with mu = -infinity (a closed species with phi = 0)
+      * is absent: its volume fraction is set to zero. The guess of
+      * every other species must be positive.
       *
       * \param interaction  excess free energy model (input)
       * \param mu  target molecular chemical potentials (input)
@@ -241,9 +265,17 @@ namespace Pscf {
       DMatrix<double> jacobian_;
 
       /**
-      * Array of old molecular volume fractions, for use in computePhi.
+      * Array of logarithms of the molecular volume fractions.
+      *
+      * Chemical potentials are computed from these values, which
+      * remain finite where a volume fraction in phi_ underflows to 0.
       */
-      DArray<double> phiOld_;
+      DArray<double> lnPhi_;
+
+      /**
+      * Array of old values of lnPhi_, for use in computePhi.
+      */
+      DArray<double> lnPhiOld_;
 
       /**
       * Free energy per monomer / kT.
@@ -256,7 +288,7 @@ namespace Pscf {
       double pressure_;
 
       /**
-      * Pointer to LUSolver.
+      * Pointer to an LUSolver.
       */
       LuSolver* solverPtr_;
 
@@ -266,7 +298,7 @@ namespace Pscf {
       int nMolecule_;
 
       /**
-      * Number of monomer types (maximum monomer id + 1).
+      * Number of monomer types.
       */
       int nMonomer_;
 
@@ -281,15 +313,25 @@ namespace Pscf {
       void computeC();
 
       /**
-      * Adjust xi to minimize mean-squared residual.
+      * Adjust xi such that the sum of residuals is equal to zero.
+      *
+      * \param mu  vector of target values for mu (in)
+      * \param xi  current value of xi, modified by function (in/out)
       */
       void adjustXi(DArray<double> const & mu, double& xi); 
 
       /**
       * Compute residual array and return max error.
+      * 
+      * The residual for each species that is present is the difference
+      * between the value of mu computed from the stored compositions and
+      * xi value and the target values. The residual is set to zero for
+      * any species that is absent.
+      * 
+      * \param mu  vector of target values for mu (in)
+      * \param error  maximum absolute value of residual value (out)
       */
-      void computeResidual(DArray<double> const & mu,
-                           double& error);
+      void computeResidual(DArray<double> const & mu, double& error);
 
    };
 
