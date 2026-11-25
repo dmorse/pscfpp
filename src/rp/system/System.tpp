@@ -866,10 +866,16 @@ namespace Rp {
          } else
          if (command == "WRITE_H_BASIS") {
             readEcho(in, filename);
+            if (hasEnvironment() && environment().needsUpdate()) {
+               environment().generate();
+            }
             h().writeBasis(filename);
          } else
          if (command == "WRITE_H_RGRID") {
             readEcho(in, filename);
+            if (hasEnvironment() && environment().needsUpdate()) {
+               environment().generate();
+            }
             h().writeRGrid(filename);
          } else
          if (command == "READ_MASK_BASIS") {
@@ -882,10 +888,16 @@ namespace Rp {
          } else
          if (command == "WRITE_MASK_BASIS") {
             readEcho(in, filename);
+            if (hasEnvironment() && environment().needsUpdate()) {
+               environment().generate();
+            }
             mask().writeBasis(filename);
          } else
          if (command == "WRITE_MASK_RGRID") {
             readEcho(in, filename);
+            if (hasEnvironment() && environment().needsUpdate()) {
+               environment().generate();
+            }
             mask().writeRGrid(filename);
          } else
          if (command == "WRITE_TIMERS") {
