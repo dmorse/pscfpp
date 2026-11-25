@@ -31,7 +31,7 @@ System{
     lattice           cubic 
     groupName         I_41_3_2
   }
-  AmIterator{
+  AmIteratorBasis{
     epsilon      1.0e-8
     maxItr       1000
     maxHist      40

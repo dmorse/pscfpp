@@ -27,7 +27,7 @@ System{
     lattice        cubic 
     groupName      I_m_-3_m
   }
-  AmIterator{
+  AmIteratorBasis{
     epsilon      1.0e-10
     maxItr       100
     maxHist      50 

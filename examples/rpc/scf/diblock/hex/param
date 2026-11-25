@@ -27,7 +27,7 @@ System{
     lattice        hexagonal
     groupName      p_6_m_m
   }
-  AmIterator{
+  AmIteratorBasis{
     epsilon        1.0e-10
     maxItr         100
     maxHist        50

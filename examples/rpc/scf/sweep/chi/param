@@ -27,7 +27,7 @@ System{
     lattice         lamellar   
     groupName       P_-1
   }
-  AmIterator{
+  AmIteratorBasis{
     epsilon       1.0e-12
     maxItr        100
     maxHist       10
