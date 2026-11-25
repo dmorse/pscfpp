@@ -76,23 +76,6 @@ namespace Rp {
          }
       }
 
-      /*
-      * Stop if the solver output (block concentrations, propagators,
-      * stress) would not belong to the current w fields and unit cell.
-      * SET_UNIT_CELL and READ_W_* clear the c fields, but not the
-      * propagators and block concentrations of the previous solution.
-      */
-      inline
-      void checkHasSolution(bool hasData, std::string const & command)
-      {
-         if (!hasData) {
-            Log::file() << "\n" << command << " needs a solution for the "
-                        << "current w fields and unit cell (COMPUTE or "
-                        << "ITERATE first)" << std::endl;
-            UTIL_THROW("No solution for the current w fields and unit cell");
-         }
-      }
-
    }
 
    /*
@@ -626,9 +609,7 @@ namespace Rp {
          if (command == "WRITE_STRESS") {
             readEcho(in, filename);
             std::ofstream file;
-            // The stress requires the propagators of the current w
-            // fields and unit cell
-            checkHasSolution(c().hasData(), command);
+            UTIL_CHECK(c().hasData());
             if (!mixture_().hasStress()) {
                computeStress();
             }
@@ -658,7 +639,7 @@ namespace Rp {
          } else
          if (command == "WRITE_BLOCK_C_RGRID") {
             readEcho(in, filename);
-            checkHasSolution(c().hasData(), command);
+            UTIL_CHECK(c().hasData());
             mixture_().writeBlockCRGrid(filename);
          } else
          if (command == "WRITE_Q_SLICE") {
@@ -675,7 +656,7 @@ namespace Rp {
                         << "\n"
                         << Str("segment ID  ", 21) << segmentId
                         << std::endl;
-            checkHasSolution(c().hasData(), command);
+            UTIL_CHECK(c().hasData());
             mixture_().writeQSlice(filename, polymerId, blockId,
                                  directionId, segmentId);
          } else
@@ -690,7 +671,7 @@ namespace Rp {
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
                         << "\n";
-            checkHasSolution(c().hasData(), command);
+            UTIL_CHECK(c().hasData());
             mixture_().writeQTail(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q") {
@@ -704,12 +685,12 @@ namespace Rp {
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId
                         << "\n";
-            checkHasSolution(c().hasData(), command);
+            UTIL_CHECK(c().hasData());
             mixture_().writeQ(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q_ALL") {
             readEcho(in, filename);
-            checkHasSolution(c().hasData(), command);
+            UTIL_CHECK(c().hasData());
             mixture_().writeQAll(filename);
          } else
          if (command == "WRITE_STARS") {
@@ -1000,10 +981,6 @@ namespace Rp {
       // Preconditions
       UTIL_CHECK(hasIterator());
       UTIL_CHECK(w().hasData());
-      if (iterator().isSymmetric()) {
-         UTIL_CHECK(isAllocatedBasis_);
-         UTIL_CHECK(w().isSymmetric());
-      }
       clearCFields();
 
       Log::file() << std::endl;
@@ -1014,6 +991,12 @@ namespace Rp {
          if (environment().needsUpdate()) {
             environment().generate();
          }
+      }
+
+      // Check space-group symmetry requirements
+      if (iterator().isSymmetric()) {
+         UTIL_CHECK(isAllocatedBasis_);
+         UTIL_CHECK(hasSymmetricInputFields());
       }
 
       // Call iterator (return 0 for convergence, 1 for failure)
@@ -1050,7 +1033,7 @@ namespace Rp {
       UTIL_CHECK(w().hasData());
       if (iterator().isSymmetric()) {
          UTIL_CHECK(isAllocatedBasis_);
-         UTIL_CHECK(w().isSymmetric());
+         UTIL_CHECK(hasSymmetricInputFields());
       }
 
       Log::file() << std::endl;
@@ -1081,6 +1064,26 @@ namespace Rp {
    {
       c_().setHasData(false);
       scft().clear();
+   }
+
+   /*
+   * Check if all field inputs are symmetric under space group.
+   *
+   * Precondition to use of a symmetric SCFT iterator.
+   */
+   template <int D, class T>
+   bool System<D,T>::hasSymmetricInputFields()
+   {
+      if (!w().hasData() || !w().isSymmetric()) {
+         return false;
+      }
+      if (h().hasData() && !h().isSymmetric()) {
+         return false;
+      }
+      if (mask().hasData() && !mask().isSymmetric()) {
+         return false;
+      }
+      return true;
    }
 
    // Unit Cell Modifiers

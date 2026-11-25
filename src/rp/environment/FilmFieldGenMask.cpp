@@ -216,12 +216,6 @@ namespace Rp {
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(excludedThickness() > interfaceThickness());
       UTIL_CHECK(normalVecId() >= 0);
-      // The mask is invariant under the space group, if any (this is
-      // checked by checkCompatibility), with or without an Iterator
-      bool isSymmetric = system().domain().hasGroup();
-      if (isSymmetric) {
-         UTIL_CHECK(system().domain().basis().isInitialized());
-      }
       
       // Get the length L of the lattice basis vector normal to the walls
       int paramId 
@@ -265,6 +259,12 @@ namespace Rp {
                rGrid[counter++] = 1-rhoW;
             }
          }
+      }
+
+      // Check if a space group and basis exist
+      bool isSymmetric = system().domain().hasGroup();
+      if (isSymmetric) {
+         UTIL_CHECK(system().domain().basis().isInitialized());
       }
 
       // Store this mask in System

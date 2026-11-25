@@ -284,12 +284,6 @@ namespace Rp {
       UTIL_CHECK(normalVecId() >= 0);
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(excludedThickness() > interfaceThickness());
-      // The mask is invariant under the space group, if any (this is
-      // checked by checkCompatibility), with or without an Iterator
-      bool isSymmetric = system().domain().hasGroup();
-      if (isSymmetric) {
-         UTIL_CHECK(system().domain().basis().isInitialized());
-      }
 
       // Get the length of the lattice basis vector normal to the walls
       int paramId;
@@ -306,10 +300,16 @@ namespace Rp {
       dim3 gridDims = ThreadMesh::gridDims();
       dim3 blockDims = ThreadMesh::blockDims();
 
-      // Generate the mask
+      // Generate the mask in r-grid format
       _generateMask<D><<<gridDims, blockDims>>>
          (rGrid.cArray(), nvLength, interfaceThickness(), 
           excludedThickness(), normalVecId(), ThreadMesh::meshDims());
+
+      // Check if a space group is declared and basis is initialized
+      bool isSymmetric = system().domain().hasGroup();
+      if (isSymmetric) {
+         UTIL_CHECK(system().domain().basis().isInitialized());
+      }
 
       // Store this mask in System
       system().mask().setRGrid(rGrid, isSymmetric);

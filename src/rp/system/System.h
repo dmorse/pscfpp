@@ -395,6 +395,16 @@ namespace Rp {
       */
       Mask<D,T>& mask();
 
+      /**
+      * Are the w fields, external fields and mask (if any) all symmetric?
+      *
+      * This checks if all relevant fields that are used as inputs to an MDE
+      * calculation are invariant under all elements declared space group.
+      * The return may be used as a precondition to the use of an SCFT 
+      * iterator that preserves space group symmetry. 
+      */
+      bool hasSymmetricInputFields();
+
       ///@}
       /// \name Component Object Accessors
       ///@{
@@ -543,8 +553,6 @@ namespace Rp {
       void clearTimers();
 
       ///@}
-
-   protected:
 
    private:
 
