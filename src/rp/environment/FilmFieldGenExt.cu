@@ -277,13 +277,6 @@ namespace Rp {
       UTIL_CHECK(normalVecId() >= 0);
       UTIL_CHECK(system().domain().unitCell().isInitialized());
       UTIL_CHECK(system().mask().hasData());
-      // Store symmetric fields if the Iterator is symmetric (a system
-      // may have no Iterator)
-      bool isSymmetric = system().hasIterator()
-                         && system().iterator().isSymmetric();
-      if (isSymmetric) {
-         UTIL_CHECK(system().domain().basis().isInitialized());
-      }
 
       // Setup
       int nMonomer = system().mixture().nMonomer();
@@ -318,6 +311,12 @@ namespace Rp {
          (hPtrs.cArray(), system().mask().rgrid().cArray(), 
           chiBottom_d.cArray(), chiTop_d.cArray(), normalVecId(), 
           nMonomer, ThreadMesh::meshDims());
+
+      // Check if a space group and basis exist
+      bool isSymmetric = system().domain().hasGroup();
+      if (isSymmetric) {
+         UTIL_CHECK(system().domain().basis().isInitialized());
+      }
 
       // Pass h into the System
       system().h().setRGrid(hFields, isSymmetric);

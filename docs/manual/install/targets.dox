@@ -8,57 +8,59 @@ The build system for PSCF is based on unix makefiles.
 
 \section install_targets_make_sec Using the "make" command
 
-Individual programs or groups of programs may be compiled by invoking the
-"make" command with an appropriate target name, using the syntax
+Executable files may be constructed by invoking the "make" command with 
+an appropriate target name, using the syntax 
 \code
 make target
 \endcode
 where "target" represents a target name such as "all" or "pscf_1d".
-The command "make" with no target is equivalent to "make all".
 
 The make utility may be invoked from the PSCF root directory (named 
 pscfpp/ by default), or from either the src/ or bld/ subdirectories of 
 this root directory. The same names are used for the main make targets 
-in all the three cases. Invoking make from the bld/ directory performs 
-an out-of-source compilation in which intermediate files are installed
-in the bld/ directory tree. Invoking make from the PSCF root directory
-with a target that causes compilation generally has the same effect as
-invoking make with the same target from the bld/ directory, and so also
-performs an out-of-source compilation.  Invoking make from within the
-PSCF src/ directory, however, will instead perform an in-source
-compilation that installs intermediate files in the src/ directory,
-alongside the source files.  Makefile targets that create executable
-programs all install the resulting executable files in the PSCF bin/
-directory by default, for either out-of-source or in-source compilation.
+from all three locations. 
 
-This page explains the most important makefile targets in more detail than
-given in the \ref install_overview_page "overview of instructions".
+   - Invoking make from the bld/ directory performs an out-of-source 
+     compilation in which intermediate files are installed in the bld/ 
+     directory tree. 
+
+   - Invoking make from the PSCF root directory with a valid target 
+     generally has the same effect as invoking make with the same 
+     target from the bld/ directory, and so also performs an 
+     out-of-source compilation.  
+
+   - Invoking make from within the PSCF src/ directory, however, instead 
+     perform an in-source compilation that installs intermediate files 
+     in the src/ directory, alongside the source files.  
+
+Makefile targets that create executable programs all install the 
+resulting executable files in the PSCF bin/ directory by default, for 
+either out-of-source or in-source compilation.
+
+This page explains the most important makefile targets in more detail 
+than given in the \ref install_overview_page "overview of instructions".
 The following instructions assume that you have already made the required
 changes to environment variables and run the configure script before
-using the make utility to compile.
+using the make utility to compile any source code.
 
 \section install_targets_main_sec Compilation
 
-The following makefile targets can be invoked either from either the PSCF
-root directory or bld/ directory to perform out-of-source compilation, or
-from the src/ directory to perform in-source compilation.
+The following makefile targets can all be invoked either from the PSCF 
+root directory or bld/ directory for out-of-source compilation, or from 
+the src/ directory for in-source compilation.
 
 <h2> all: </h2>
-To compile all programs that are enabled by the build system, enter either
-\code
-make
-\endcode
-with no target or (equivalently)
+To compile all programs that are currently enabled by the build system, 
+enter 
 \code
 make all
 \endcode
-The behavior of this command depends on build-system settings that 
-may be modified by running the setopts script, as discussed in more 
-detail \ref install_setopts_page "elsewhere".  
-By default, "make all" builds pscf_1d and pscf_rpc but not pscf_rpg.
-Compilation of CUDA code and building of pscf_rpg may be enabled or 
-disabled by using the -u option of the setopts script, e.g., by 
-entering "./setopts -u1" to enable CUDA compilation.
+The behavior of this command depends on build-system settings that may 
+be modified by running the setopts script, as discussed in more detail 
+\ref install_setopts_page "elsewhere".  By default, "make all" builds 
+pscf_1d and pscf_rpc but not pscf_rpg.  Compilation of CUDA code and 
+building of pscf_rpg may be enabled or disabled by using the -u option 
+of the setopts script.
 
 <h2> pscf_1d: </h2>
 
@@ -72,30 +74,28 @@ If entered before compiling any other code, this command will:
     namespace-level subdirectories of the src/ directory.
 
   - Install corresponding object (\*.o) and dependency (\*.d) files in
-    corresponding locations within the chosen build directory (i.e.,
-    in either the bld/ or src/ directory)
+    corresponding locations within the chosen build directory (i.e., in 
+    either the bld/ or src/ directory)
 
-  - Create a static library (with file extension \*.a) in each of these
-    three namespace-level subdirectories of the build directory.
+  - Create a static library (file extension \*.a) in each of these three 
+    namespace-level subdirectories of the build directory.
 
-  - Compile and link the main program file src/r1/pscf_1d.cpp and
-    install an executable file named pscf_1d in the PSCF bin/
-    directory.
+  - Compile and link the main program file src/r1/pscf_1d.cpp and install 
+    an executable file named pscf_1d in the PSCF bin/ directory.
 
 To recompile these programs after making any changes to configuration
 files (e.g., after enabling or disabling the debugging feature or changing 
-compiler command line options), simply invoke "make pscf_1d" again.
-The build system detects if you have changed any relevant source or
-configuration files, and will recompile any file that might be affected 
-by such changes.
+compiler command line options), simply invoke "make pscf_1d" again.  The 
+build system detects if you have changed any relevant source or configuration 
+files, and will recompile any file that might be affected by such changes.
 
 <h2> pscf_rp: </h2>
 To compile only the programs for periodic structures, enter:
 \code
 make pscf_rp
 \endcode
-from the PSCF root, bld/ or src/ directory ("make rp" is equivalent
-in bld/ and src/). This command will cause the system to:
+from the PSCF root, bld/ or src/ directory.  This command will cause the 
+build system to:
 
   - Compile all out-of-date \*.cpp files in the util/, pscf/, and rp/ 
     subdirectories, create resulting object and dependency files, and 
@@ -106,8 +106,9 @@ in bld/ and src/). This command will cause the system to:
 
   - If CUDA has been enabled (e.g., by entering "./setopts -u1") on a
     computer with an appropriate NVIDIA GPU and CUDA development kit,
-    also compile the CUDA code in these directories and install an
-    executable named pscf_rpg in the PSCF bin directory.
+    also compile the CUDA source files in these directories (with
+    extension *.cu) and install an executable named pscf_rpg in the 
+    PSCF bin/ directory.
 
 \section install_targets_docs_sec Documentation
 
@@ -146,17 +147,18 @@ bld/ directory in order to remove remove all intermediate files from that
 directory and all of its subdirectories.
 
 <h2> clean-bin: </h2>
-The "clean-bin" command removes all executable files with names of 
-the form pscf_\* from the directory in which executables are installed. 
-By default, this installation directory is the bin/ subdirectory of the
-PSCF root directory. This target does not remove other executable files 
-that are installed in this directory by the configure script.
+Invoking "make clean-bin" from the PSCF root directory removes all 
+executable files with names of the form pscf_\* from the directory in 
+which executables are installed.  By default, this installation directory 
+is the bin/ subdirectory of the PSCF root directory. This target does not 
+remove several other executable files that are installed in this directory 
+by the configure script. 
 
 <h2> clean-docs: </h2>
-The "clean-docs" command removes any files that have been generated
-in the docs directory by the doxygen documentation generation utility, 
-including all of the html files that are created in the docs/html 
-directory.
+Invoking "make clean-docs" from the PSCF root directory or the docs/
+subdirectory command removes all html and other files that have been 
+generated in the docs/html directory by the doxygen documentation 
+generation utility.
 
 <h2> veryclean: </h2>
 The "make clean" and "make clean-bin" commands discussed above remove
@@ -172,22 +174,21 @@ from the PSCF root directory. This command returns the entire PSCF
 directory tree to a state very similar to the state it had immediately
 after the repository was created by cloning a remote repository.
 
-After you run "make veryclean", you must rerun the configure script 
-before attempting to compile any code.
+After you run "make veryclean", you will need to rerun the configure 
+script before attempting to compile any code.
 
 The "veryclean" target erases all of the files that are generated by
 the configure script, compilation, and the documentation generator.
-It does not, however erase any compiler configuration files files 
-that the user may have created in the make/compiler directory. After 
-invoking "make veryclean", a user can thus invoke the configure script 
-again with the name of a user-generated compiler configuration file 
-as an argument in order to recreate a previous initial configuration.
+It does not, however erase any compiler configuration files that the 
+user may have created in the make/compiler directory. After invoking 
+"make veryclean", a user can thus invoke the configure script again 
+with the name of a user-generated compiler configuration file as an 
+argument in order to recreate a previous initial configuration.
 
 \section install_targets_makeall_sec Invoking make from within src
 
 When compiling in-source, developers may also invoke "make all" from 
-almost any subdirectory of the src/ directory in order to compile a 
-smaller set of source files. Invoking
+almost any subdirectory of the src/ directory.  Invoking
 \code
 make all
 \endcode
@@ -198,40 +199,43 @@ outside of that subdirectory tree.
 
 Invoking "make all" from a subdirectory of a namespace level directory
 (i.e., a subdirectory of the src/util/, src/pscf/, src/r1/, or src/rp/
-directory) generally causes compilation of all compilable \*.cpp and
-\*.cu source files in that directory and any nested subdirectories 
-that are enabled by the build system.
+directory) generally causes compilation of all required \*.cpp and
+\*.cu source files in that directory and any nested subdirectories.
 
-Invoking "make all" from any namespace-level subdirectory of src/ will
-compile all required \*.cpp and/or \*.cu source files in that directory
-tree, and also create a static library file containing all of the
+Invoking "make all" from any namespace-level subdirectory of src/ 
+(i.e., from src/util, src/pscf, src/r1 or src/rp) will compile all 
+required \*.cpp and/or \*.cu source files in that directory tree, 
+and also create a static library file containing all of the
 resulting object code.
 
 In addition, invoking "make all" from the r1/ or rp/ "program-level"
 subdirectories of src/ will also compile, link and install any executable 
 programs that are built from the source code is located in that directory. 
-For example, entering "make all" from src/r1/ directory will create an 
-executable named pscf_1d that is installed in the bin/ directory.
+For example, entering "make all" from src/r1/ directory will create the
+pscf_1d in the bin/ directory.
 
 <em> Rationale </em>: The ability to invoke "make all" from a
-subdirectory of the src/ directory allows developers to easily recompile
-a few recently modified files from the command line without leaving the
+subdirectory of the src/ directory allows developers who use an 
+editor that is invoked from the command line to easily recompile a 
+few recently modified files from the command line without leaving the
 directory in which they are working. Typically, when a developer is
 adding a new feature or fixing a bug, they will be usually be actively
 editing only a few files within a single subdirectory of the src/
 directory.  The system for tracking dependencies used by the PSCF build 
 system is designed to assure that invoking "make all" from a directory
 containing the files of immediate interest will only cause recompilation
-of source files that have been modified since they were last compiled,
-or that include header files that have been recently modified. 
+of source files that are out-of-date because they have been modified 
+since they were last compiled, or that include header files that have 
+been modified. 
 
-<em> Comment </em>: Invoking make with the name of a single *\.o object
+<em> Comment </em>: Invoking make with the name of a single \*.o object
 file as a target generally does *not* work as intended, unless one uses 
 the full absolute path to the object file.  This is a result of the fact 
 that the pattern rules and dependency files used by the PSCF makefile 
 system use absolute paths for all file names. The make utility is not
-sophisticated enough to recognize that a relative path to a file is 
-equivalent to the absolute paths used in the PSCF makefile system.  
+sophisticated enough to recognize that a relative path to an object file 
+is equivalent to the corresponding absolute path that is used as the 
+name of the corresponding target in the PSCF makefile system.  
 Consistent use of "make all" from within a subdirectory of src/ for 
 in-source compilation avoids this problem, and only re-compiles files 
 that are out-of-date.

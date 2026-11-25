@@ -8,13 +8,12 @@ This page contains instructions for compiling the PSCF package using
 default settings, after completing all required 
 \ref install_compile_page "preliminary steps". We have divided the
 instructions into a set of instructions for compiling and installing 
-the programs that use only CPU hardware, and additional instructions 
-for compiling programs that use an NVIDIA GPU.
+CPU and GPU-enabled executables. 
 
 \section install_compile_CPU_sec Compiling C++ code (CPU hardware)
 
-We recommend that users first attempt to compile only the CPU programs, 
-leaving compilation of the GPU-enabled programs to a separate step.
+We recommend that users first attempt to compile only the CPU executables, 
+pscf_1d and pscf_rpc.
 
 Compilation of GPU-enabled code is disabled by default.  To compile only
 the pscf_1d and pscf_rpc CPU programs, you may simply enter
@@ -22,93 +21,94 @@ the pscf_1d and pscf_rpc CPU programs, you may simply enter
     make all
 \endcode
 from the PSCF directory immediately after running the configure script.
-If successful, this will install executables named "pscf_1d" and
-"pscf_rpc" in the PSCF bin/ directory.
+If successful, this will install executable files named pscf_1d and
+pscf_rpc in the PSCF bin/ directory.
 
-Compiling all the PSCF C++ code using "make all" takes a bit of time
-(e.g., 2 to 3 minutes on a 2020 Mac air laptop with an M1 chip). This
-can be completed more quickly on a multi-core machine by using the -j
-option of the "make" command to use multiple CPU cores in parallel to
-compile different C++ files.  The argument of the -j option is the
-number of cores that should be used, if available. For example, you
-could enter
+Compiling all the PSCF C++ code takes some time (e.g., 2 to 3 minutes 
+on a 2020 Mac air laptop with an M1 chip). This can be completed more 
+quickly on a multi-core machine by using the -j option of the "make" 
+command to use multiple CPU cores to compile multiple different C++ 
+files in parallel.  The argument of the -j option is the number of 
+cores that should be used, if available. For example, you could enter
 \code
    make -j8 all
 \endcode
-to use all 8 CPU cores of an 8-core computer to compile.
+to use all 8 CPU cores of an 8-core computer.
 
 Entering "make all" or "make -jn all" from the PSCF root directory,
 as described above, will create a large number of intermediate object
 (*.o), dependency (*.d) and library (*.a) files in subdirectories of
-the PSCF bld/ directory, in addition to the executable files that are
+the PSCF bld/ directory, in addition to executable files that are
 created in the PSCF bin/ directory.
 
 \section install_compile_GPU_sec Compiling CUDA C++ Code (GPU hardware)
 
-The GPU-enabled pscf_rpg program can only be compiled on computers that
-have an NVIDIA CUDA development kit installed, and can only be run on
-machines that have an appropriate CUDA-capable NVIDIA GPU and CUDA driver
-software installed.  Before compiling pscf_rpg, the user must first enable
-compilation of CUDA code and set the appropriate target GPU architecture,
-as described below.  The following instructions assume that you have
-already completed the preliminary steps described above.
+The GPU-enabled pscf_rpg executable can only be compiled on computers 
+that have an NVIDIA CUDA development kit installed, and can only be run 
+on machines that have an appropriate CUDA-capable NVIDIA GPU and CUDA 
+run-time software installed.  Before compiling pscf_rpg, the user must 
+first enable compilation of CUDA code and set the appropriate target 
+GPU architecture, as described below.  The following instructions assume 
+that you have already completed  required preliminary steps to install
+dependencies and set environment variables:
 
-   - **Enable compilation of GPU-enabled programs:**
-     To enable compilation of CUDA code for GPU-enabled programs on a
-     machine that is set up to allow this, enter
+   - **Enable compilation of GPU-enabled executables:**
+     To enable compilation of CUDA code on a machine that is set up to allow 
+     this, enter
      \code
      ./setopts -u1
      \endcode
-     from the PSCF root directory. If you later want to disable
-     compilation of CUDA code, instead enter
+     from the PSCF root directory. If you later want to disable compilation 
+     of CUDA code, instead enter
      \code
      ./setopts -u0
      \endcode
-     Commands issued by the setops script set variables that
-     affect subsequent behavior of the build system and compiler.
-     Usage of the setopts script is discussed in more detail
+     Commands issued by the setopts script modify variables in configuration 
+     files that control subsequent behavior of the build system.  Usage of 
+     the setopts script is discussed in more detail 
      \ref install_setopts_page "here".
 
-     To check if CUDA compilation is currently enabled, change directory
+     To check if CUDA compilation is currently enabled, change directory (cd)
      to the PSCF bld/ directory, and enter
      \code
      ./setopts -q
      \endcode
-     from that directory. This should yield a report that indicates
-     (among other things) whether the "CUDA" options is currently set
-     to be enabled (ON) or disabled (OFF) for code built in the bld/
-     directory (the default build directory).
+     from there. This should yield a report that indicates (among other 
+     things) whether the "CUDA" option is currently set to be enabled (ON) 
+     or disabled (OFF) for code built in the bld/ directory (which is the 
+     default build directory).
 
    - **Set the target GPU architecture:**
-     CUDA must be compiled for a particular target GPU architecture.
-     To set the target architecture to correspond to the GPU on your
-     computer, you must change directory to PSCF root directory and
-     issue a command of the form
+     CUDA C++ must be compiled for a particular target GPU architecture.  
+     To set the target architecture to correspond to the GPU on your 
+     computer, you must change directory to PSCF root directory and issue 
+     a command of the form
      \code
      ./setopts -a [architecture id]
      \endcode
-     where [architecture id] denotes a string that identifies the
-     architecture of the GPU for which you are compiling. Valid values
-     of this string have the form "sm_IJ", where IJ denotes a integer
-     string that represents the NVIDIA "compute capability" for the
-     target GPU. You can look up the compute capabability for the
-     type of NVIDIA GPU installed on your computer by consulting the
-     <a href="https://developer.nvidia.com/cuda-gpus">NVIDIA developer
-     documentation</a>. The compute capability for an NVIDIA GPU is a
-     number of the form I.J in which I is an integer major version number
-     and J is a minor version number. The architecture id required as
-     an argument of the -a option, however, uses a string of the form
-     sm_IJ that drops the dot between the major and minor version.
+     where [architecture id] denotes a string that identifies the 
+     architecture of the GPU for which you are compiling. Valid values of 
+     this string have the form "sm_IJ", where IJ denotes a integer string 
+     that represents the NVIDIA "compute capability" for the target GPU. 
+     You can look up the compute capabability for the type of NVIDIA GPU 
+     installed on your computer by consulting the 
+     <a href="https://developer.nvidia.com/cuda-gpus"> NVIDIA developer 
+     documentation</a>. The compute capability for an NVIDIA GPU is a 
+     number of the form I.J in which I is an integer major version number 
+     and J is an integer minor version number. The architecture id string 
+     of the form sm_IJ omits the dot between the major and minor version
+     numbers.
 
-     For example, an NVIDIA A100 GPU has a compute capability of 8.0.
-     To set this as the target architecture, one would enter
+     For example, an NVIDIA A100 GPU has a compute capability of 8.0.  To 
+     select this as the target architecture, one would enter
      \code
      ./setopts -a sm_80
      \endcode
-     from the PSCF root directory, using "sm_80" as the architecture id.
+     from the PSCF root directory, using "sm_80" as the architecture id 
+     string.
 
-     By default, the target architecture is set to compute capability
-     8.0, or sm_80, which is the appropriate level for an A100 GPU.
+     By default, the target architecture is set to compute capability 8.0, 
+     or sm_80, as appropriate for an A100 GPU.
 
    - **Compile all programs (including pscf_rpg):**
      After enabling CUDA compilation and setting the appropriate
@@ -117,17 +117,15 @@ already completed the preliminary steps described above.
      \code
      make all
      \endcode
-     from within the PSCF root directory. As when compiling pure C++
-     code, one may use multiple cores to compile by instead entering
+     from within the PSCF root directory. As when compiling pure C++ 
+     code, one may use multiple cores to compile by instead entering 
      "make -jn all", where "n" is the number of CPU cores to be used.
 
-If successful, the "make all" command will install an executable file
-named pscf_rpg in the PSCF bin/ directory in addition to the executable
-files named pscf_1d and pscf_rpc that are created by compiling only C++
-code.
+If successful, the "make all" command will install an executable file named 
+pscf_rpg in the PSCF bin/ directory, in addition to the files named pscf_1d 
+and pscf_rpc that are created by compiling only C++ code.
 
-Several of the above steps are discussed in more detail in subsequent
-pages.
+Several of the above steps are discussed in more detail in subsequent pages.
 
 \section user_overview_inout_sec Out-of-source vs. in-source compilation
 
