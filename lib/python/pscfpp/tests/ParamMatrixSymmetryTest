@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+
+from pscfpp.param import *
+import os, tempfile, warnings
+
+# Read a parameter file with the given text
+def readText(text):
+   with tempfile.TemporaryDirectory() as d:
+      name = os.path.join(d, 'param')
+      with open(name, 'w') as file:
+         file.write(text)
+      return Composite(name)
+
+# A matrix in which one element of a symmetric pair was set through the
+# list of rows is written with its lower triangle and a warning, while
+# an element set by assigning [i, j, value] is written without one
+for i, j, value in [(0, 1, 15.0), (1, 0, 17.0)]:
+   p = Composite('in/param')
+   p.Interaction.chi[i][j] = 17.0
+   with warnings.catch_warnings(record=True) as w:
+      warnings.simplefilter('always')
+      text = str(p)
+   assert len(w) == 1 and 'chi' in str(w[0].message)
+   assert readText(text).Interaction.chi[1][0] == value
+p.Interaction.chi = [0, 1, 17.0]
+with warnings.catch_warnings(record=True) as w:
+   warnings.simplefilter('always')
+   text = str(p)
+assert len(w) == 0
+assert readText(str(p)).Interaction.chi[1][0] == 17.0
