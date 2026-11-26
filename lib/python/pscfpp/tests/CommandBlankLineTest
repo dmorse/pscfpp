@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+
+from pscfpp.command import *
+import os, tempfile
+
+# Read a command file with the given text
+def readText(text):
+   with tempfile.TemporaryDirectory() as d:
+      name = os.path.join(d, 'command')
+      with open(name, 'w') as file:
+         file.write(text)
+      return Script(name)
+
+# A blank line, which is skipped
+p = readText('READ_W in/w\n\nITERATE\nFINISH\n')
+assert len(p) == 3
+assert p['ITERATE'].label == 'ITERATE'

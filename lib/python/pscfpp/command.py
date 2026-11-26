@@ -84,14 +84,19 @@ class Script:
       finish = False
       while i < len(lines) and not finish:
          line = lines[i]
+         i += 1
          if not isinstance(line, str):
             raise Exception('Command line object is not a string')
+         if line.strip() == '':
+            # Skip a blank line
+            continue
          command = Command(line)
 
          # Add command to list self._commands
+         n = len(self._commands)
          self._commands.append(command)
 
-         # Add index i to dictionary self._indices
+         # Add index n of the command to dictionary self._indices
          label = command.label
          if label in self._indices:
             index = self._indices[label]
@@ -99,13 +104,12 @@ class Script:
                self._indices[label] = [index]
             elif not instance(index, list):
                raise Exception('Values of _indices must be int or list')
-            self._indices[label].append(i)
+            self._indices[label].append(n)
          else:
-            self._indices[label] = i
+            self._indices[label] = n
 
          if (command.label == 'FINISH'):
             finish = True
-         i += 1
 
    ## 
    # Return a string containing the command script. 
