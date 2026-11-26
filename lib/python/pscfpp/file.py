@@ -124,14 +124,14 @@ class File:
     # String representation of file data.
     #
     def __repr__(self):
-        if scan:
+        if self.scan:
            return '%-40s  size= %10d  mtime= %10d' \
               % (self.path, self.size, self.mtime)
         else:
            return self.path
 
     def xml(self,indent=''):
-        if scan:
+        if self.scan:
            return indent + '<File path ="' + self.path   + '"' \
                          + ' size ="' + str(self.size)  + '"' \
                          + ' mtime="' + str(self.mtime) + '" />\n'
@@ -246,7 +246,7 @@ class Directory(File):
             r.append( str(self.files[x]) + '\n' )
         for x in self.dirs.keys():
             r.append( repr(self.dirs[x])  )
-        return join(r,'')
+        return ''.join(r)
 
     ##
     # String representation of a directory.
@@ -258,7 +258,7 @@ class Directory(File):
             r.append( str(self.files[x]) + '\n' )
         for x in self.dirs.keys() :
             r.append( str(self.dirs[x]) )
-        return join(r,'')
+        return ''.join(r)
 
     ##
     # XML string representation of a directory.
@@ -272,7 +272,7 @@ class Directory(File):
         for x in self.dirs.keys() :
             r.append( self.dirs[x].xml(n_indent)  )
         r.append( indent + '</Directory>'+'\n')
-        return join(r,'')
+        return ''.join(r)
 
     ##
     # Write XML representation to file.
@@ -358,5 +358,5 @@ class Directory(File):
             if not x in self.dirs.keys(): 
                 r.append('< ' + other.dirs[x].path + '\n' )
         # Return true if all tests passed
-        return join(r,'')
+        return ''.join(r)
 
