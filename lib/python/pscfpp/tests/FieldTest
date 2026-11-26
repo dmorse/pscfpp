@@ -1,6 +1,39 @@
 #!/usr/bin/env python3
 
 from pscfpp.field import *
+import os, tempfile
+
+# Header of an r-grid or k-grid file for a 1D system with two monomer
+# types on a mesh of 4 points, without a group_name
+header = '''format   1   0
+dim
+          1
+crystal_system
+          lamellar
+N_cell_param
+          1
+cell_param
+      1.0000000000e+00
+N_monomer
+          2
+mesh
+          4
+'''
+
+# Read a Field from a file with the given text
+def readText(text):
+   with tempfile.TemporaryDirectory() as d:
+      name = os.path.join(d, 'field')
+      with open(name, 'w') as file:
+         file.write(text)
+      return Field(name)
+
+# All rows of a file without a group_name
+rows = [[0.1, 0.9], [0.2, 0.8], [0.3, 0.7], [0.4, 0.6]]
+f = readText(header + ''.join(f'{a} {b}\n' for a, b in rows))
+assert f.type == 'rgrid'
+assert f.data == rows
+assert list(f.header)[-1] == 'mesh' and f.header['mesh'] == [4]
 
 f = Field('in/w.bf')
 
