@@ -326,6 +326,11 @@ class Thermo:
                line = file.readline()
             line = self.skipEmptyLine(file)
 
+         # Any other line ends the thermo block (e.g., the fHelmholtz
+         # line of another thermo block written to the same file)
+         else:
+            break
+
       if not hasPolymersBlock:
          raise Exception('Not valid Thermo file. No polymers block found.')
 
