@@ -6,3 +6,13 @@ p = Script('in/command')
 
 print(p)
 
+import io
+
+# An open file object, and a command that appears three times
+p = Script(io.StringIO('''WRITE_Q_SLICE  out/qs_0  0 0 0 0
+WRITE_Q_SLICE  out/qs_1  0 0 0 1
+WRITE_Q_SLICE  out/qs_2  0 0 0 2
+FINISH
+'''))
+assert len(p) == 4
+assert [c.param() for c in p['WRITE_Q_SLICE']] == ['out/qs_0', 'out/qs_1', 'out/qs_2']
