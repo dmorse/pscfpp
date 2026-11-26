@@ -1,33 +1,8 @@
 include ../../../config.mk
-include $(SRC_DIR)/util/sources.mk
-include $(BLD_DIR)/pscf/sources.mk
-include $(BLD_DIR)/pscf/patterns.mk
+SHORT_DIR=pscf/tests/solvers
 
-TEST=$(BLD_DIR)/pscf/tests/solvers/Test
-
-all: $(TEST)
-
-$(TEST): $(TEST).o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
-
-run: $(TEST).o $(TEST)
-	$(TEST) $(SRC_DIR)/pscf/tests/solvers/ 
-
-run-quiet: $(TEST).o $(TEST)
-	$(TEST) $(SRC_DIR)/pscf/tests/solvers/ > log
-	@echo `grep failed log` ", "\
-              `grep successful log` "in pscf/tests/solvers/log" > count
-	@cat count
+include $(SRC_DIR)/pscf/tests/mfile_c.mk
 
 clean-outputs:
 	rm -f log count 
 
-clean:
-	rm -f $(TEST).o
-	rm -f $(TEST).d
-	rm -f $(TEST)
-	$(MAKE) clean-outputs
-
--include $(TEST).d
--include $(pscf_DEPS)
--include $(util_DEPS)

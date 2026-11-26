@@ -1,33 +1,8 @@
 include ../../../config.mk
-include $(SRC_DIR)/util/sources.mk
-include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/pscf/patterns.mk
+SHORT_DIR=pscf/tests/math
 
-TEST=$(BLD_DIR)/pscf/tests/math/Test
-
-all: $(TEST)
-
-$(TEST): $(TEST).o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $(TEST) $(TEST).o $(LIBS)
-
-run: $(TEST)
-	$(TEST) $(SRC_DIR)/pscf/tests/math/
-
-run-quiet: $(TEST)
-	@$(TEST) $(SRC_DIR)/pscf/tests/math/ > log
-	@echo `grep failed log` ", "\
-              `grep successful log` "in pscf/tests/math/log" > count
-	@cat count
+include $(SRC_DIR)/pscf/tests/mfile_c.mk
 
 clean-outputs:
 	rm -f log count 
 
-clean:
-	rm -f $(TEST).o 
-	rm -f $(TEST).d
-	rm -f $(TEST)
-	$(MAKE) clean-outputs
-
--include $(TEST).d
--include $(pscf_DEPS)
--include $(util_DEPS)

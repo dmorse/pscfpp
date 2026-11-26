@@ -260,14 +260,14 @@ namespace Pscf
 
    private:
 
+      /// Elements of the vector.
+      T elem_[D];
+
       /// Width of field per Cartesian coordinate in stream IO
       static const int Width = 25;
 
       /// Precision in stream IO of Vec<D, T> coordinates
       static const int Precision = 17;
-
-      /// Elements of the vector.
-      T elem_[D];
 
    };
 
@@ -313,15 +313,17 @@ namespace Pscf
    /*
    * Default constructor
    */
-   template <int D, typename T> 
-   inline Vec<D, T>::Vec()
+   template <int D, typename T> inline 
+   Vec<D, T>::Vec()
+    : elem_{}
    {}
 
    /*
    * Copy constructor
    */
-   template <int D, typename T> 
-   inline Vec<D, T>::Vec(const Vec<D, T>& v)
+   template <int D, typename T> inline 
+   Vec<D, T>::Vec(const Vec<D, T>& v)
+    : elem_{}
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] = v.elem_[i];
@@ -331,8 +333,9 @@ namespace Pscf
    /*
    * Constructor, from C-Array.
    */
-   template <int D, typename T> 
-   inline Vec<D, T>::Vec(T const * v)
+   template <int D, typename T> inline 
+   Vec<D, T>::Vec(T const * v)
+    : elem_{}
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] = v[i];
@@ -342,8 +345,9 @@ namespace Pscf
    /*
    * Constructor, initialize all elements to a scalar value s.
    */
-   template <int D, typename T> 
-   inline Vec<D, T>::Vec(T s)
+   template <int D, typename T> inline 
+   Vec<D, T>::Vec(T s)
+    : elem_{}
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] = s;
@@ -353,8 +357,8 @@ namespace Pscf
    /*
    * Assignment.
    */
-   template <int D, typename T> 
-   inline Vec<D, T>& Vec<D, T>::operator = (const Vec<D, T>& v)
+   template <int D, typename T> inline 
+   Vec<D, T>& Vec<D, T>::operator = (const Vec<D, T>& v)
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] = v.elem_[i];
@@ -365,8 +369,8 @@ namespace Pscf
    /*
    * Assign all elements to a common scalar value.
    */
-   template <int D, typename T> 
-   inline Vec<D, T>& Vec<D, T>::operator = (T s)
+   template <int D, typename T> inline 
+   Vec<D, T>& Vec<D, T>::operator = (T s)
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] = s;
@@ -377,8 +381,8 @@ namespace Pscf
    /*
    * Set all elements of a 3D vector to zero.
    */
-   template <int D, typename T> 
-   inline Vec<D, T>& Vec<D, T>::setToZero()
+   template <int D, typename T> inline 
+   Vec<D, T>& Vec<D, T>::setToZero()
    {
       for (int i = 0; i < D; ++i) {
          Util::setToZero(elem_[i]); 
@@ -389,8 +393,8 @@ namespace Pscf
    /*
    * Add vector dv to this vector.
    */
-   template <int D, typename T> 
-   inline void Vec<D, T>::operator += (const Vec<D, T>& dv)
+   template <int D, typename T> inline 
+   void Vec<D, T>::operator += (const Vec<D, T>& dv)
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] += dv.elem_[i];
@@ -400,8 +404,8 @@ namespace Pscf
    /*
    * Subtract vector dv from this vector.
    */
-   template <int D, typename T> 
-   inline void Vec<D, T>::operator -= (const Vec<D, T>& dv)
+   template <int D, typename T> inline 
+   void Vec<D, T>::operator -= (const Vec<D, T>& dv)
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] -= dv.elem_[i];
@@ -411,8 +415,8 @@ namespace Pscf
    /*
    * Add a common scalar to all components.
    */
-   template <int D, typename T> 
-   inline void Vec<D, T>::operator += (T s)
+   template <int D, typename T> inline 
+   void Vec<D, T>::operator += (T s)
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] += s;
@@ -422,8 +426,8 @@ namespace Pscf
    /*
    * Subtract a common scalar from all components.
    */
-   template <int D, typename T> 
-   inline void Vec<D, T>::operator -= (T s)
+   template <int D, typename T> inline 
+   void Vec<D, T>::operator -= (T s)
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] -= s;
@@ -433,8 +437,8 @@ namespace Pscf
    /*
    * Multiply this vector by scalar s.
    */
-   template <int D, typename T> 
-   inline void Vec<D, T>::operator *= (T s)
+   template <int D, typename T> inline 
+   void Vec<D, T>::operator *= (T s)
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] *= s;
@@ -444,8 +448,8 @@ namespace Pscf
    /*
    * Return one Cartesian element by value.
    */
-   template <int D, typename T>
-   inline const T& Vec<D, T>::operator [] (int i) const
+   template <int D, typename T> inline 
+   const T& Vec<D, T>::operator [] (int i) const
    { 
       assert(i >=0); 
       assert(i < D); 
@@ -455,8 +459,8 @@ namespace Pscf
    /*
    * Return a reference to one element of the vector.
    */
-   template <int D, typename T>
-   inline T& Vec<D, T>::operator [] (int i)
+   template <int D, typename T> inline 
+   T& Vec<D, T>::operator [] (int i)
    {
       assert(i >=0); 
       assert(i < D); 
@@ -468,8 +472,7 @@ namespace Pscf
    *
    * Upon return, *this = v1 + v2.
    */
-   template <int D, typename T>
-   inline
+   template <int D, typename T> inline
    Vec<D, T>& Vec<D, T>::add(Vec<D, T> const & v1, 
                              Vec<D, T> const & v2)
    {
@@ -485,8 +488,7 @@ namespace Pscf
    * Upon return, *this = v1 - v2.
    * \return modified invoking vector
    */
-   template <int D, typename T>
-   inline
+   template <int D, typename T> inline
    Vec<D, T>& Vec<D, T>::subtract(Vec<D, T> const & v1, Vec<D, T> const & v2)
    {
       for (int i = 0; i < D; ++i) {
@@ -500,8 +502,7 @@ namespace Pscf
    *
    * Upon return, *this = v*s.
    */
-   template <int D, typename T>
-   inline 
+   template <int D, typename T> inline 
    Vec<D, T>& Vec<D, T>::multiply(Vec<D, T> const & v, T s)
    {
       for (int i = 0; i < D; ++i) {
@@ -515,8 +516,7 @@ namespace Pscf
    *
    * Upon return, *this = -v.
    */
-   template <int D, typename T>
-   inline 
+   template <int D, typename T> inline 
    Vec<D, T>& Vec<D, T>::negate(Vec<D, T> const & v)
    {
       for (int i = 0; i < D; ++i) {
@@ -530,8 +530,7 @@ namespace Pscf
    *
    * Upon return, *this = -v.
    */
-   template <int D, typename T>
-   inline 
+   template <int D, typename T> inline 
    Vec<D, T>& Vec<D, T>::negate()
    {
       for (int i = 0; i < D; ++i) {
@@ -544,8 +543,7 @@ namespace Pscf
    * Serialize to/from an archive.
    */
    template <int D, typename T>
-   template <class Archive>
-   inline 
+   template <class Archive> inline 
    void Vec<D, T>::serialize(Archive& ar, const unsigned int version)
    { 
       for (int i = 0; i < D; ++i) {
