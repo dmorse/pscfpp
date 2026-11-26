@@ -20,15 +20,15 @@ namespace Pscf
    FieldGeneratorBase::~FieldGeneratorBase()
    {}
 
-   // Checks if fields need to be (re)generated. If so, generates them. 
+   // Checks compatibility, and (re)generates the fields if needed.
    void FieldGeneratorBase::generate()
    {
+      // Check the system even if the fields need no update: a change
+      // that leaves the fields unchanged can make it incompatible
+      checkCompatibility();
+
       if (needsUpdate()) {
-         checkCompatibility();
          compute();
-      } else {
-         // update not needed, do nothing
-         return;
       }
    }   
    
