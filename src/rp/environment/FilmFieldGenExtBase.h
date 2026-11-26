@@ -83,8 +83,8 @@ namespace Rp {
       * mask. However, there is one exception: the external fields can have
       * different chi values on top and bottom, which makes the system less
       * symmetric than the mask. If chiBottom != chiTop, this method checks
-      * that the space group is compatible with a thin film unit cell with 
-      * asymmetric walls.
+      * that the space group, if any, is compatible with a thin film unit
+      * cell with asymmetric walls.
       */
       void checkCompatibility();
 
@@ -203,7 +203,7 @@ namespace Rp {
       virtual void compute() = 0;
 
       /**
-      * Get the space group name for this system.
+      * Get the space group name for this system (empty if none).
       */
       virtual std::string systemSpaceGroup() const = 0;
 

@@ -130,6 +130,7 @@ namespace Rp {
       // Otherwise, walls are asymmetric, so the space group must not 
       // have any operations that swap the two walls
       std::string groupName = systemSpaceGroup();
+      if (groupName.empty()) return; // no space group, nothing to check
       SpaceGroup<D> group;
       std::ifstream in;
 
