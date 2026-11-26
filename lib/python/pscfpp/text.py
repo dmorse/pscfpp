@@ -201,16 +201,17 @@ class RecordEditor:
       n       = len(lines)
       oldfile.close()
    
-      if (not self.isTest): 
-         newfile = open (filename, 'w')
-      found = False
+      # Edit all lines before the file is opened for writing, so that
+      # an error leaves the file unchanged
+      newlines = []
       for line in lines:
          record = Record(line)
          if (self.filter == record.fields[self.filterField]):
             record.fields[self.dataField] = self.new
-         if (not self.isTest):
-            newfile.write(str(record) + '\n')
+         newlines.append(str(record) + '\n')
       if (not self.isTest):
+         newfile = open (filename, 'w')
+         newfile.writelines(newlines)
          newfile.close()
 
 
@@ -433,8 +434,9 @@ class FileEditor:
       n       = len(lines)
       oldfile.close()
    
-      if (not self.isTest): 
-         newfile = open (filename, 'w')
+      # Edit all lines before the file is opened for writing, so that
+      # an error leaves the file unchanged
+      newlines = []
       found = False
       for line in lines:
          if (self.filter.search(line)):
@@ -444,9 +446,10 @@ class FileEditor:
             print(line)
             line = re.sub(self.old, self.new, line);
             print(line)
-         if (not self.isTest):
-            newfile.write(line)
+         newlines.append(line)
       if (not self.isTest): 
+         newfile = open (filename, 'w')
+         newfile.writelines(newlines)
          newfile.close()
   
    ##
@@ -465,9 +468,8 @@ class FileEditor:
       n       = len(lines)
       oldfile.close()
    
-      if (not self.isTest): 
-         newfile = open (filename, 'w')
-
+      # Edit all blocks before the file is opened for writing, so that
+      # an error leaves the file unchanged
       found = False
       for i in range(n + 1 - self.blockSize):
          block = ''.join(lines[i:i + self.blockSize])
@@ -485,8 +487,8 @@ class FileEditor:
                list[j] = list[j] + '\n'
             lines[i:i+self.blockSize] = list
       if (not self.isTest):
-         for line in lines:
-            newfile.write(line)
+         newfile = open (filename, 'w')
+         newfile.writelines(lines)
          newfile.close()
   
    ##
