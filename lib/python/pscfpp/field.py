@@ -110,9 +110,6 @@ class Field:
    # \param filename  a filename string
    #
    def __init__(self, filename):
-      self.data = []
-      self.header = {}
-      self.type = ''
       with open(filename) as f:
          self.read(f)
 
@@ -122,11 +119,14 @@ class Field:
    # This function reads the passed-in open-file object line
    # by line and update the read items into instance
    # variables. The reading stops when all lines in file are
-   # read.
+   # read. The contents of any previously read file are discarded.
    #
    # \param openFile  a file object, open for reading
    #
    def read(self, openFile):
+      self.data = []
+      self.header = {}
+      self.type = ''
       line = openFile.readline()
       l = line.split()
       if l[0] == 'format':
