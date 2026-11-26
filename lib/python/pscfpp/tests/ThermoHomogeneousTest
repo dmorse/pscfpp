@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+
+from pscfpp.output import *
+import io
+
+# Read a Thermo object from text
+def readThermo(text):
+   t = Thermo()
+   t.read(io.StringIO(text))
+   return t
+
+thermo = '''
+fHelmholtz     2.54644869605e+00
+pressure       2.99799018142e+00
+
+fIdeal         5.48458514628e-01
+fInter         1.99799018143e+00
+
+polymers:
+             phi                 mu
+    0   1.00000000000e+00   5.54443887748e+00
+
+cellParams:
+    0   1.54046133979e+00
+    1   1.60000000000e+00
+
+'''
+
+# A homogeneous comparison in mode 0 (pscf_1d)
+t = readThermo(thermo + '''
+f (homo)    =  4.00000000000e+00   [per monomer volume]
+delta f     = -1.05739192260e+00   [per monomer volume]
+
+Species:
+    i      mu(homo)            phi(homo)
+    0   1.00000000000e+01   1.00000000000e+00
+
+''')
+assert t.homogeneous == {'f (homo)': 4.0, 'delta f': -1.0573919226}
+assert t.homogeneousSpecies == [{'i': 0, 'mu(homo)': 10.0, 'phi(homo)': 1.0}]
+u = readThermo(str(t))
+assert u.homogeneous == t.homogeneous
+assert u.homogeneousSpecies == t.homogeneousSpecies
