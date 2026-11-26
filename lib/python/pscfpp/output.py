@@ -112,7 +112,9 @@ import os
 #  parameter, and are therefore stored in the same form as cellParams.
 #  Note that environmentStress is only included in the output from PSCF 
 #  if the calculation contained an Environment object and used a flexible
-#  unit cell.
+#  unit cell. It lists only the flexible lattice parameters (for a film,
+#  not the one normal to the walls), and element i of environmentStress
+#  is None for any other lattice parameter i.
 #
 #  *Homogeneous information:* In r1d, the COMPARE_HOMOGENEOUS command or 
 #  the homogeneousMode parameter in a Sweep object will result in the 
@@ -318,11 +320,16 @@ class Thermo:
          
          # Read environment stress block (optional)
          elif line.lower().startswith('environment-modified stress:'):
+            # Only the flexible lattice parameters are listed: element i
+            # is the stress of parameter i, or None
             self.environmentStress = []
             line = file.readline()
             while line.strip() != '':
                l = line.split()
-               self.environmentStress.append(float(l[1]))
+               i = int(l[0])
+               while len(self.environmentStress) <= i:
+                  self.environmentStress.append(None)
+               self.environmentStress[i] = float(l[1])
                line = file.readline()
             line = self.skipEmptyLine(file)
 
@@ -441,6 +448,8 @@ class Thermo:
       if self.environmentStress != None:
          s += 'environment-modified stress:\n'
          for i in range(len(self.environmentStress)):
+            if self.environmentStress[i] is None:
+               continue
             v = f'{self.environmentStress[i]:.11e}'
             s += f'{i:>5}{v:>20}\n'
          s += '\n'
