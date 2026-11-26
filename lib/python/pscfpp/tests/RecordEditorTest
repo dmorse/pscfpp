@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+
+from pscfpp.text import *
+import os, tempfile
+
+d = tempfile.TemporaryDirectory()
+name = os.path.join(d.name, 'file')
+
+# Write text to the file, and return the text of the file
+def write(text):
+   with open(name, 'w') as file:
+      file.write(text)
+def read():
+   with open(name) as file:
+      return file.read()
+
+# RecordEditor: a file with a blank line
+write('mesh 32\n\nchi 10.0\n')
+editor = RecordEditor()
+editor.setFilter('chi', 0)
+editor.setNew('12.0', 1)
+editor.setIsTest(False)
+editor.editFile(name)
+assert read() == 'mesh 32\n\nchi 12.0\n'
+
+d.cleanup()
