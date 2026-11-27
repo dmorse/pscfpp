@@ -130,7 +130,8 @@ namespace Rp {
                coords[1] = y;
                for (z = 0; z < dim[2]; z++) {
                   coords[2] = z;
-                  if (coords[normalVecId()] < (dim[normalVecId()] / 2)) {
+                  // Bottom half: reduced coordinate d < 1/2
+                  if (2*coords[normalVecId()] < dim[normalVecId()]) {
                      hDeriv[counter] = -1.0 * maskDeriv[counter] * chiBottom(i);
                   } else {
                      hDeriv[counter] = -1.0 * maskDeriv[counter] * chiTop(i);
@@ -212,7 +213,8 @@ namespace Rp {
                   // Calculate wall volume fraction (rho_w) at gridpoint 
                   // (x,y,z)
                   rhoW = maskPtr[counter];
-                  if (coords[normalVecId()] < (dim[normalVecId()]/2)) {
+                  // Bottom half: reduced coordinate d < 1/2
+                  if (2*coords[normalVecId()] < dim[normalVecId()]) {
                      hRGrid[i][counter++] = (1.0-rhoW) * chiBottom(i);
                   } else {
                      hRGrid[i][counter++] = (1.0-rhoW) * chiTop(i);
