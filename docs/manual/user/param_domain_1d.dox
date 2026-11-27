@@ -3,7 +3,7 @@ namespace Pscf {
 /*! \page user_param_domain_1d_page One dimension domains (pscf_1d)
 
 \ref user_param_domain_page  (Prev/up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_domain_pc_page  (Next)
+\ref user_param_domain_rp_page  (Next)
 <BR>
 
 The pscf_1d program solves a self-consistent field problem in which all
@@ -135,7 +135,7 @@ actually continuous at the origin.
 <BR>
 \ref user_param_mixture_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_domain_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_param_domain_pc_page  (Next)
+\ref user_param_domain_rp_page  (Next)
 
 */
 

@@ -4,38 +4,47 @@
  \ref scft_page              (Next)
 <BR>
 
-The pscf_rpc and pscf_rpg programs for periodic systems can also read
-and write files in format that gives the unsymmetrized discrete
-Fourier transform of the field associated with each monomer type.
-The required file format is very similar to that used for the
-coordinate space grid. The file consists of a header and a data
-section. The format of the header is identical to that used for
-the coordinate grid format, and includes a list of the number of
-grid points used in each direction, denoted by mesh.
+The pscf_rp program can also read and write files in a k-grid format 
+that contains the unsymmetrized discrete Fourier transform of the field 
+associated with each monomer type.  The required file format is very 
+similar to the r-grid format used for fields defined on a coordinate 
+space grid. The file consists of a header and a data section. 
+
+The format of the header section of a k-grid field file is identical 
+to that used for the \ref user_field_rgrid_page "r-grid" coordinate 
+space file format. As for the r-grid format, the header includes a 
+list of the number of grid points used in each direction, labelled 
+by the parameter name "mesh".
 
 The data section contains the Fourier coefficients obtained by a
-discrete Fourier transform of each field at wavevectors given by
+discrete Fourier transform of each field at wavevectors that are
+commensurate with the periodic unit cell. Allowed wavevectors are 
+given by
 \f[
-    \textbf{k}(n_1, \ldots, n_{D}) = \sum_{i=0}^{\textrm{D}-1}
+    \textbf{k}(n_0, \ldots, n_{D-1}) = \sum_{i=0}^{\textrm{D}-1}
     n_{i}\textbf{b}_{i}
 \f]
 where \f$D\f$ is the dimensionality of the crystal (i.e., dim
-in the header file), \f$\textbf{b}_{i}\f$ is a reciprocal lattice
-basis vector, \f$N_{i}\f$ is the number of grid points along
-direction \f$i\f$, and \f$n_{i}\f$ is an integer in the range
-\f$0 \leq n_{D-1} \leq N_{1}/2\f$ for the last index and
-\f$0 \leq n_{i} \leq N_{i} - 1\f$ for indices \f$i < D-1\f$.
-The number of rows in the data section is equal to the total
-number of such wavevectors, and each row contains values of
-Fourier coefficients associated with a single wavevector, with
-coefficients for fields associated with different monomer types
-in different columnns.
+in the header file), \f$\textbf{b}_{i}\f$ is a reciprocal lattice 
+basis vector, and \f$ n_{0}, \ldots, n_{D-1} \f$ are a set of
+integers. 
+
+For a grid with \f$N_{i}\f$ grid points along direction \f$i\f$, the 
+data format for the discrete Fourier transform of a real-valued field 
+stores Fourier components for values of \f$n_{i}\f$ in the range 
+\f$0 \leq n_{i} \leq N_{i} - 1\f$ for indices \f$i < D-1\f$, but for
+\f$0 \leq n_{i} \leq N_{i}/2\f$ for the last index, \f$ i = D-1 \f$.
+The number of rows in the data section is equal to the total number 
+of such wavevectors, and each row contains values of Fourier 
+coefficients associated with a single wavevector, with coefficients 
+for fields associated with different monomer types in different 
+columnns.
 
 Coefficients for different wavevectors are output in sequential
 order, using the last index (e.g., \f$n_{2}\f$ for a 3D crystal)
 as the most rapidly varying (inner-most) loop index. Reading or
-writing of the data section for a 3D field performed by a loop
-of the form:
+writing of the data section for the Fourier transform of a 3D 
+real-valued field is performed by a loop of the form:
 \code
    for (n0 = 0; n0 < N0; ++n0) {
       for (n1 = 0; n1 < N1: ++n1) {
@@ -45,11 +54,11 @@ of the form:
       }
    }
 \endcode
-where N0, N1, N2 are the number of grid points in directions
-0, ..., 2.
+where N0, N1, and N2 are the number of grid points in directions
+0, 1, and 2.
 
-**Note**: The format of the data section of a k-grid file, as
-described above, is different from the format used in the older
+<em> Note </em>: The format of the data section of a k-grid file, 
+as described above, is different from the format used in the older
 Fortran version of PSCF. In the Fortran version, the number of
 gridpoints is halved in the first index (`n0` in the code above)
 rather than the last index, as is the case here. The two programs

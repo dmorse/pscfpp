@@ -1,6 +1,6 @@
 
-# This file is included by makefiles in subdirectories of the
-# pscf/tests directory that contain *.cu CUDA C++ files
+# This file is included by makefiles in subdirectories of the directory
+# src/pscf/tests that contain a CUDA C++ file named Test.cu
 #
 # Requirements:
 #  - The src/config.mk file must be included before this file
@@ -11,8 +11,7 @@
 # Include makefile fragments
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/rp/sources.mk
-include $(SRC_DIR)/rp/patterns.mk
+include $(SRC_DIR)/pscf/patterns.mk
 
 
 # -------------------------------------------------------------------
@@ -52,6 +51,5 @@ clean:
 # Including dependency files
 
 -include $(TEST).du
--include $(rp_DEPS)
 -include $(pscf_DEPS)
 -include $(util_DEPS)

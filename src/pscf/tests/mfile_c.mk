@@ -1,6 +1,6 @@
 
-# This file is included by makefiles in subdirectories of the
-# pscf/tests/ directory that contain *.cpp C++ files. 
+# This file is included by makefiles in subdirectories of the directory
+# src/pscf/tests/ that contain a C++ source file named Test.cpp
 #
 # Requirements:
 #  - The src/config.mk file must be included before this file

@@ -51,12 +51,12 @@ and analysis operations "analyzer" classes.
 The parameter file for a typical PS-FTS calculation will thus normally
 contain a choice of algorithms for the following three purposes:
 
-   - **Sampling** :  A BD step algorithm or a set of MC step algorithms
-     that is used to update the fluctuating field components.
-
    - **Compressor** :  A compressor algorithm that is used to adjust
      the pressure-like field \f$ W_{+} \f$ so as to always satisfy the
      partial saddle-point condition.
+
+   - **Sampling** :  A BD step algorithm or a set of MC step algorithms
+     that is used to update the fluctuating field components.
 
    - **Analyzers** :  File IO and/or data analysis operations that
      are performed at regular intervals during a simulation.
@@ -71,40 +71,42 @@ other types of optional elements:
 
    - **Perturbation** : A "perturbation" is an optional feature that
      allows the user to modify the form of the field theoretic
-     Hamiltonian by adding a perturbation to the standard form
+     Hamiltonian by adding a perturbation to the standard form.
 
 \section psfts_algo_overview_classes_sec Class Inheritance
 
 In the source code of PSCF, different algorithms of the same type are
-generally implemented by C++ classes that are subclasses of a common
-base class. The generic names that we use in this documentation to 
-describe different types of algorithm generally correspond to the names 
-of a base class template defined in namespace Pscf::Rp. Specifically:
+generally implemented by C++ classes that are subclasses of a common base 
+class. The generic names that we use in this documentation to describe 
+different types of algorithm (Compressor, BdStep, McMove, etc.) generally 
+correspond to the names of a base class template defined in namespace 
+Pscf::Rp. Specifically:
 
-   - Brownian dynamics step algorithms are implemented by subclasses 
-     of specializations of the class template BdStep
+   - Brownian dynamics step algorithms are implemented by subclasses of 
+     specializations of the class template Pscf::Rp::BdStep
 
    - Monte Carlo moves are implemented by subclasses of specializations
-     of McMove.
+     of the class template Pscf::Rp::McMove.
 
    - File Io and data analysis operations are implemented by subclasses
-     of specializations of Analyzer.
+     of specializations of Pscf::Rp::Analyzer.
 
    - Algorithms for continuous variation of parameters are implemented 
-     by subclasses of specializations of Ramp
+     by subclasses of specializations of Pscf::Rp::Ramp
 
-   - Classes that define additive changes to the field theoretic
-     Hamiltonian are subclasses of specializations of Perturbation
+   - Classes that modify the form of the field theoretic Hamiltonian
+     are subclasses of specializations of Pscf::Rp::Perturbation
 
-Each of the base class and subclass templates take the dimension of
-space and a backend identifier class as template parameters.
+Each of these base classes takes the dimension of space and a backend 
+identifier class as template parameters. Subclasses that implement
+specific algorithms are also defined as specializations of class 
+templates that take the same two template parameters.
 
 The PSCF parameter file format uses selectable parameter file blocks 
 to allow a user to either choose one algorithm from a set of different 
-algorithms of the same type (as is appropriate for BdStep or Compressor 
-algorithms) or to choose a set one or more algorithms from among a list 
-of available algorithms of the same type (as appropriate for McMove 
-and Analyzer algorithms).
+algorithms of the same type (as for Compressor or BdStep algorithms) 
+or to choose a one or more algorithms from among a list of available 
+algorithms of the same type (as for McMove and Analyzer algorithms).
 
 <BR>
 \ref psfts_algorithm_page      (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp;

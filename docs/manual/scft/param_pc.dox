@@ -108,7 +108,7 @@ The Domain block contains information required to describe the unit cell
 of a periodic structure, the regular mesh that is used to discretize
 fields within each unit cell, and (optionally) an identifier for the space
 group of an SCFT solution.  The format of this block has been discussed
-in detail on a \ref user_param_domain_pc_page "previous page".
+in detail on a \ref user_param_domain_rp_page "previous page".
 
 \section scft_param_pc_environment_sec Environment
 
@@ -167,7 +167,7 @@ The above example does not contains a Sweep block.
  <li> \subpage rp_System_page "System"  </li>
  <li> \ref user_param_mixture_page "Mixture"  </li>
  <li> \ref user_param_example_interaction "Interaction"  </li>
- <li> \subpage user_param_domain_pc_page "Domain" </li>
+ <li> \subpage user_param_domain_rp_page "Domain" </li>
  <li> \subpage scft_environment_page "Environment" </li>
  <li> \ref scft_iterator_page "Iterator" </li>
  <ul>
