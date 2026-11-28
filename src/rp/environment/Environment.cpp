@@ -24,6 +24,12 @@ namespace Rp {
    void Environment::reset()
    {
       EnvironmentBase::reset();
+      clearStress();
+   }
+
+   // Mark the stress as outdated, keeping the generated fields.
+   void Environment::clearStress()
+   {
       hasStress_ = false;
       stress_.clear();
       stressIds_.clear();

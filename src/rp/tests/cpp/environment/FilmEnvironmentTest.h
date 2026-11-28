@@ -122,6 +122,45 @@ public:
       TEST_ASSERT(system.environment().needsUpdate());
    }
 
+   /*
+   * The environment-modified stress after a change of the w fields must
+   * be the stress for the new w fields.
+   */
+   void testStressAfterFieldChange()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestStressAfterFieldChange.log");
+
+      // Film with a flexible thickness (fBulk given)
+      Rp::System<1,CPT> system;
+      createSystem(system, "in/system1DEnvFBulk");
+      system.w().readBasis("in/wIn1D_3.bf");
+      DArray< DArray<double> > w0 = system.w().basis();
+      system.compute(true);
+      double stress0 = system.environment().stress(0);
+
+      // Other w fields
+      DArray< DArray<double> > w1 = w0;
+      w1[0][1] += 1.0;
+      w1[1][1] -= 1.0;
+      system.w().setBasis(w1);
+      system.compute(true);
+      double stress1 = system.environment().stress(0);
+
+      // The first w fields again
+      system.w().setBasis(w0);
+      system.compute(true);
+      double stress2 = system.environment().stress(0);
+
+      if (verbose() > 0) {
+         std::cout << "\nstress0 = " << stress0
+                   << "\nstress1 = " << stress1
+                   << "\nstress2 = " << stress2 << "\n";
+      }
+      TEST_ASSERT(std::abs(stress1 - stress0) > 1.0E-4);
+      TEST_ASSERT(std::abs(stress2 - stress0) < 1.0E-10);
+   }
+
    void testSolve1D() // solve a 1D system with an FilmEnvironment
    {
       printMethod(TEST_FUNC);
@@ -448,6 +487,7 @@ TEST_BEGIN(FilmEnvironmentTest)
 TEST_ADD(FilmEnvironmentTest, testConstructor)
 TEST_ADD(FilmEnvironmentTest, testReadParameters)
 TEST_ADD(FilmEnvironmentTest, testWallChiParameter)
+TEST_ADD(FilmEnvironmentTest, testStressAfterFieldChange)
 TEST_ADD(FilmEnvironmentTest, testSolve1D)
 TEST_ADD(FilmEnvironmentTest, testNoSpaceGroup)
 TEST_ADD(FilmEnvironmentTest, testSolve2D)
