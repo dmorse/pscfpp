@@ -111,6 +111,99 @@ public:
       TEST_ASSERT(!wavelist3.hasMinImages());
    }
 
+   /*
+   * Sums S[n] over the k-grid of w dKSq_n, with w = exp(-kSq/kSqMax),
+   * for a cell and a mesh with the symmetry of a hexagonal or cubic
+   * lattice. The tensor sum of w k k is then isotropic, so that S[n]
+   * is proportional to dLogV[n], the derivative of the logarithm of
+   * the cell volume. Returns the largest deviation from this relation,
+   * relative to the largest |S[n]|.
+   */
+   template <int D>
+   double dKSqAnisotropy(UnitCell<D> const & cell, IntVec<D> const & d,
+                         double const * dLogV)
+   {
+      Mesh<D> mesh(d);
+      WaveList<D,CPT> wavelist;
+      wavelist.allocate(mesh, cell);
+      wavelist.computedKSq();
+      RField<D,CPT> const & kSq = wavelist.kSq();
+      double kSqMax = 0.0;
+      for (int i = 0; i < kSq.capacity(); ++i) {
+         kSqMax = std::max(kSqMax, kSq[i]);
+      }
+      double S[6];
+      double scale = 0.0;
+      for (int n = 0; n < cell.nParameter(); ++n) {
+         S[n] = 0.0;
+         for (int i = 0; i < kSq.capacity(); ++i) {
+            S[n] += std::exp(-kSq[i]/kSqMax)*wavelist.dKSq(n)[i];
+         }
+         scale = std::max(scale, std::abs(S[n]));
+      }
+      double deviation = 0.0;
+      for (int n = 1; n < cell.nParameter(); ++n) {
+         double r = S[n] - S[0]*dLogV[n]/dLogV[0];
+         deviation = std::max(deviation, std::abs(r)/scale);
+      }
+      return deviation;
+   }
+
+   /*
+   * Cells with a variable angle at geometries of higher symmetry, in
+   * which the minimum images of some wavevectors are tied with images
+   * whose |k|^2 has other derivatives: dKSq must treat these images
+   * alike, so that the sums of dKSqAnisotropy are isotropic. Elsewhere,
+   * dKSq must be the derivative for the minimum image, bit for bit.
+   */
+   void testComputedKSqTied()
+   {
+      printMethod(TEST_FUNC);
+
+      // Rhombic cell at 120 degrees (hexagonal lattice), area a^2 sin(g)
+      FSArray<double, 6> parameters;
+      double a = 1.7;
+      double g = 2.0*Constants::Pi/3.0;
+      parameters.append(a);
+      parameters.append(g);
+      UnitCell<2> rhombic;
+      rhombic.set(UnitCell<2>::Rhombic, parameters);
+      double dLogV[2];
+      dLogV[0] = 2.0/a;
+      dLogV[1] = std::cos(g)/std::sin(g);
+      TEST_ASSERT(dKSqAnisotropy<2>(rhombic, IntVec<2>(12), dLogV) < 1E-12);
+      TEST_ASSERT(dKSqAnisotropy<2>(rhombic, IntVec<2>(13), dLogV) < 1E-12);
+
+      // Rhombohedral cells at 60 degrees (fcc) and 109.47 degrees (bcc),
+      // volume a^3 (1 - 3c^2 + 2c^3)^(1/2), with c = cos(alpha)
+      a = 2.0;
+      double alpha[2] = {Constants::Pi/3.0, std::acos(-1.0/3.0)};
+      for (int k = 0; k < 2; ++k) {
+         parameters[0] = a;
+         parameters[1] = alpha[k];
+         UnitCell<3> rhombohedral;
+         rhombohedral.set(UnitCell<3>::Rhombohedral, parameters);
+         double c = std::cos(alpha[k]);
+         dLogV[0] = 3.0/a;
+         dLogV[1] = 3.0*c*(1.0 - c)*std::sin(alpha[k])
+                    /(1.0 - 3.0*c*c + 2.0*c*c*c);
+         TEST_ASSERT(dKSqAnisotropy<3>(rhombohedral, IntVec<3>(8), dLogV)
+                     < 1E-12);
+      }
+
+      // Generic oblique cell: dKSq of the minimum image, bit for bit
+      WaveList<2,CPT> wavelist;
+      wavelist.allocate(mesh2, cell2);
+      wavelist.computedKSq();
+      for (int n = 0; n < cell2.nParameter(); ++n) {
+         for (int i = 0; i < kSize2; ++i) {
+            double dksq = cell2.dksq(wavelist.minImages()[i], n);
+            if (wavelist.implicitInverse()[i]) dksq *= 2.0;
+            TEST_ASSERT(wavelist.dKSq(n)[i] == dksq);
+         }
+      }
+   }
+
    void testComputeMinimumImages1D()
    {
       printMethod(TEST_FUNC);
@@ -547,6 +640,7 @@ public:
 
 TEST_BEGIN(CppWaveListTest)
 TEST_ADD(CppWaveListTest, testAllocate)
+TEST_ADD(CppWaveListTest, testComputedKSqTied)
 TEST_ADD(CppWaveListTest, testComputeMinimumImages1D)
 TEST_ADD(CppWaveListTest, testComputeMinimumImages2D)
 TEST_ADD(CppWaveListTest, testComputeMinimumImages3D)

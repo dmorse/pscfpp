@@ -19,7 +19,87 @@
 #include <pscf/mesh/Mesh.h>
 #include <pscf/math/Sort.h>
 
+#include <algorithm>
+#include <cmath>
+
 namespace Pscf {
+
+   // Functions used to average dKSq over tied minimum images
+   // (defined in an anonymous namespace, used only in this file)
+   namespace {
+
+      /*
+      * Minimum images tied with the minimum image r.
+      *
+      * A minimum image on the boundary of the Voronoi cell of the
+      * lattice of image shifts is tied with other images of the same
+      * wavevector. This function returns in tied the image r (first)
+      * and the images with |k|^2 equal to that of r within a fraction
+      * 1.0E-9 that are reached from r by steps of the vectors in
+      * neighbors (from imageShiftNeighbors) through such images. These
+      * steps connect all tied minimum images, of which there are at
+      * most 2^D. The tolerance is larger than that of shiftToMinimum,
+      * so that cell parameters written to a file (with 11 significant
+      * digits) at a geometry with tied images give the same images.
+      */
+      template <int D>
+      void tiedMinimumImages(IntVec<D> const & r,
+                             FSArray<IntVec<D>, 14> const & neighbors,
+                             UnitCell<D> const & cell,
+                             FSArray<IntVec<D>, 8>& tied)
+      {
+         const double epsilon = 1.0E-9;
+         const double g0 = cell.ksq(r);
+         tied.clear();
+         tied.append(r);
+         IntVec<D> u;
+         for (int t = 0; t < tied.size(); ++t) {
+            for (int j = 0; j < neighbors.size(); ++j) {
+               u.add(tied[t], neighbors[j]);
+               double g = cell.ksq(u);
+               if (std::abs(g - g0) > epsilon*std::max(g, g0)) continue;
+               bool found = false;
+               for (int m = 0; m < tied.size(); ++m) {
+                  if (tied[m] == u) found = true;
+               }
+               if (!found) {
+                  if (tied.size() == (1 << D)) {
+                     UTIL_THROW("More than 2^D tied minimum images");
+                  }
+                  tied.append(u);
+               }
+            }
+         }
+      }
+
+      /*
+      * Derivative of |k|^2 with respect to cell parameter n, averaged
+      * over the tied minimum images in tied, or the derivative for
+      * tied[0] if those of all images agree within a fraction 1.0E-9
+      * (e.g., for the images k and -k of a wavevector that is half a
+      * vector of the lattice of image shifts).
+      */
+      template <int D>
+      double tiedImageDKSq(FSArray<IntVec<D>, 8> const & tied,
+                           UnitCell<D> const & cell, int n)
+      {
+         const double epsilon = 1.0E-9;
+         const int nTied = tied.size();
+         const double value0 = cell.dksq(tied[0], n);
+         double sum = value0;
+         double maxDiff = 0.0;
+         double scale = std::abs(value0);
+         for (int t = 1; t < nTied; ++t) {
+            double value = cell.dksq(tied[t], n);
+            sum += value;
+            maxDiff = std::max(maxDiff, std::abs(value - value0));
+            scale = std::max(scale, std::abs(value));
+         }
+         if (maxDiff <= epsilon*scale) return value0;
+         return sum/double(nTied);
+      }
+
+   }
 
    /*
    * Constructor.
@@ -209,6 +289,28 @@ namespace Pscf {
          }
       }
       
+      // Minimum images tied with images whose |k|^2 has other derivatives
+      // (cells with a variable angle only, e.g. rhombic at 120 degrees):
+      // use the average over the tied images (see tiedImageDKSq)
+      if (hasVariableAngle<D>(unitCell().lattice())) {
+         FSArray<IntVec<D>, 14> neighbors;
+         imageShiftNeighbors<D>(mesh().dimensions(), unitCell(), neighbors);
+         FSArray<IntVec<D>, 8> tied;
+         for (rank = 0; rank < kSize_; ++rank) {
+            tiedMinimumImages<D>(minImages_[rank], neighbors, unitCell(),
+                                 tied);
+            if (tied.size() == 1) continue;
+            for (i = 0; i < unitCell().nParameter(); ++i) {
+               dKSq_[i][rank] = tiedImageDKSq<D>(tied, unitCell(), i);
+               if (isRealField_) {
+                  if (implicitInverse_[rank]) {
+                     dKSq_[i][rank] *= 2.0;
+                  }
+               }
+            }
+         }
+      }
+
       hasdKSq_ = true;
    }
 
