@@ -31,7 +31,7 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 # Note: Creates a *.d dependency file as a side effect
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@SDIR=$$(dirname "$@"); if [ ! -d"$$SDIR" ]; then mkdir -p"$$SDIR"; fi
-	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
+	$(CXX) $(INCLUDES) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
 
 # Pattern rule to link Test programs in src/r1/tests

@@ -4,7 +4,7 @@ file for basic instructions on usage and a link to the web manual.
 Subdirectories:
 
   bin/      - default installation directory for executable files
-  bld/      - build directory for out-of-source builds 
+  bld/      - build directory for out-of-source builds
   data/     - read-only data files (e.g., space group description files)
   docs/     - documentation, including web manual source files
   examples/ - input files for example calculations
@@ -12,13 +12,14 @@ Subdirectories:
   make/     - makefile fragments used by the configure script
   src/      - C++ and CUDA C++ source code files
 
-Files: 
+Files:
 
-  CONTENTS  - this file
-  HISTORY   - summary of changes for each package version
-  LICENSE   - GNU GPL v3 license
-  README.md - brief intro to package (as displayed on github page)
-  configure - shell script for initial set up of the build system 
-  setopts   - shell script to manage compile-time options
-  makefile  - main makefile (compiles out-of-source in bld/ directory)
+  CONTENTS        - this file (directory contents)
+  HISTORY         - summary of changes for each tagged version
+  README.md       - brief intro to package (displayed on github)
+  CONTRIBUTING.md - instructions for contributors
+  LICENSE         - GNU GPL v3 license
+  configure       - script for initial set up of the build system
+  setopts         - script to manage compile-time options
+  makefile        - main makefile (compiles out-of-source in bld/ )
 

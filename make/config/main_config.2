@@ -21,12 +21,6 @@ ifdef PSCF_CUDA
    CPPFLAGS+= -D PSCF_CUDA
 endif
 
-# Initialize INCLUDES path for header files to an empty string.
-# This initial value is added to in the patterns.mk file in each 
-# namespace-level subdirectory of the src/ directory, giving a list
-# of any additional include directories needed in each context.
-INCLUDES=
-
 #=======================================================================
 # Automatic dependency generation.
  
@@ -57,19 +51,19 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #-----------------------------------------------------------------------
 # Compiler Pattern Rules (patterns.mk files):
 #
-# The top level subdirectories of src/ named util/, pscf/, prdc/, r1/, 
-# and rp/ each contain the source code defined in a particular C++
-# namespace, and are referred to here as namespace-level directories.
+# The top level subdirectories of src/ named util/, pscf/, r1/, and /rp
+# each contain the source code defined in a particular C++ namespace, and
+# are referred to here as namespace-level directories.
 #
-# Each such namespace-level directory contains files named sources.mk and
-# patterns contain makefile fragments that are included by other makefiles.
-# The purposes of these files are as follows:
+# Each such namespace-level directory contains two files named sources.mk 
+# and patterns.mk contain makefile fragments that are included by other 
+# makefiles. The purposes of these files are as follows:
 # 
-#    sources.mk  defines a list of source files in the directory
+#    sources.mk defines a list of source files in the directory
 #    patterns.mk defines pattern rules for compilation 
 # 
 # All makefiles within each namespace-level directory includes the 
-# sources.mk and patterns.mk files from that namespace-level directory.
+# sources.mk and patterns.mk files from that directory.
 #
 # Compiling standard C++ (*.cpp) source files
 # -------------------------------------------
@@ -93,25 +87,20 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #
 # Values for the variables $(CXX), $(CPPFLAGS) and $(CXXFLAGS) are defined
 # above in this config.mk configuration file, and so have the same value 
-# in all namespace-level directories. Values of $(INCLUDES) are defined
-# in the patterns.mk file in each namespace-level subdirectory of src, and
+# in all namespace-level directories. Values of $(INCLUDES) are defined in
+# the patterns.mk file in each namespace-level subdirectory of src/, and
 # so may have different values in different namespace level directories.
 #
 # The variable $(CPPFLAGS) defines flags that are used by the C/C++ 
-# preprocessor. This may include strings that use the -D option to pass
-# definitions of preprocessor variables to the compiler. This string
-# normally contains the string "-D UTIL_CXX11", which enables compilation
-# of code that uses features of the C++11 standard in the some files in
-# the src/util/ directory. When debugging is enabled (i.e., when the
-# makefile variable UTIL_DEBUG is defined), it also contains a string
+# preprocessor. This may include strings that specify where the compiler
+# should look for included header files, and strings that use the -D 
+# option to pass definitions of preprocessor variables to the compiler. 
+# This string normally contains the string "-D UTIL_CXX11", which enables 
+# compilation of code that uses features of the C++11 standard in the some 
+# files in the src/util/ directory. When debugging is enabled (i.e., when 
+# the makefile variable UTIL_DEBUG is defined), it also contains a string
 # "-D UTIL_DEBUG" that defines a corresponding C preprocessor variable
 # named UTIL_DEBUG.
-#
-# The variable $(CXXFLAGS) specifies additonal compiler options that are 
-# used during compilation of a preprocessed translation unit.  This string 
-# always contains the $(CXX_STD) string to specify which version of C++ 
-# should be used, and may contain options that specify the optimization 
-# level and the strictness of compiler warnings.
 #
 # The INCLUDES variable uses the -I option to list additional paths that 
 # the preprocessor should search for header files. The CPPFLAGS variable 
@@ -120,10 +109,16 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # are part of the PSCF package. The INCLUDES variable instead contains
 # options that add paths to directories that contain header files 
 # required to use relevant external libraries. The value of INCLUDES is 
-# initialized to an empty string in this config.mk file, and may be
-# extended in the patterns.mk file in each namespace-level subdirectory 
-# of the src/ directory.
+# initialized to an empty string in this file, and may be extended in 
+# the patterns.mk file in each namespace-level subdirectory of the src/ 
+# directory.
 # 
+# The variable $(CXXFLAGS) specifies additional compiler options that are 
+# used during compilation of a preprocessed translation unit.  This string 
+# always contains the $(CXX_STD) string to specify which version of C++ 
+# should be used, and may contain options that specify the optimization 
+# level and the strictness of compiler warnings.
+#
 # Compiling C++ CUDA (*.cu) source files:
 # ---------------------------------------
 #

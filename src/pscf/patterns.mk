@@ -41,13 +41,13 @@ MAKEDEP_ARGS+= -B$(BLD_DIR)
 # Note: Creates a *.d dependency file as a side effect of compilation
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
-	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
+	$(CXX) $(INCLUDES) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
 
 # Pattern rule to compile *.cu CUDA source files in src/pscf
 # Note: Creates a *.du dependency file as a side effect of compilation
 $(BLD_DIR)/%.ou: $(SRC_DIR)/%.cu
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
-	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
+	$(NVXX) $(INCLUDES) $(CPPFLAGS) $(NVXXFLAGS) -c -o $@ $<
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
 

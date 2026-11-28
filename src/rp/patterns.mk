@@ -44,13 +44,13 @@ TEST_CUDA_DIR=$(SRC_DIR)/rp/tests/cuda
 # Note: Creates a *.d dependency file as a side effect 
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
-	$(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
+	$(CXX) $(INCLUDES) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 	$(MAKEDEP) $(MAKEDEP_CMD) $(MAKEDEP_ARGS) $<
 
 # Pattern rule to compile *.cu CUDA source files in src/rp
 # Note: Creates a *.d dependency file as a side effect 
 $(BLD_DIR)/%.ou:$(SRC_DIR)/%.cu
 	@SDIR=$$(dirname "$@"); if [ ! -d "$$SDIR" ]; then mkdir -p "$$SDIR"; fi
-	$(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
+	$(NVXX) $(INCLUDES) $(CPPFLAGS) $(NVXXFLAGS) -c -o $@ $<
 	$(MAKEDEP_CUDA) $(MAKEDEP_CUDA_CMD) $(MAKEDEP_ARGS) $<
 

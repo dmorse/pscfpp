@@ -46,8 +46,8 @@
 # C++ compiler command name
 CXX=g++
 
-# Options for C/C++ preprocessor - includes standard header search paths
-CPPFLAGS= -I $(SRC_DIR) -D UTIL_CXX11
+# Additional options for C/C++ preprocessor - define makefile variables
+CPPFLAGS= -D UTIL_CXX11
 
 # Compiler option to specify ANSI C++ 2011 standard (required)
 CXX_STD = --std=c++11
@@ -102,7 +102,6 @@ NVARCH=sm_80
 # Compute capabilities for GPUs (https://developer.nvidia.com/cuda-gpus)
 # GPU  CC
 # ---  ---
-# K40  3.5
 # V100 7.0
 # A100 8.0
 # A40  8.6

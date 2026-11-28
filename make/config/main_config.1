@@ -8,7 +8,8 @@
 # and bld/ directories. The copy in the src/ directory controls in-source 
 # compilation, in which intermediate files are created in the src/
 # directory tree. The copy in the bld/ directory controls out-of-source 
-# compilation in which intermediate files are created in the bld/ directory.
+# compilation, in which intermediate files are created in the bld/ 
+# directory.
 #
 # This file contains definitions of several types of makefile variables:
 # 
@@ -31,9 +32,8 @@
 #  - Variables MAKEDEP and MAKEDEP_CUDA that give names for scripts used
 #    to automatically generate dependency files.
 #
-# The setopts script in the src/ or bld/ directory may be used to
-# define or undefine UTIL_DEBUG, PSCF_CUDA and PSCF_CPP from the command
-# line.
+# The setopts script in the src/ or bld/ directory may be used to define
+# or undefine UTIL_DEBUG, PSCF_CUDA and PSCF_CPP from the command line.
 #=========================================================================
 # Variables that define absolute directory paths
 #
@@ -60,6 +60,19 @@ BIN_DIR=$(ROOT_DIR)/bin
 DAT_DIR=$(ROOT_DIR)/data
 
 #======================================================================
+# Search path for header file includes
+#
+# The INCLUDES variable use the -I compiler option to define a list 
+# of non-standard directories in which the preprocessor should look for 
+# included header files, in addition to standard system directories. The 
+# initial value given below instructs the compiler to search the PSCF
+# src/ directory for included headers. Other directories may be added to 
+# this search path in the remainder of this file and in the patterns.mk
+# files in each namespace level directory.
+
+INCLUDES= -I $(SRC_DIR)
+
+#======================================================================
 # Conditional compilation of debugging.
 
 # Defining UTIL_DEBUG enables extra run-time validity tests.
@@ -69,23 +82,26 @@ DAT_DIR=$(ROOT_DIR)/data
 # definition, by entering "./setopts -d1" to enable debugging (uncomment) 
 # or "./setopts -d0" to disable (comment out).
 #======================================================================
-# Conditional compilation of CUDA code
+# Conditional compilation of code that uses a CPU backend.
  
-# Defining PSCF_CUDA enables compilation of code that uses a GPU backend
-# programmed in CUDA C++.
+# Defining PSCF_CPP enables compilation of code that uses a serial C++
+# backend that uses conventional CPU hardware, which is used to construct
+# the pscf_rpc executable.
+PSCF_CPP=1
+ 
+# Note: The setopts script may be used to uncomment or comment out 
+# this definition, by entering "./setopts -c1" to enable (uncomment) 
+# or "./setopts -c0" to disable (comment out) compilation of the 
+# relevant C++ files.
+#======================================================================
+# Conditional compilation of CUDA code.
+ 
+# Defining PSCF_CUDA enables compilation of code that uses a CUDA backend
+# that uses a GPU. If PSCF_CUDA is not defined, no CUDA code is compiled,
+# and the pscf_rpg executable is not built. 
 #PSCF_CUDA=1
  
 # Note: The setopts script may be used to uncomment or comment out this
 # definition, by entering "./setopts -u1" to enable (uncomment) or 
 # "./setopts -u0" to disable (comment out) compilation of CUDA files.
-#======================================================================
-# Conditional compilation of code that uses a CPU backend.
- 
-# Defining PSCF_CPP enables compilation of code that uses a serial CPU
-# backend programmed in standard C++.
-PSCF_CPP=1
- 
-# Note: The setopts script may be used to uncomment or comment out this
-# definition, by entering "./setopts -c1" to enable (uncomment) or
-# "./setopts -c0" to disable (comment out) the relevant C++ files.
 #======================================================================

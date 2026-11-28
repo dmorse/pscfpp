@@ -42,11 +42,14 @@
 # C++ compiler and options (*.cpp files)
 
 # C++ Compiler Command name 
-# On OS X, the g++ command calls the Apple installed clang compiler
+# On OS X, the g++ command calls the Apple installed clang++ compiler
 CXX=g++
 
-# Flags for C/C++ preprocessor, including standard header search paths
-CPPFLAGS= -I $(SRC_DIR) -I /opt/homebrew/include -D UTIL_CXX11
+# Add header search path for packages installed by homebrew
+INCLUDES += -I /opt/homebrew/include
+
+# Flags for C/C++ preprocessor that define preprocessor variables
+CPPFLAGS= -D UTIL_CXX11
 
 # Compiler option to specify ANSI C++ 2011 standard (required)
 CXX_STD = --std=c++11
