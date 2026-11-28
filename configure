@@ -6,14 +6,14 @@
 # This script must be run once before the first time the PSCF package 
 # is compiled in order to install files that are used by the build system. 
 # It should be run from the pscf root directory in which this script is 
-# located (named pscfpp/ by default). The script detects the path to pscf 
-# root directory and sets some variables to values that contain this path, 
-# and so must be rerun if the entire package directory tree is moved or 
-# renamed. 
+# located (named pscfpp/ by default). The script detects the path to the
+# pscf root directory and sets some variables to values that contain this 
+# path. The configure script must thus be rerun if the pscf root directory
+# is moved or renamed. 
 #
 # This script:
 #
-# - Installs the config.mk compiler configuration file in the pscf src/
+# - Installs a config.mk compiler configuration file in the pscf src/
 #   directory (for in-source builds) and another file of the same name 
 #   in the bld/ directory (for out-of-source builds), with appropriate 
 #   values set in both of these files for ROOT_DIR, BLD_DIR, SRC_DIR and 
@@ -22,7 +22,7 @@
 # - Copies several "makefile" files from the src/ directory into the bld/ 
 #   directory
 #
-# - Copies the "setopts" script from src/ into bld/
+# - Copies the "setopts" script from the src/ to bld/ directory
 #
 # - Installs makeDep dependency generation scripts in bin/
 #
@@ -76,7 +76,6 @@ else
   case "$(uname -s)" in
     Linux*)
       echo "Linux operating system detected"
-      echo "Using default compiler settings file make/compiler/linux-default"
       ;;
     Darwin*)
       echo "Mac OS X (Darwin) operating system detected"
@@ -89,6 +88,7 @@ else
       ;;
     FreeBSD*)
       echo "FreeBSD operating system detected"
+      echo "Using default compiler settings file make/compiler/linux-default"
       ;;
     CYGWIN*)
       echo "CYGWIN operating system for Windows hardware detected"

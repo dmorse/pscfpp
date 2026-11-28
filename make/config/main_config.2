@@ -72,7 +72,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # level subdirectory of src/ is of the form:
 # 
 # $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
-#      $(CXX) $(CPPFLAGS) $(INCLUDES) $(CXXFLAGS) -c -o $@ $<
+#      $(CXX) $(INCLUDES) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 #
 # This pattern compiles a *.cpp file in a subdirectory of the source
 # directory $(SRC_DIR) and creates a *.o object file in a corresponding
@@ -81,42 +81,38 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # compilation. The variables used in this recipe line are:
 #
 # CXX         - C++ compiler executable command name 
-# CPPFLAGS    - standard options for the C/C++ preprocessor
 # INCLUDES    - additional directories to search for header files
-# CXXFLAGS    - options used during compilation
+# CPPFLAGS    - other options for the C/C++ preprocessor
+# CXXFLAGS    - options used only during compilation
 #
 # Values for the variables $(CXX), $(CPPFLAGS) and $(CXXFLAGS) are defined
-# above in this config.mk configuration file, and so have the same value 
-# in all namespace-level directories. Values of $(INCLUDES) are defined in
-# the patterns.mk file in each namespace-level subdirectory of src/, and
-# so may have different values in different namespace level directories.
+# above in this config.mk configuration file, and so have the same value in 
+# all namespace-level directories. The value of $(INCLUDES) is initialized 
+# above but may be extended in the patterns.mk file in namespace-level 
+# subdirectory of src/, and so may have different values in different 
+# namespace level directories.
 #
-# The variable $(CPPFLAGS) defines flags that are used by the C/C++ 
-# preprocessor. This may include strings that specify where the compiler
-# should look for included header files, and strings that use the -D 
-# option to pass definitions of preprocessor variables to the compiler. 
-# This string normally contains the string "-D UTIL_CXX11", which enables 
-# compilation of code that uses features of the C++11 standard in the some 
-# files in the src/util/ directory. When debugging is enabled (i.e., when 
-# the makefile variable UTIL_DEBUG is defined), it also contains a string
-# "-D UTIL_DEBUG" that defines a corresponding C preprocessor variable
-# named UTIL_DEBUG.
-#
-# The INCLUDES variable uses the -I option to list additional paths that 
-# the preprocessor should search for header files. The CPPFLAGS variable 
-# always contains a string "-I$(SRC_DIR) that instructs the preprocessor 
-# to search the PSCF src/ directory, $(SRC_DIR), for header files that 
-# are part of the PSCF package. The INCLUDES variable instead contains
-# options that add paths to directories that contain header files 
-# required to use relevant external libraries. The value of INCLUDES is 
-# initialized to an empty string in this file, and may be extended in 
-# the patterns.mk file in each namespace-level subdirectory of the src/ 
-# directory.
+# The INCLUDES variable contains one or more strings that use the -I option 
+# to add directory paths to the list of paths the preprocessor will search for
+# included header files. It is initialized above to a value "-I $(SRC_DIR)" 
+# that instructs the preprocessor to search the PSCF src/ directory, given by
+# $(SRC_DIR), for header files that are part of the PSCF package. Paths for
+# other directory namespaces may be added in patterns.mk files.
 # 
+# The variable $(CPPFLAGS) defines other flags that are used by the C/C++ 
+# preprocessor. Its includes string segments that use the compiler -D option 
+# pass definitions of preprocessor variables to the compiler.  This string 
+# always contains the string "-D UTIL_CXX11", which enables compilation of 
+# code that uses features of the C++11 standard in the some files in the 
+# src/util/ directory. When debugging is enabled (i.e., when the makefile 
+# variable UTIL_DEBUG is defined), it also contains a string "-D UTIL_DEBUG" 
+# that defines a corresponding C preprocessor variable named UTIL_DEBUG, and
+# may optionally contain definitions of variables PSCF_CPP and/or PSCF_CUDA.
+#
 # The variable $(CXXFLAGS) specifies additional compiler options that are 
-# used during compilation of a preprocessed translation unit.  This string 
-# always contains the $(CXX_STD) string to specify which version of C++ 
-# should be used, and may contain options that specify the optimization 
+# used only during compilation of a preprocessed translation unit. This 
+# string always contains the $(CXX_STD) string to specify which version of 
+# C++ should be used, and may contain options that specify the optimization 
 # level and the strictness of compiler warnings.
 #
 # Compiling C++ CUDA (*.cu) source files:
@@ -129,7 +125,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # is closely analogous to that used for *.cpp files, and is of the form:
 # 
 # $(BLD_DIR)/%.o: $(SRC_DIR)/%.cu
-#      $(NVXX) $(CPPFLAGS) $(INCLUDES) $(NVXXFLAGS) -c -o $@ $<
+#      $(NVXX) $(INCLUDES $(CPPFLAGS) $(NVXXFLAGS) -c -o $@ $<
 #
 # This contains the two new makefile variables that are analogous to 
 # CXX and CXXFLAGS:
@@ -137,8 +133,10 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # NVXX        - CUDA compiler executable name (nvcc)
 # NVXXFLAGS   - compiler options used during compilation
 #
-# The makefile variables $(CPPFLAGS) and $(INCLUDES) have the same
-# meanings and values as in the rule for *.cpp files. 
+# The makefile variables $(INCLUDES) and $(CPPFLAGS) have the same
+# meanings and values as in the rule for *.cpp files, while $(NVXXFLAGS)
+# contains flags that are used by the compiler after preprocessing,
+# analogous to $(CXXFLAGS).
 #
 #-----------------------------------------------------------------------
 # Archiver rules for static libraries (sources.mk files):
@@ -147,7 +145,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # subdirectory of the build directory. Each such library contains the 
 # contents of all of the object code files created by compiling all of the
 # source files in the corresponding namespace-level directory of the src
-# directory tree.  The makefile rule used to construct this library is 
+# directory tree. The makefile rule used to construct this library is 
 # defined in the sources.mk file located in the relevant namespace-level 
 # subdirectory of the src directory. 
 #
@@ -173,7 +171,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # Linker rules for main PSCF executable files (makefiles):
 # 
 # Each of the main PSCF executable files is created by linking an object 
-# file that was created by compiling a main program file to a list of 
+# file that is created by compiling a main program file to several 
 # libraries. Recipes for creating each executables is defined in a 
 # makefile in the associated program-level subdirectory of the build 
 # directory. 
@@ -187,7 +185,7 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 #
 # Meanings of the variables used in this example are:
 #   
-#     - $(PSCF_RPC_EXE) is the path to the executable target. Ih this
+#     - $(PSCF_RPC_EXE) is the path to this executable target. Ih this
 #       example, this is given by $(BIN_DIR)/pscf_rpc .
 #
 #     - $(PSCF_RPC) is the path to the object file for the main program, 
@@ -222,25 +220,3 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # all relevant libraries, but the build system is only responsbile for
 # rebuilding out-of-date libraries if they are in the PSCF repository.
 #-----------------------------------------------------------------------
-# Linker rules for unit test executables (patterns.mk files):
-#
-# The patterns.mk file in each namespace-level subdirectory of src defines
-# a pattern rule for creating executable files that run unit tests. By 
-# convention executable unit test files have names that end with suffix
-# "Test" (such as Test, CpuTest or CudaTest), and are created by compiling 
-# source code files with the same base name and suffix .cpp or .cu. 
-#
-# The pattern rule for compiling such files in directories that do not
-# contain any CUDA code generally looks something like this:
-#
-# $(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSCF_LIBS)
-# 	$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
-#
-# The corresponding rule for directories that contain CUDA code is
-# modified when compilation of CUDA code is enabled to use to the 
-# NVIDIA $(NVXX) compiler rather than $(CXX) compiler. Aside from the 
-# use of a pattern for the names of the object and executable files,
-# this rule is similar to that used to create the main PSCF executable
-# file, and uses the $(LDFLAGS) variable defined in this config.mk file.
-#
-#=======================================================================
