@@ -22,6 +22,9 @@
 #include <util/containers/FSArray.h>
 #include <rp/solvers/Mixture.h>
 #include <rp/environment/MixAndMatchEnv.h>
+#include <rp/solvers/Polymer.h>
+#include <rp/solvers/Solvent.h>
+#include <pscf/chem/Ensemble.h>
 
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/BFieldComparison.h>
@@ -442,6 +445,118 @@ public:
       TEST_ASSERT(diff < 1.0E-7);
    }
 
+
+   /*
+   * Semi-grand potential g = fHelmholtz - sum of phi*mu/N over the open
+   * species, for the bead model.
+   */
+   double semiGrandPotential(Rp::System<1,CPT> const & system)
+   {
+      Rp::Mixture<1,CPT> const & mixture = system.mixture();
+      double g = system.scft().fHelmholtz();
+      for (int i = 0; i < mixture.nPolymer(); ++i) {
+         if (mixture.polymer(i).ensemble() == Ensemble::Open) {
+            g -= mixture.polymer(i).phi() * mixture.polymer(i).mu()
+                 / double(mixture.polymer(i).nBead());
+         }
+      }
+      for (int i = 0; i < mixture.nSolvent(); ++i) {
+         if (mixture.solvent(i).ensemble() == Ensemble::Open) {
+            g -= mixture.solvent(i).phi() * mixture.solvent(i).mu()
+                 / mixture.solvent(i).size();
+         }
+      }
+      return g;
+   }
+
+   /*
+   * A 1D film (bead model, fBulk given) with a closed diblock and an
+   * open homopolymer and solvent. The stress modified by the mask, which
+   * is used to optimize the film thickness L, must be the derivative of
+   * (L - t)*(g - fBulk) with respect to L, where t is the excluded
+   * thickness and g is the semi-grand potential, as computed by central
+   * finite differences of solutions for a rigid unit cell.
+   */
+   void testModifyStressOpenSpecies()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/FilmEnvTestModifyStressOpenSpecies.log");
+
+      Rp::System<1,CPT> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      std::istringstream param(
+         "System{ polymerModel bead"
+         " Mixture{ nMonomer 2 monomers[ 0.2236067977 0.2236067977 ]"
+         " nPolymer 2 nSolvent 1"
+         " Polymer{ type linear nBlock 2 blocks[ 0 8 1 12 ] phi 0.8 }"
+         " Polymer{ type linear nBlock 1 blocks[ 0 10 ] mu 0.27 }"
+         " Solvent{ monomerId 1 size 2.0 mu -1.7 } }"
+         " Interaction{ chi( 1 0 1.0 ) }"
+         " Domain{ mesh 48 lattice lamellar groupName P_-1 }"
+         " FilmEnvironment{ normalVecId 0 interfaceThickness 0.2"
+         " excludedThickness 0.4 fBulk 0.03"
+         " chiBottom[ 0.5 0.0 ] chiTop[ 0.5 0.0 ] }"
+         " AmIteratorBasis{ epsilon 1.0e-12 maxItr 1000 maxHist 25"
+         " isFlexible 0 } }\n");
+      system.readParam(param);
+      double t = 0.4;
+      double fBulk = 0.03;
+
+      // Solution for L = 2.2, from homogeneous w fields
+      double L = 2.2;
+      FSArray<double, 6> parameters;
+      parameters.append(L);
+      system.setUnitCell(parameters);
+      int nBasis = system.domain().basis().nBasis();
+      DArray< DArray<double> > w;
+      w.allocate(2);
+      for (int i = 0; i < 2; ++i) {
+         w[i].allocate(nBasis);
+         for (int k = 0; k < nBasis; ++k) {
+            w[i][k] = 0.0;
+         }
+      }
+      w[0][0] = 0.6;
+      w[1][0] = 0.4;
+      system.w().setBasis(w);
+      int error = system.iterate();
+      TEST_ASSERT(!error);
+      w = system.w().basis();
+
+      // Stress modified by the mask
+      system.computeStress();
+      Rp::MixAndMatchEnv const & env
+            = dynamic_cast<Rp::MixAndMatchEnv const &>(system.environment());
+      double stress = system.mixture().stress(0);
+      stress += env.fieldGenerator1().stress(0);
+      stress += env.fieldGenerator2().stress(0);
+      stress = env.fieldGenerator1().modifyStress(0, stress);
+
+      // (L - t)*(g - fBulk) for thicknesses L + h and L - h
+      double h = 1.0E-4;
+      parameters[0] = L + h;
+      system.setUnitCell(parameters);
+      error = system.iterate();
+      TEST_ASSERT(!error);
+      double gp = (L + h - t) * (semiGrandPotential(system) - fBulk);
+
+      system.w().setBasis(w);
+      parameters[0] = L - h;
+      system.setUnitCell(parameters);
+      error = system.iterate();
+      TEST_ASSERT(!error);
+      double gm = (L - h - t) * (semiGrandPotential(system) - fBulk);
+
+      double stressFD = (gp - gm)/(2.0*h);
+      double diff = std::abs(stress - stressFD);
+      Log::file() << "\nmodified stress   = " << Dbl(stress, 20, 12)
+                  << "\nstress (fin diff) = " << Dbl(stressFD, 20, 12)
+                  << "\ndifference        = " << Dbl(diff, 20, 12)
+                  << std::endl;
+      TEST_ASSERT(diff < 1.0E-6);
+   }
+
 };
 
 TEST_BEGIN(FilmEnvironmentTest)
@@ -454,6 +569,7 @@ TEST_ADD(FilmEnvironmentTest, testSolve2D)
 TEST_ADD(FilmEnvironmentTest, testSweep)
 TEST_ADD(FilmEnvironmentTest, testSolveWithFBulk)
 TEST_ADD(FilmEnvironmentTest, testStressFiniteDifference1D)
+TEST_ADD(FilmEnvironmentTest, testModifyStressOpenSpecies)
 TEST_END(FilmEnvironmentTest)
 
 #endif
