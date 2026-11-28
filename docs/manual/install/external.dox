@@ -92,16 +92,17 @@ module load  module-name
 where module-name represents the name of a particular software module, as
 listed by the "module avail" command.
 
-On the computer cluster at MSI, we currently normally set up the
-compilation environment by invoking
+On the agate computer cluster at MSI, we currently set up the compilation 
+environment by invoking
 \code
-module load fftw/3.3.6-double-gnu-7.2.0
+module load fftw
 module load cuda
 \endcode
-before compiling PSCF. We use a version of fftw that was compiled with
-GCC version 7.2.0, rather than the most recent version, because the
-current version of CUDA (v10.0) isn't compatible with GCC versions with
-primary version numbers greater than 7.
+before compiling PSCF. These commands load the default versions of
+the fftw and cuda modules, which currently (Nov. 2026) work together
+without problems. One can see, by entering "module avail fftw" and
+"module avail cuda", that there actually multiple modules available
+for both fftw and cuda.
 
 These module load commands can be either be entered manually from the
 command line by the user after logging in, or they can be configured to
